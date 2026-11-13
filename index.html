@@ -2,6 +2,22 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
+  <script>
+    // 表示言語（このファイルは日本語版。英語版は en.html）
+    var PAGE_LANG = "ja";
+    var LANG_PAGES = { ja: "index.html", en: "en.html" };
+    // 前回選んだ言語が違えば、そちらのページへ自動で移動
+    (function () {
+      try {
+        var pref = localStorage.getItem("okamoto_lang");
+        if (pref && pref !== PAGE_LANG && LANG_PAGES[pref]) location.replace(LANG_PAGES[pref]);
+      } catch (e) {}
+    })();
+    function switchLang(lang) {
+      try { localStorage.setItem("okamoto_lang", lang); } catch (e) {}
+      if (lang !== PAGE_LANG && LANG_PAGES[lang]) location.href = LANG_PAGES[lang];
+    }
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>岡本研 実験機器予約システム</title>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -41,6 +57,30 @@
       max-width: 420px;
       text-align: center;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    }
+    .lang-switch {
+      display: flex;
+      gap: 4px;
+      width: fit-content;
+      margin: 0 auto 20px auto;
+      padding: 4px;
+      background-color: #f1f5f9;
+      border-radius: 9999px;
+    }
+    .lang-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+    }
+    .lang-btn.active {
+      background-color: #ffffff;
+      color: #4f46e5;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
     }
     .auth-icon {
       width: 56px;
@@ -119,6 +159,10 @@
   <!-- 一般入室ログインモーダル -->
   <div id="authModal">
     <div class="auth-card">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang-btn="ja" onclick="switchLang('ja')" class="lang-btn">日本語</button>
+        <button type="button" data-lang-btn="en" onclick="switchLang('en')" class="lang-btn">English</button>
+      </div>
       <div class="auth-icon">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 5a3 3 0 1 1 6 0v3H9V7zm3 7a1.5 1.5 0 0 1 .75 2.8V18a.75.75 0 0 1-1.5 0v-1.2A1.5 1.5 0 0 1 12 14z"/>
@@ -151,6 +195,9 @@
           </button>
           <button onclick="toggleTagBar()" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition">
             <i class="fa-solid fa-tags mr-1"></i>機器タグ
+          </button>
+          <button onclick="switchLang(PAGE_LANG === 'ja' ? 'en' : 'ja')" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition" title="Language / 言語">
+            <i class="fa-solid fa-language mr-1"></i><span id="headerLangLabel"></span>
           </button>
           <button onclick="requestAdminSettings()" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition flex items-center gap-1.5" title="管理者のみ機器の追加・削除が可能">
             <i id="adminLockIcon" class="fa-solid fa-lock text-amber-300 text-xs"></i>
@@ -384,11 +431,11 @@
 
   <script>
     // ==========================================
-    // ★管理者設定エリア（パスワードやURLはここで変更可能）
+    // ★設定エリア
+    //   パスワードはここには書きません。GASの「スクリプト プロパティ」
+    //   （MEMBER_PASSWORD / ADMIN_PASSWORD）で管理し、照合もGAS側で行います。
     // ==========================================
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPipEUBQ1MJ-UTiPeqIriwgUc-jw1b4b8Z8CdPBQgLFxlx_GhmoHZ8c2pkrxg2kZ4W/exec";
-    const MEMBER_PASSWORD = "OkamotoLab";   // 一般メンバー用の入室パスワード
-    const ADMIN_PASSWORD  = "OkamotoAdmin"; // 管理者専用（機器リスト編集用）パスワード
     const AUTO_REFRESH_INTERVAL_MS = 10 * 60 * 1000; // 10分おきに自動同期
     // ==========================================
 
@@ -407,6 +454,50 @@
     let prefetchPromise = null;
     let autoRefreshTimer = null;
     let hasScrolledInitialToday = false;
+
+    // 入力されたパスワードはタブを閉じると消える sessionStorage にだけ保持し、
+    // 毎回のリクエストに付けてGAS側で照合してもらう
+    let memberKey = sessionStorage.getItem('okamoto_key') || "";
+    let adminKey  = sessionStorage.getItem('okamoto_admin_key') || "";
+
+    // HTMLエスケープ（XSS対策）：ユーザー入力を innerHTML に入れる前に必ず通す
+    function esc(s) {
+      return String(s ?? "").replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    async function postToServer(body) {
+      const res = await fetch(GAS_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ ...body, lang: PAGE_LANG }) // サーバーのメッセージ言語を指定
+      });
+      return res.json();
+    }
+
+    // 言語切り替えボタンの表示を設定
+    document.querySelectorAll('[data-lang-btn]').forEach(b => {
+      b.classList.toggle('active', b.dataset.langBtn === PAGE_LANG);
+    });
+    document.getElementById('headerLangLabel').innerText = PAGE_LANG === 'ja' ? 'English' : '日本語';
+
+    // パスワードが無効になった（変更された等）ときはログイン画面に戻す
+    function handleUnauthorized(message) {
+      sessionStorage.removeItem('okamoto_key');
+      sessionStorage.removeItem('okamoto_admin_key');
+      localStorage.removeItem('okamoto_res_v1');
+      memberKey = "";
+      adminKey = "";
+      reservations = [];
+      isUnlocked = false;
+      isAdminAuthenticated = false;
+      if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
+      ['bookingModal', 'moveConfirmModal', 'settingsModal', 'adminAuthModal', 'mainApp'].forEach(hideEl);
+      showEl('authModal');
+      document.body.style.backgroundColor = '#0f172a';
+      const errEl = document.getElementById('authError');
+      errEl.innerText = message || "パスワードが変更された可能性があります。再度入力してください。";
+      showEl('authError');
+    }
 
     let dragState = null;
     let touchHoldState = null;
@@ -529,9 +620,16 @@
 
     function startPrefetch(isBackgroundAuto = false) {
       if (prefetchPromise) return prefetchPromise;
-      prefetchPromise = fetch(GAS_WEB_APP_URL)
-        .then(res => res.json())
+      if (!memberKey) return Promise.resolve(false);
+      prefetchPromise = postToServer({ action: "list", key: memberKey })
         .then(json => {
+          if (json && json.status === "unauthorized") {
+            handleUnauthorized();
+            return false;
+          }
+          if (!json || json.status !== "success") {
+            throw new Error((json && json.message) || "load failed");
+          }
           if (isBackgroundAuto && isUserOperating()) {
             return false;
           }
@@ -583,18 +681,40 @@
     }
 
     // 一般ログイン処理
-    function handleLogin(e) {
+    // パスワードの照合はGAS側で行う
+    async function handleLogin(e) {
       e.preventDefault();
-      const inputVal = document.getElementById('passwordInput').value;
-      if (inputVal === MEMBER_PASSWORD || inputVal === ADMIN_PASSWORD) {
-        sessionStorage.setItem('okamoto_auth', '1');
-        if (inputVal === ADMIN_PASSWORD) {
-          isAdminAuthenticated = true;
-          sessionStorage.setItem('okamoto_admin_auth', '1');
+      const input = document.getElementById('passwordInput');
+      const btn = e.target.querySelector('button[type="submit"]');
+      const errEl = document.getElementById('authError');
+      const inputVal = input.value;
+      hideEl('authError');
+      btn.disabled = true;
+      btn.innerText = "確認中...";
+      try {
+        const json = await postToServer({ action: "login", key: inputVal });
+        if (json && json.status === "success") {
+          memberKey = inputVal;
+          sessionStorage.setItem('okamoto_key', inputVal);
+          if (json.role === "admin") {
+            adminKey = inputVal;
+            isAdminAuthenticated = true;
+            sessionStorage.setItem('okamoto_admin_key', inputVal);
+          }
+          input.value = "";
+          startPrefetch(false);
+          unlockApp();
+        } else {
+          errEl.innerText = "パスワードが正しくありません";
+          showEl('authError');
         }
-        unlockApp();
-      } else {
+      } catch (err) {
+        console.error(err);
+        errEl.innerText = "サーバーに接続できませんでした";
         showEl('authError');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "入室する";
       }
     }
 
@@ -642,17 +762,27 @@
       }
     }
 
-    function handleAdminLogin(e) {
+    async function handleAdminLogin(e) {
       e.preventDefault();
-      const val = document.getElementById('adminPasswordInput').value;
-      if (val === ADMIN_PASSWORD) {
-        isAdminAuthenticated = true;
-        sessionStorage.setItem('okamoto_admin_auth', '1');
-        updateAdminIconState();
-        hideEl('adminAuthModal');
-        openSettingsModal();
-      } else {
-        showEl('adminAuthError');
+      const input = document.getElementById('adminPasswordInput');
+      const val = input.value;
+      hideEl('adminAuthError');
+      try {
+        const json = await postToServer({ action: "login", key: val });
+        if (json && json.status === "success" && json.role === "admin") {
+          adminKey = val;
+          isAdminAuthenticated = true;
+          sessionStorage.setItem('okamoto_admin_key', val);
+          input.value = "";
+          updateAdminIconState();
+          hideEl('adminAuthModal');
+          openSettingsModal();
+        } else {
+          showEl('adminAuthError');
+        }
+      } catch (err) {
+        console.error(err);
+        alert("サーバーに接続できませんでした。");
       }
     }
 
@@ -662,12 +792,9 @@
       const savedRes = localStorage.getItem('okamoto_res_v1');
       if (savedRes) reservations = normalizeList(JSON.parse(savedRes));
 
-      startPrefetch(false);
-
-      if (sessionStorage.getItem('okamoto_admin_auth') === '1') {
-        isAdminAuthenticated = true;
-      }
-      if (sessionStorage.getItem('okamoto_auth') === '1') {
+      if (adminKey) isAdminAuthenticated = true;
+      if (memberKey) {
+        startPrefetch(false); // 保存済みのパスワードが無効なら handleUnauthorized でログイン画面に戻る
         unlockApp();
       }
     })();
@@ -689,12 +816,22 @@
       status.innerText = "サーバー同期中...";
 
       try {
-        const res = await fetch(GAS_WEB_APP_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
-        const result = await res.json();
+        const key = payload.action === "saveEquipments" ? adminKey : memberKey;
+        const result = await postToServer({ ...payload, key });
+        if (result.status === "unauthorized") {
+          handleUnauthorized();
+          return null;
+        }
+        if (result.status === "forbidden") {
+          adminKey = "";
+          isAdminAuthenticated = false;
+          sessionStorage.removeItem('okamoto_admin_key');
+          updateAdminIconState();
+          hideEl('settingsModal');
+          status.innerText = "同期完了";
+          alert(result.message || "管理者パスワードが必要です。");
+          return null;
+        }
         if (result.reservations) {
           reservations = normalizeList(result.reservations);
           localStorage.setItem('okamoto_res_v1', JSON.stringify(reservations));
@@ -920,30 +1057,29 @@
 
       eqs.forEach((eq, rowIdx) => {
         const dayItems = reservations.filter(r => r.equipment === eq && r.date === dateStr);
-        const safeEqAttr = eq.replace(/"/g, '&quot;');
-        const safeEqJs = eq.replace(/'/g, "\\'");
+        const safeEqAttr = esc(eq);
         html += `<div data-eq-row="${rowIdx}" data-eq-name="${safeEqAttr}" class="eq-timeline-row timeline-grid border-b border-slate-200 hover:bg-slate-50/70 relative h-11">`;
-        html += `<div class="px-2.5 py-2 border-r border-slate-300 text-xs font-semibold truncate sticky left-0 bg-white z-20 flex items-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]" title="${safeEqAttr}">${eq}</div>`;
+        html += `<div class="px-2.5 py-2 border-r border-slate-300 text-xs font-semibold truncate sticky left-0 bg-white z-20 flex items-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]" title="${safeEqAttr}">${safeEqAttr}</div>`;
 
         for (let h = 0; h < 24; h++) {
           html += `<div class="border-r border-slate-100 h-full pointer-events-none"></div>`;
         }
 
         html += `<div class="timeline-track absolute top-0 bottom-0 left-[160px] md:left-[220px] right-0 cursor-crosshair z-10 overflow-hidden"
-          onmousedown="startCreateDrag(event, '${safeEqJs}', '${dateStr}')"
-          ontouchstart="handleTrackTouchStart(event, '${safeEqJs}', '${dateStr}')">`;
+          onmousedown="startCreateDrag(event, this.closest('.eq-timeline-row').dataset.eqName, '${dateStr}')"
+          ontouchstart="handleTrackTouchStart(event, this.closest('.eq-timeline-row').dataset.eqName, '${dateStr}')">`;
 
         dayItems.forEach(item => {
           const startMin = timeToMinutes(item.startTime);
           const endMin = Math.max(startMin + 15, timeToMinutes(item.endTime));
           const leftPct = (startMin / 1440) * 100;
           const widthPct = ((endMin - startMin) / 1440) * 100;
-          const text = item.notes ? `${item.title} | ${item.notes}` : item.title;
+          const text = esc(item.notes ? `${item.title} | ${item.notes}` : item.title);
 
-          html += `<div data-res-id="${item.id}"
-            onmousedown="startMoveDrag(event, '${item.id}')"
-            ontouchstart="handleBarTouchStart(event, '${item.id}')"
-            title="${item.startTime}-${item.endTime} ${text}（クリックで編集 / ドラッグで移動）"
+          html += `<div data-res-id="${esc(item.id)}"
+            onmousedown="startMoveDrag(event, this.dataset.resId)"
+            ontouchstart="handleBarTouchStart(event, this.dataset.resId)"
+            title="${esc(item.startTime)}-${esc(item.endTime)} ${text}（クリックで編集 / ドラッグで移動）"
             style="left:${leftPct}%; width:${widthPct}%;"
             class="res-bar absolute top-1.5 bottom-1.5 bg-white border-2 border-indigo-600 text-slate-900 rounded px-1.5 text-xs font-bold flex items-center overflow-hidden shadow-sm cursor-pointer hover:bg-indigo-50 z-10">
             ${item.seriesId ? '<i class="fa-solid fa-rotate text-[9px] text-indigo-600 mr-0.5 shrink-0"></i>' : ''}<span class="res-label whitespace-nowrap overflow-hidden leading-none">${text}</span>
@@ -1351,7 +1487,7 @@
 
         html += `<div class="max-w-md mx-auto mb-5 relative">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
-          <input id="weekEqSearchInput" type="text" value="${weekSearchQuery.replace(/"/g, '&quot;')}"
+          <input id="weekEqSearchInput" type="text" value="${esc(weekSearchQuery)}"
             oninput="updateWeekSearch(this.value)"
             placeholder="機器名で絞り込み（例: HPLC, PCR, Centrifuge...）"
             class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
@@ -1361,10 +1497,10 @@
         filtered.forEach((eq) => {
           const origIdx = equipments.indexOf(eq);
           const colorCls = tagColors[origIdx % tagColors.length];
-          html += `<button onclick="selectWeekEquipment('${eq.replace(/'/g, "\\'")}')"
+          html += `<button data-eq="${esc(eq)}" onclick="selectWeekEquipment(this.dataset.eq)"
             class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/50 text-left transition shadow-sm group">
             <span class="w-3 h-8 rounded-full ${colorCls} shrink-0"></span>
-            <span class="text-sm font-bold text-slate-800 group-hover:text-indigo-700 truncate">${eq}</span>
+            <span class="text-sm font-bold text-slate-800 group-hover:text-indigo-700 truncate">${esc(eq)}</span>
           </button>`;
         });
         html += `</div></div>`;
@@ -1397,7 +1533,7 @@
       let html = `<div class="bg-indigo-50/80 border-b border-indigo-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3 sticky left-0">`;
       html += `<div class="flex items-center gap-2.5">
         <span class="px-2.5 py-1 rounded-md text-xs font-bold text-white ${badgeColor}">表示中</span>
-        <span class="text-base sm:text-lg font-extrabold text-indigo-950">${weekSelectedEq}</span>
+        <span class="text-base sm:text-lg font-extrabold text-indigo-950">${esc(weekSelectedEq)}</span>
       </div>`;
 
       html += `<div class="flex flex-wrap items-center gap-2">
@@ -1405,7 +1541,7 @@
           <i class="fa-solid fa-chevron-left"></i> 前の機器
         </button>
         <select onchange="selectWeekEquipment(this.value)" class="border border-indigo-300 bg-white rounded-lg px-3 py-1.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500">
-          ${equipments.map(e => `<option value="${e.replace(/"/g, '&quot;')}" ${e === weekSelectedEq ? 'selected' : ''}>${e}</option>`).join('')}
+          ${equipments.map(e => `<option value="${esc(e)}" ${e === weekSelectedEq ? 'selected' : ''}>${esc(e)}</option>`).join('')}
         </select>
         <button onclick="stepWeekEquipment(1)" class="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50">
           次の機器 <i class="fa-solid fa-chevron-right"></i>
@@ -1441,7 +1577,7 @@
         for (let h = 0; h < 24; h++) {
           const tStr = `${String(h).padStart(2,'0')}:00`;
           const eStr = `${String(Math.min(23, h+1)).padStart(2,'0')}:00`;
-          html += `<div ${d.disabled ? '' : `onclick="openNewModal('${weekSelectedEq.replace(/'/g, "\\'")}', '${d.str}', '${tStr}', '${eStr}')"`}
+          html += `<div data-eq="${esc(weekSelectedEq)}" ${d.disabled ? '' : `onclick="openNewModal(this.dataset.eq, '${d.str}', '${tStr}', '${eStr}')"`}
             style="height:${hourHeight}px;"
             class="border-b border-slate-100 ${d.disabled ? '' : 'hover:bg-indigo-50/70 cursor-pointer'}"></div>`;
         }
@@ -1452,15 +1588,15 @@
           const durationMin = endMin - startMin;
           const topPx = (startMin / 60) * hourHeight;
           const heightPx = Math.max(16, (durationMin / 60) * hourHeight);
-          const text = item.notes ? `${item.title} | ${item.notes}` : item.title;
+          const text = esc(item.notes ? `${item.title} | ${item.notes}` : item.title);
           const fontSizeClass = durationMin <= 30 ? 'text-[9px]' : durationMin <= 45 ? 'text-[10px]' : 'text-[11px]';
 
-          html += `<div onclick="event.stopPropagation(); openEditModal('${item.id}')"
+          html += `<div data-res-id="${esc(item.id)}" onclick="event.stopPropagation(); openEditModal(this.dataset.resId)"
             style="top:${topPx}px; height:${heightPx}px;"
             title="${item.startTime}-${item.endTime} ${text}"
             class="absolute left-1 right-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md px-1.5 py-0.5 ${fontSizeClass} shadow-sm cursor-pointer overflow-hidden flex flex-col justify-center border border-indigo-800 z-10">
-            <div class="font-bold leading-tight whitespace-nowrap overflow-hidden">${item.startTime}-${item.endTime} ${item.title}</div>
-            ${item.notes && heightPx >= 32 ? `<div class="text-[9.5px] text-indigo-100 whitespace-nowrap overflow-hidden">${item.notes}</div>` : ''}
+            <div class="font-bold leading-tight whitespace-nowrap overflow-hidden">${esc(item.startTime)}-${esc(item.endTime)} ${esc(item.title)}</div>
+            ${item.notes && heightPx >= 32 ? `<div class="text-[9.5px] text-indigo-100 whitespace-nowrap overflow-hidden">${esc(item.notes)}</div>` : ''}
           </div>`;
         });
 
@@ -1510,7 +1646,7 @@
 
       const defaultEq = eq || (viewMode === 'week' && weekSelectedEq ? weekSelectedEq : '');
       const sel = document.getElementById('modalEquipment');
-      sel.innerHTML = equipments.map(e => `<option value="${e}" ${e === defaultEq ? 'selected' : ''}>${e}</option>`).join('');
+      sel.innerHTML = equipments.map(e => `<option value="${esc(e)}" ${e === defaultEq ? 'selected' : ''}>${esc(e)}</option>`).join('');
 
       const dateInput = document.getElementById('modalDate');
       dateInput.min = getMinAllowedDateStr();
@@ -1534,7 +1670,7 @@
       hideEl('repeatSection');
 
       const sel = document.getElementById('modalEquipment');
-      sel.innerHTML = equipments.map(e => `<option value="${e}" ${e === item.equipment ? 'selected' : ''}>${e}</option>`).join('');
+      sel.innerHTML = equipments.map(e => `<option value="${esc(e)}" ${e === item.equipment ? 'selected' : ''}>${esc(e)}</option>`).join('');
 
       const dateInput = document.getElementById('modalDate');
       dateInput.min = getMinAllowedDateStr();
@@ -1671,7 +1807,7 @@
       const box = document.getElementById('equipmentListContainer');
       box.innerHTML = equipments.map((eq, i) => `
         <div class="flex justify-between items-center bg-slate-50 px-3 py-2 rounded border text-sm gap-2">
-          <span class="truncate flex-1 font-medium text-slate-800">${i + 1}. ${eq}</span>
+          <span class="truncate flex-1 font-medium text-slate-800">${i + 1}. ${esc(eq)}</span>
           <div class="flex items-center gap-1 shrink-0">
             <button onclick="moveEquipment(${i}, -1)" ${i === 0 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="上へ">▲</button>
             <button onclick="moveEquipment(${i}, 1)" ${i === equipments.length - 1 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="下へ">▼</button>
