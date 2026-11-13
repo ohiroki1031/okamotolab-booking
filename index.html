@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>岡本研 実験機器予約システム / Okamoto Lab Equipment Booking</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind CSS：このページで使っているクラスだけを事前に生成して埋め込んだもの（外部CDNに依存しない）。
+       ここにないクラスを新しく使うときは、Tailwind CLI v3 でこのページを読み込ませて CSS を生成し直す必要があります -->
+  <style id="tailwind-css">/*TW_START*/*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.inset-y-0{top:0;bottom:0}.bottom-0{bottom:0}.bottom-1\.5{bottom:.375rem}.left-0{left:0}.left-1{left:.25rem}.left-1\/2{left:50%}.left-3\.5{left:.875rem}.left-\[165px\]{left:165px}.right-0{right:0}.right-1{right:.25rem}.right-4{right:1rem}.top-0{top:0}.top-1\.5{top:.375rem}.top-3{top:.75rem}.top-4{top:1rem}.z-10{z-index:10}.z-20{z-index:20}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.z-\[15\]{z-index:15}.z-\[25\]{z-index:25}.z-\[35\]{z-index:35}.mx-auto{margin-left:auto;margin-right:auto}.-mt-1\.5{margin-top:-.375rem}.mb-0\.5{margin-bottom:.125rem}.mb-1{margin-bottom:.25rem}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.ml-1{margin-left:.25rem}.ml-auto{margin-left:auto}.mr-0\.5{margin-right:.125rem}.mr-1{margin-right:.25rem}.mr-1\.5{margin-right:.375rem}.mr-2{margin-right:.5rem}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1{height:.25rem}.h-1\.5{height:.375rem}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-12{height:3rem}.h-3\.5{height:.875rem}.h-4{height:1rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-full{height:100%}.max-h-\[85vh\]{max-height:85vh}.max-h-\[88vh\]{max-height:88vh}.max-h-\[92vh\]{max-height:92vh}.min-h-screen{min-height:100vh}.w-0\.5{width:.125rem}.w-1{width:.25rem}.w-1\.5{width:.375rem}.w-10{width:2.5rem}.w-12{width:3rem}.w-16{width:4rem}.w-3{width:.75rem}.w-3\.5{width:.875rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-full{width:100%}.min-w-0{min-width:0}.min-w-\[1893px\]{min-width:1893px}.min-w-\[860px\]{min-width:860px}.max-w-5xl{max-width:64rem}.max-w-\[1700px\]{max-width:1700px}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.max-w-xl{max-width:36rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-crosshair{cursor:crosshair}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.resize{resize:both}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-7{grid-template-columns:repeat(7,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0\.5{gap:.125rem}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-1\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.375rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.375rem*var(--tw-space-y-reverse))}.space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem*var(--tw-space-y-reverse))}.space-y-2\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.625rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.625rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.space-y-3\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.875rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.875rem*var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-amber-300{--tw-border-opacity:1;border-color:rgb(252 211 77/var(--tw-border-opacity,1))}.border-emerald-200{--tw-border-opacity:1;border-color:rgb(167 243 208/var(--tw-border-opacity,1))}.border-emerald-700{--tw-border-opacity:1;border-color:rgb(4 120 87/var(--tw-border-opacity,1))}.border-emerald-800{--tw-border-opacity:1;border-color:rgb(6 95 70/var(--tw-border-opacity,1))}.border-indigo-200{--tw-border-opacity:1;border-color:rgb(199 210 254/var(--tw-border-opacity,1))}.border-indigo-300{--tw-border-opacity:1;border-color:rgb(165 180 252/var(--tw-border-opacity,1))}.border-indigo-400{--tw-border-opacity:1;border-color:rgb(129 140 248/var(--tw-border-opacity,1))}.border-indigo-700{--tw-border-opacity:1;border-color:rgb(67 56 202/var(--tw-border-opacity,1))}.border-red-300{--tw-border-opacity:1;border-color:rgb(252 165 165/var(--tw-border-opacity,1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249/var(--tw-border-opacity,1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240/var(--tw-border-opacity,1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225/var(--tw-border-opacity,1))}.border-slate-400{--tw-border-opacity:1;border-color:rgb(148 163 184/var(--tw-border-opacity,1))}.border-slate-600{--tw-border-opacity:1;border-color:rgb(71 85 105/var(--tw-border-opacity,1))}.bg-amber-100{--tw-bg-opacity:1;background-color:rgb(254 243 199/var(--tw-bg-opacity,1))}.bg-amber-600{--tw-bg-opacity:1;background-color:rgb(217 119 6/var(--tw-bg-opacity,1))}.bg-black\/50{background-color:rgba(0,0,0,.5)}.bg-black\/55{background-color:rgba(0,0,0,.55)}.bg-black\/60{background-color:rgba(0,0,0,.6)}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235/var(--tw-bg-opacity,1))}.bg-cyan-600{--tw-bg-opacity:1;background-color:rgb(8 145 178/var(--tw-bg-opacity,1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245/var(--tw-bg-opacity,1))}.bg-emerald-50\/60{background-color:rgba(236,253,245,.6)}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129/var(--tw-bg-opacity,1))}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105/var(--tw-bg-opacity,1))}.bg-emerald-800{--tw-bg-opacity:1;background-color:rgb(6 95 70/var(--tw-bg-opacity,1))}.bg-indigo-100{--tw-bg-opacity:1;background-color:rgb(224 231 255/var(--tw-bg-opacity,1))}.bg-indigo-100\/70{background-color:rgba(224,231,255,.7)}.bg-indigo-100\/80{background-color:rgba(224,231,255,.8)}.bg-indigo-400{--tw-bg-opacity:1;background-color:rgb(129 140 248/var(--tw-bg-opacity,1))}.bg-indigo-50{--tw-bg-opacity:1;background-color:rgb(238 242 255/var(--tw-bg-opacity,1))}.bg-indigo-50\/20{background-color:rgba(238,242,255,.2)}.bg-indigo-50\/70{background-color:rgba(238,242,255,.7)}.bg-indigo-50\/80{background-color:rgba(238,242,255,.8)}.bg-indigo-500\/35{background-color:rgba(99,102,241,.35)}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229/var(--tw-bg-opacity,1))}.bg-indigo-800{--tw-bg-opacity:1;background-color:rgb(55 48 163/var(--tw-bg-opacity,1))}.bg-indigo-900{--tw-bg-opacity:1;background-color:rgb(49 46 129/var(--tw-bg-opacity,1))}.bg-indigo-950{--tw-bg-opacity:1;background-color:rgb(30 27 75/var(--tw-bg-opacity,1))}.bg-pink-600{--tw-bg-opacity:1;background-color:rgb(219 39 119/var(--tw-bg-opacity,1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234/var(--tw-bg-opacity,1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226/var(--tw-bg-opacity,1))}.bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242/var(--tw-bg-opacity,1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68/var(--tw-bg-opacity,1))}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38/var(--tw-bg-opacity,1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.bg-slate-100\/70{background-color:rgba(241,245,249,.7)}.bg-slate-100\/80{background-color:rgba(241,245,249,.8)}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity,1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85/var(--tw-bg-opacity,1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.bg-teal-600{--tw-bg-opacity:1;background-color:rgb(13 148 136/var(--tw-bg-opacity,1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-1{padding:.25rem}.p-2{padding:.5rem}.p-2\.5{padding:.625rem}.p-3{padding:.75rem}.p-3\.5{padding:.875rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-1\.5{padding-left:.375rem;padding-right:.375rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-2{padding-bottom:.5rem}.pl-0\.5{padding-left:.125rem}.pl-10{padding-left:2.5rem}.pr-1{padding-right:.25rem}.pr-2{padding-right:.5rem}.pr-4{padding-right:1rem}.pt-0{padding-top:0}.pt-0\.5{padding-top:.125rem}.pt-1{padding-top:.25rem}.pt-2{padding-top:.5rem}.pt-3{padding-top:.75rem}.text-left{text-align:left}.text-center{text-align:center}.text-\[10\.5px\]{font-size:10.5px}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[8px\]{font-size:8px}.text-\[9\.5px\]{font-size:9.5px}.text-\[9px\]{font-size:9px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-none{line-height:1}.leading-snug{line-height:1.375}.leading-tight{line-height:1.25}.tracking-wide{letter-spacing:.025em}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77/var(--tw-text-opacity,1))}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11/var(--tw-text-opacity,1))}.text-amber-600{--tw-text-opacity:1;color:rgb(217 119 6/var(--tw-text-opacity,1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14/var(--tw-text-opacity,1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235/var(--tw-text-opacity,1))}.text-emerald-100{--tw-text-opacity:1;color:rgb(209 250 229/var(--tw-text-opacity,1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183/var(--tw-text-opacity,1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153/var(--tw-text-opacity,1))}.text-emerald-50{--tw-text-opacity:1;color:rgb(236 253 245/var(--tw-text-opacity,1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105/var(--tw-text-opacity,1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87/var(--tw-text-opacity,1))}.text-emerald-800{--tw-text-opacity:1;color:rgb(6 95 70/var(--tw-text-opacity,1))}.text-emerald-900{--tw-text-opacity:1;color:rgb(6 78 59/var(--tw-text-opacity,1))}.text-indigo-200{--tw-text-opacity:1;color:rgb(199 210 254/var(--tw-text-opacity,1))}.text-indigo-300{--tw-text-opacity:1;color:rgb(165 180 252/var(--tw-text-opacity,1))}.text-indigo-500{--tw-text-opacity:1;color:rgb(99 102 241/var(--tw-text-opacity,1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229/var(--tw-text-opacity,1))}.text-indigo-700{--tw-text-opacity:1;color:rgb(67 56 202/var(--tw-text-opacity,1))}.text-indigo-800{--tw-text-opacity:1;color:rgb(55 48 163/var(--tw-text-opacity,1))}.text-indigo-900{--tw-text-opacity:1;color:rgb(49 46 129/var(--tw-text-opacity,1))}.text-indigo-950{--tw-text-opacity:1;color:rgb(30 27 75/var(--tw-text-opacity,1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68/var(--tw-text-opacity,1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38/var(--tw-text-opacity,1))}.text-red-700{--tw-text-opacity:1;color:rgb(185 28 28/var(--tw-text-opacity,1))}.text-red-800{--tw-text-opacity:1;color:rgb(153 27 27/var(--tw-text-opacity,1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225/var(--tw-text-opacity,1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity,1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity,1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity,1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59/var(--tw-text-opacity,1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.line-through{text-decoration-line:line-through}.opacity-70{opacity:.7}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color)}.shadow,.shadow-2xl{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgba(0,0,0,.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color)}.shadow-\[2px_0_4px_-2px_rgba\(0\2c 0\2c 0\2c 0\.08\)\]{--tw-shadow:2px 0 4px -2px rgba(0,0,0,.08);--tw-shadow-colored:2px 0 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-\[2px_0_4px_-2px_rgba\(0\2c 0\2c 0\2c 0\.12\)\]{--tw-shadow:2px 0 4px -2px rgba(0,0,0,.12);--tw-shadow-colored:2px 0 4px -2px var(--tw-shadow-color)}.shadow-\[2px_0_4px_-2px_rgba\(0\2c 0\2c 0\2c 0\.12\)\],.shadow-md{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.outline{outline-style:solid}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-emerald-200{--tw-ring-opacity:1;--tw-ring-color:rgb(167 243 208/var(--tw-ring-opacity,1))}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.hover\:border-emerald-500:hover{--tw-border-opacity:1;border-color:rgb(16 185 129/var(--tw-border-opacity,1))}.hover\:border-indigo-500:hover{--tw-border-opacity:1;border-color:rgb(99 102 241/var(--tw-border-opacity,1))}.hover\:bg-amber-700:hover{--tw-bg-opacity:1;background-color:rgb(180 83 9/var(--tw-bg-opacity,1))}.hover\:bg-emerald-100:hover{--tw-bg-opacity:1;background-color:rgb(209 250 229/var(--tw-bg-opacity,1))}.hover\:bg-emerald-50:hover{--tw-bg-opacity:1;background-color:rgb(236 253 245/var(--tw-bg-opacity,1))}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129/var(--tw-bg-opacity,1))}.hover\:bg-emerald-700:hover{--tw-bg-opacity:1;background-color:rgb(4 120 87/var(--tw-bg-opacity,1))}.hover\:bg-indigo-100:hover{--tw-bg-opacity:1;background-color:rgb(224 231 255/var(--tw-bg-opacity,1))}.hover\:bg-indigo-50:hover{--tw-bg-opacity:1;background-color:rgb(238 242 255/var(--tw-bg-opacity,1))}.hover\:bg-indigo-50\/50:hover{background-color:rgba(238,242,255,.5)}.hover\:bg-indigo-50\/70:hover{background-color:rgba(238,242,255,.7)}.hover\:bg-indigo-700:hover{--tw-bg-opacity:1;background-color:rgb(67 56 202/var(--tw-bg-opacity,1))}.hover\:bg-indigo-800:hover{--tw-bg-opacity:1;background-color:rgb(55 48 163/var(--tw-bg-opacity,1))}.hover\:bg-red-50:hover{--tw-bg-opacity:1;background-color:rgb(254 242 242/var(--tw-bg-opacity,1))}.hover\:bg-red-800:hover{--tw-bg-opacity:1;background-color:rgb(153 27 27/var(--tw-bg-opacity,1))}.hover\:bg-slate-100:hover{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.hover\:bg-slate-200:hover{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity,1))}.hover\:bg-slate-300:hover{--tw-bg-opacity:1;background-color:rgb(203 213 225/var(--tw-bg-opacity,1))}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.hover\:bg-slate-50\/70:hover{background-color:rgba(248,250,252,.7)}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85/var(--tw-bg-opacity,1))}.hover\:bg-slate-800:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.hover\:text-red-800:hover{--tw-text-opacity:1;color:rgb(153 27 27/var(--tw-text-opacity,1))}.hover\:opacity-90:hover{opacity:.9}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus\:ring-amber-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(245 158 11/var(--tw-ring-opacity,1))}.focus\:ring-indigo-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(99 102 241/var(--tw-ring-opacity,1))}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:bg-slate-100:disabled{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.disabled\:text-slate-400:disabled{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.disabled\:opacity-30:disabled{opacity:.3}.disabled\:opacity-40:disabled{opacity:.4}.group:hover .group-hover\:text-indigo-700{--tw-text-opacity:1;color:rgb(67 56 202/var(--tw-text-opacity,1))}@media (min-width:640px){.sm\:ml-2{margin-left:.5rem}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\:text-sm{font-size:.875rem;line-height:1.25rem}}@media (min-width:768px){.md\:left-\[230px\]{left:230px}.md\:w-60{width:15rem}.md\:min-w-\[1958px\]{min-width:1958px}.md\:flex-row{flex-direction:row}}@media (min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (min-width:1280px){.xl\:inline{display:inline}}/*TW_END*/</style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
@@ -113,6 +115,11 @@
     }
     .week-grid { display: grid; grid-template-columns: 64px repeat(7, minmax(110px, 1fr)); }
     .res-bar { transition: box-shadow 0.15s, background-color 0.15s, transform 0.15s; }
+    /* 現在時刻の表示（日表示：縦線＋時刻ラベル／週表示：横線） */
+    .now-line { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #ef4444; box-shadow: 0 0 0 1px rgba(255,255,255,0.7); }
+    .now-pill { position: absolute; top: 50%; transform: translate(-50%, -50%); background: #ef4444; color: #fff; font-size: 10px; font-weight: 700; line-height: 1; padding: 3px 6px; border-radius: 9999px; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .now-line-h { position: absolute; left: 0; right: 0; height: 2px; margin-top: -1px; background: #ef4444; z-index: 15; pointer-events: none; }
+    .now-line-h::before { content: ""; position: absolute; left: -4px; top: -4px; width: 10px; height: 10px; border-radius: 9999px; background: #ef4444; }
     .res-bar.dragging { opacity: 0.9; z-index: 40 !important; box-shadow: 0 10px 25px rgba(79,70,229,0.35); transform: scale(1.03); cursor: grabbing !important; }
   </style>
 </head>
@@ -132,9 +139,14 @@
       <h2 id="uiAuthTitle" class="auth-title">岡本研究室 実験機器予約</h2>
       <p id="uiAuthDesc" class="auth-desc">利用するには合言葉とあなたの名前を入力してください</p>
       <form onsubmit="handleLogin(event)" autocomplete="off">
-        <input type="text" id="loginActorInput" placeholder="あなたの名前 (例: Oiwa)" autocomplete="off" required class="auth-input" />
+        <input type="text" id="loginActorInput" placeholder="あなたの名前 (例: Oiwa)" autocomplete="off" list="nameSuggestions" maxlength="40" required class="auth-input" />
+        <p id="uiActorHint" class="text-[11px] text-slate-500 text-left mb-3 -mt-1.5"></p>
         <input type="text" id="passwordInput" placeholder="パスワードを入力" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required class="auth-input pw-mask" />
         <p id="authError" class="auth-error force-hidden"></p>
+        <label class="flex items-center justify-center gap-1.5 text-xs text-slate-500 mb-3 cursor-pointer select-none">
+          <input type="checkbox" id="rememberLogin" class="w-3.5 h-3.5 cursor-pointer" />
+          <span id="uiRememberLabel">このブラウザでログイン状態を保持する（30日間）</span>
+        </label>
         <button type="submit" id="uiAuthBtn" class="auth-btn">入室する</button>
       </form>
     </div>
@@ -152,13 +164,16 @@
           <button onclick="loadFromCloud(false)" class="text-xs bg-indigo-800 hover:bg-indigo-700 px-2.5 py-1 rounded-full transition">
             <i class="fa-solid fa-arrows-rotate mr-1"></i><span id="uiBtnRefresh">更新</span>
           </button>
-          <button onclick="changeActorName()" class="text-xs bg-indigo-900 hover:bg-indigo-800 border border-indigo-700 px-2.5 py-1 rounded-full text-emerald-300 transition" title="操作者名を変更">
+          <button onclick="changeActorName()" id="actorBadgeBtn" class="text-xs bg-indigo-900 hover:bg-indigo-800 border border-indigo-700 px-2.5 py-1 rounded-full text-emerald-300 transition" title="名前の確認・変更">
             <i class="fa-solid fa-user mr-1"></i><span id="currentActorBadge">User</span>
           </button>
         </div>
         <div class="flex items-center gap-2 flex-wrap">
           <button onclick="openNewModal()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-sm font-bold transition">
             <i class="fa-solid fa-plus mr-1"></i><span id="uiBtnNew">新規予約</span>
+          </button>
+          <button onclick="openMyBookings()" class="bg-emerald-800 hover:bg-emerald-700 px-3 py-1.5 rounded-lg text-sm transition">
+            <i class="fa-solid fa-user mr-1"></i><span id="uiBtnMine">自分の予約</span>
           </button>
           <button onclick="toggleTagBar()" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition">
             <i class="fa-solid fa-tags mr-1"></i><span id="uiBtnTags">機器タグ</span>
@@ -170,7 +185,7 @@
           <button onclick="toggleLanguage()" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition">
             <i class="fa-solid fa-globe mr-1 text-indigo-300"></i><span id="headerLangLabel">EN</span>
           </button>
-          <button onclick="logout()" class="bg-indigo-900 hover:bg-red-800 px-2.5 py-1.5 rounded-lg text-xs text-indigo-200 transition" title="ログアウト">
+          <button onclick="logout()" id="logoutBtn" class="bg-indigo-900 hover:bg-red-800 px-2.5 py-1.5 rounded-lg text-xs text-indigo-200 transition" title="ログアウト">
             <i class="fa-solid fa-right-from-bracket"></i>
           </button>
         </div>
@@ -227,11 +242,19 @@
         <!-- 凡例＆操作ガイド -->
         <div class="bg-white rounded-xl shadow border border-slate-200 p-3 text-xs text-slate-600 space-y-2">
           <div id="uiLegendTitle" class="font-bold text-slate-800">凡例・操作ガイド</div>
-          <div class="flex items-center gap-2 text-[11px]">
-            <span class="inline-block w-3.5 h-3.5 rounded bg-emerald-50 border-2 border-emerald-600 shrink-0"></span>
-            <span id="uiLegendMine">あなたの予約</span>
-            <span class="inline-block w-3.5 h-3.5 rounded bg-white border-2 border-indigo-600 shrink-0 ml-1"></span>
-            <span id="uiLegendOthers">他メンバー</span>
+          <div class="space-y-1.5 text-[11px]">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center justify-center w-7 h-4 rounded bg-emerald-600 border-2 border-emerald-700 text-white text-[8px] shrink-0"><i class="fa-solid fa-user"></i></span>
+              <span id="uiLegendMine" class="font-bold text-emerald-800">あなたの予約</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-7 h-4 rounded bg-white border-2 border-indigo-400 shrink-0"></span>
+              <span id="uiLegendOthers">他メンバー</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="relative inline-block w-7 h-4 shrink-0"><span class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-red-500"></span></span>
+              <span id="uiLegendNow">現在時刻</span>
+            </div>
           </div>
           <div id="uiGuideBody" class="space-y-1 text-[11px] pt-1 border-t border-slate-100"></div>
         </div>
@@ -337,7 +360,8 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label id="uiLblName" class="block text-xs font-bold text-slate-600 mb-1">予約者名</label>
-            <input type="text" id="modalName" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+            <input type="text" id="modalName" required maxlength="100" list="nameSuggestions" autocomplete="off" onkeydown="if (event.key === 'Enter') event.preventDefault();" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+            <p id="uiNameHint" class="text-[10.5px] leading-snug text-slate-500 mt-1"></p>
           </div>
           <div>
             <label id="uiLblStartDate" class="block text-xs font-bold text-slate-600 mb-1">開始日付</label>
@@ -361,7 +385,7 @@
           </div>
           <div>
             <label id="uiLblNotes" class="block text-xs font-bold text-slate-600 mb-1">備考テキスト</label>
-            <input type="text" id="modalNotes" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+            <input type="text" id="modalNotes" maxlength="200" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
           </div>
         </div>
 
@@ -423,10 +447,29 @@
       <p id="uiSettingsDesc" class="text-xs text-slate-500 mb-3">機器の追加・削除・並び替えや、故障中・メンテナンス中の設定が可能です。</p>
       <div id="equipmentListContainer" class="flex-1 overflow-y-auto space-y-2 mb-3 pr-1"></div>
       <div class="flex gap-2 pt-2 border-t">
-        <input type="text" id="newEquipmentName" placeholder="追加する機器名" class="flex-1 border rounded-lg p-2 text-sm" />
+        <input type="text" id="newEquipmentName" placeholder="追加する機器名" maxlength="60" class="flex-1 border rounded-lg p-2 text-sm" />
         <button type="button" onclick="addEquipment()" id="uiBtnAddEq" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold">追加</button>
       </div>
       <button onclick="closeSettingsModal()" id="uiBtnCloseSettings" class="mt-3 w-full py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-bold">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 予約者名の入力候補（これまでの予約で使われた名前から自動生成） -->
+  <datalist id="nameSuggestions"></datalist>
+
+  <!-- 自分の予約一覧モーダル（名前の確認・変更もここで行う） -->
+  <div id="myBookingsModal" class="force-hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-lg font-bold text-emerald-900"><i class="fa-solid fa-user text-emerald-600 mr-1.5"></i><span id="uiMyTitle">自分の予約</span></h3>
+        <button type="button" onclick="closeMyBookings()" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 text-lg leading-none">&times;</button>
+      </div>
+      <div class="flex items-center gap-2 mb-1">
+        <label for="myNameInput" id="uiMyNameLabel" class="text-xs font-bold text-slate-600 shrink-0">あなたの名前</label>
+        <input type="text" id="myNameInput" maxlength="40" list="nameSuggestions" autocomplete="off" oninput="updateMyName(this.value)" class="flex-1 border border-slate-300 rounded-lg p-2 text-sm" />
+      </div>
+      <p id="uiMyDesc" class="text-[11px] text-slate-500 mb-3"></p>
+      <div id="myBookingsList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
     </div>
   </div>
 
@@ -436,6 +479,7 @@
     // ==========================================
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPipEUBQ1MJ-UTiPeqIriwgUc-jw1b4b8Z8CdPBQgLFxlx_GhmoHZ8c2pkrxg2kZ4W/exec";
     const AUTO_REFRESH_INTERVAL_MS = 10 * 60 * 1000;
+    const MAX_SPAN_DAYS = 14; // 1件の予約で日をまたげる最大日数（GAS側と同じ値）
     // ==========================================
 
     // 多言語辞書（日本語 / English）
@@ -470,6 +514,7 @@
           <p>• <b>範囲予約</b>：空欄を横ドラッグ（スマホは<b>長押し→スライド</b>）</p>
           <p>• <b>バー移動</b>：予約バーをドラッグ（スマホは<b>長押し→スライド</b>）</p>
           <p>• <b>編集/延長</b>：予約バーをクリック（タップ）</p>
+          <p>• <b>日をまたぐ予約</b>：予約画面で「終了日付」を変更（ドラッグ移動は不可）</p>
           <p class="text-[10px] text-slate-400 pt-1">※10分おきに自動同期（操作中はスキップ）</p>
         `,
         adminAuthTitle: "管理者認証",
@@ -537,7 +582,55 @@
         weekBackList: "機器一覧に戻る",
         weekTodayBadge: "今日",
         weekTimeCol: "時間",
-        weekShowing: "表示中"
+        weekShowing: "表示中",
+        // ---- 追加分 ----
+        actorHint: "ローマ字の姓で入力してください（例: Oiwa）。ラボ外の方は「姓 (所属)」（例: Tanaka (Kyoto Univ.)）。",
+        nameHint: "ローマ字の姓（例: Oiwa）。ラボ外の方は「姓 (所属)」。候補から選ぶと表記がそろいます。",
+        rememberLogin: "このブラウザでログイン状態を保持する（30日間）",
+        btnMine: "自分の予約",
+        myTitle: "自分の予約",
+        myNameLabel: "あなたの名前",
+        myDesc: "予約者名がこの名前と一致する、まだ終わっていない予約を表示します（大文字・小文字は区別しません）。この名前は予約の自動入力・強調表示・操作ログに使われます。",
+        myEmpty: "今後の予約はありません。",
+        myNoName: "名前を入力すると、あなたの予約が表示されます。",
+        legendNow: "現在時刻",
+        logoutTitle: "ログアウト",
+        actorBadgeTitle: "名前の確認・変更",
+        confirmLogout: "ログアウトしますか？",
+        pwIncorrect: "パスワードが正しくありません",
+        pwChanged: "パスワードが変更された可能性があります。再度入力してください。",
+        syncFailed: "同期失敗",
+        autoSynced: "自動更新済 ({time})",
+        networkFail: "サーバーとの通信に失敗しました。時間をおいて再度お試しください。",
+        opFailed: "処理に失敗しました。時間をおいて再度お試しください。",
+        busyRetry: "混雑のため再試行中 ({n}/3)...",
+        stillSyncing: "前の処理がまだ終わっていません。少し待ってからもう一度お試しください。",
+        moveConflict: "移動先にすでに別の予約が入っているため移動できません。",
+        eqUnavailableAlert: "「{eq}」は現在{status}のため予約できません。",
+        dateRequired: "日付と時間を入力してください。",
+        endAfterStart: "終了日時は開始日時より後に設定してください。",
+        spanTooLong: "1件の予約で指定できるのは最大{n}日間までです。",
+        dateBeforeRetention: "保持期間（{date}〜）より前の日付は指定できません。",
+        dateTooFar: "予約は {date} までしか指定できません。",
+        repeatTooFar: "繰り返しのうち {n} 件が予約可能な期間（{date} まで）を超えています。回数を減らしてください。",
+        conflictSame: "同じ時間帯にすでに別の予約が入っています。",
+        seriesDateChange: "「この日以降すべて」を変更するときは日付を変えられません。日付を変えるときは「この予約のみ」を選んでください。",
+        addAllConflict: "指定した時間帯はすでに他の予約と重複しているため登録できませんでした。",
+        addPartial: "{added}件を登録しました（重複していた{skipped}件はスキップしました）。",
+        addRangeSkipped: "{n}件は予約可能な期間外のため登録しませんでした。",
+        bookingNotFound: "対象の予約が見つかりません。「更新」ボタンで最新の状態にしてください。",
+        confirmEditOther: "⚠️ これは他の人（{name}さん）の予約です。本当に変更してもよろしいですか？",
+        confirmDeleteOtherSeries: "⚠️ これは他の人（{name}さん）の予約です。この日以降の繰り返し予約をすべて削除してもよろしいですか？",
+        eqDuplicate: "「{eq}」はすでにリストにあります。",
+        eqRemoveConfirm: "「{eq}」をリストから削除しますか？",
+        eqRemoveUpcoming: "この機器には今後の予約が {n} 件あります。削除すると予約表に表示されなくなります（予約のデータは残り、「自分の予約」からは確認できます）。",
+        eqSaveFailed: "機器リストの保存に失敗しました。",
+        statusNoteDisabled: "状態を選ぶとメモを入力できます",
+        clickEdit: "クリックで編集",
+        clickEditDrag: "クリックで編集 / ドラッグで移動",
+        moveUp: "上へ",
+        moveDown: "下へ",
+        yourBooking: "あなたの予約",
       },
       en: {
         loginToggle: "日本語",
@@ -569,6 +662,7 @@
           <p>• <b>Book</b>: Drag empty slot (Mobile: <b>long-press & slide</b>)</p>
           <p>• <b>Move</b>: Drag bar (Mobile: <b>long-press & slide</b>)</p>
           <p>• <b>Edit / Extend</b>: Click or tap a booking bar</p>
+          <p>• <b>Multi-day</b>: change the "End Date" in the booking form (cannot be dragged)</p>
           <p class="text-[10px] text-slate-400 pt-1">*Auto-syncs every 10 min (skips while editing)</p>
         `,
         adminAuthTitle: "Admin Authentication",
@@ -636,14 +730,97 @@
         weekBackList: "Back to List",
         weekTodayBadge: "Today",
         weekTimeCol: "Time",
-        weekShowing: "Showing"
+        weekShowing: "Showing",
+        // ---- additions ----
+        actorHint: "Enter your family name in romaji (e.g., Oiwa). External users: \"Family name (Affiliation)\" (e.g., Tanaka (Kyoto Univ.)).",
+        nameHint: "Family name in romaji (e.g., Oiwa). External users: \"Family name (Affiliation)\". Picking a suggestion keeps names consistent.",
+        rememberLogin: "Keep me signed in on this browser (30 days)",
+        btnMine: "My Bookings",
+        myTitle: "My Bookings",
+        myNameLabel: "Your name",
+        myDesc: "Shows bookings that have not ended yet whose name matches yours (case-insensitive). This name is used to pre-fill bookings, highlight your bookings, and record the operation log.",
+        myEmpty: "No upcoming bookings.",
+        myNoName: "Enter your name to see your bookings.",
+        legendNow: "Current time",
+        logoutTitle: "Log out",
+        actorBadgeTitle: "View / change your name",
+        confirmLogout: "Do you want to log out?",
+        pwIncorrect: "Incorrect password",
+        pwChanged: "The password may have changed. Please enter it again.",
+        syncFailed: "Sync failed",
+        autoSynced: "Auto-updated ({time})",
+        networkFail: "Failed to communicate with the server. Please try again later.",
+        opFailed: "The operation failed. Please try again later.",
+        busyRetry: "Server busy, retrying ({n}/3)...",
+        stillSyncing: "The previous operation is still in progress. Please wait a moment and try again.",
+        moveConflict: "Cannot move: another booking already occupies that time slot.",
+        eqUnavailableAlert: "\"{eq}\" cannot be booked right now ({status}).",
+        dateRequired: "Please enter the dates and times.",
+        endAfterStart: "The end must be after the start.",
+        spanTooLong: "A single booking can span at most {n} days.",
+        dateBeforeRetention: "Dates before the retention period (from {date}) cannot be selected.",
+        dateTooFar: "Bookings can only be made up to {date}.",
+        repeatTooFar: "{n} of the repeated bookings would fall after the bookable period (up to {date}). Please reduce the count.",
+        conflictSame: "Another booking already exists in this time slot.",
+        seriesDateChange: "You cannot change the date when updating all following bookings. To change the date, choose \"Only this booking\".",
+        addAllConflict: "Could not book: the selected time overlaps with an existing booking.",
+        addPartial: "Booked {added} slot(s); skipped {skipped} overlapping slot(s).",
+        addRangeSkipped: "{n} booking(s) were not created because they fall outside the bookable period.",
+        bookingNotFound: "The booking could not be found. Press \"Refresh\" to load the latest data.",
+        confirmEditOther: "⚠️ This booking belongs to {name}. Are you sure you want to change it?",
+        confirmDeleteOtherSeries: "⚠️ This booking belongs to {name}. Delete this and all following bookings in the series?",
+        eqDuplicate: "\"{eq}\" is already in the list.",
+        eqRemoveConfirm: "Remove \"{eq}\" from the list?",
+        eqRemoveUpcoming: "This equipment has {n} upcoming booking(s). After removal they will no longer appear in the schedule (the data is kept and can still be seen in \"My Bookings\").",
+        eqSaveFailed: "Failed to save the equipment list.",
+        statusNoteDisabled: "Choose a status to add a note",
+        clickEdit: "click to edit",
+        clickEditDrag: "click to edit / drag to move",
+        moveUp: "Move up",
+        moveDown: "Move down",
+        yourBooking: "your booking",
       }
     };
 
-    let currentLang = localStorage.getItem('okamoto_lang') === 'en' ? 'en' : 'ja';
-    let authKey = sessionStorage.getItem('okamoto_key') || '';
-    let userRole = sessionStorage.getItem('okamoto_role') || '';
-    let currentActor = localStorage.getItem('okamoto_actor') || '';
+    // ブラウザの保存領域を安全に使うためのヘルパー
+    // （プライベートモードや容量超過、データ破損で例外が出ても画面全体が止まらないようにする）
+    function storageGet(store, key) {
+      try { return window[store].getItem(key); } catch (e) { return null; }
+    }
+    function storageSet(store, key, value) {
+      try { window[store].setItem(key, value); } catch (e) { /* 保存できなくても動作は続ける */ }
+    }
+    function storageRemove(store, key) {
+      try { window[store].removeItem(key); } catch (e) { /* 無視 */ }
+    }
+    function lsGetJSON(key, fallback) {
+      const raw = storageGet('localStorage', key);
+      if (raw === null) return fallback;
+      try { return JSON.parse(raw); } catch (e) { storageRemove('localStorage', key); return fallback; }
+    }
+    const lsGet = k => storageGet('localStorage', k);
+    const lsSet = (k, v) => storageSet('localStorage', k, v);
+    const lsRemove = k => storageRemove('localStorage', k);
+    const ssGet = k => storageGet('sessionStorage', k);
+    const ssSet = (k, v) => storageSet('sessionStorage', k, v);
+    const ssRemove = k => storageRemove('sessionStorage', k);
+
+    // 「ログイン状態を保持」の期間
+    const REMEMBER_LOGIN_DAYS = 30;
+    function getRememberedKey() {
+      const saved = lsGetJSON('okamoto_key_persist', null);
+      if (!saved || typeof saved.key !== 'string' || !(saved.exp > Date.now())) {
+        lsRemove('okamoto_key_persist');
+        return "";
+      }
+      return saved.key;
+    }
+
+    let currentLang = lsGet('okamoto_lang') === 'en' ? 'en' : 'ja';
+    // パスワードは通常タブを閉じると消える sessionStorage にだけ保持（「保持」を選んだ場合のみ localStorage にも）
+    let authKey = ssGet('okamoto_key') || getRememberedKey();
+    let userRole = ssGet('okamoto_role') || (authKey ? 'member' : '');
+    let currentActor = lsGet('okamoto_actor') || '';
 
     let currentDate = new Date();
     let miniCalDate = new Date();
@@ -668,8 +845,13 @@
 
     const tagColors = ["bg-blue-600","bg-red-600","bg-emerald-600","bg-amber-600","bg-indigo-600","bg-purple-600","bg-pink-600","bg-cyan-600","bg-teal-600"];
 
-    function t(key) {
-      return (I18N[currentLang] && I18N[currentLang][key]) || I18N.ja[key] || key;
+    // 翻訳（{name} などの部分を params で埋める）
+    function t(key, params) {
+      let text = (I18N[currentLang] && I18N[currentLang][key]) || I18N.ja[key] || key;
+      if (params && typeof text === 'string') {
+        Object.keys(params).forEach(k => { text = text.split('{' + k + '}').join(String(params[k])); });
+      }
+      return text;
     }
 
     // XSS対策用HTMLエスケープ関数
@@ -763,6 +945,19 @@
       document.getElementById('uiSettingsDesc').textContent = t('settingsDesc');
       document.getElementById('newEquipmentName').placeholder = t('newEqPlaceholder');
       document.getElementById('uiBtnAddEq').textContent = t('btnAddEq');
+      document.getElementById('uiActorHint').textContent = t('actorHint');
+      document.getElementById('uiNameHint').textContent = t('nameHint');
+      document.getElementById('uiRememberLabel').textContent = t('rememberLogin');
+      document.getElementById('uiBtnMine').textContent = t('btnMine');
+      document.getElementById('uiMyTitle').textContent = t('myTitle');
+      document.getElementById('uiMyNameLabel').textContent = t('myNameLabel');
+      document.getElementById('uiMyDesc').textContent = t('myDesc');
+      document.getElementById('myNameInput').placeholder = t('actorPlaceholder');
+      document.getElementById('uiLegendNow').textContent = t('legendNow');
+      document.getElementById('logoutBtn').title = t('logoutTitle');
+      document.getElementById('actorBadgeBtn').title = t('actorBadgeTitle');
+      document.title = currentLang === 'en' ? 'Okamoto Lab Equipment Booking' : '岡本研 実験機器予約システム';
+      if (isModalOpen('myBookingsModal')) renderMyBookings();
       document.getElementById('uiBtnCloseSettings').textContent = t('btnCloseSettings');
 
       if (isUnlocked) {
@@ -774,7 +969,7 @@
 
     function toggleLanguage() {
       currentLang = currentLang === 'ja' ? 'en' : 'ja';
-      localStorage.setItem('okamoto_lang', currentLang);
+      lsSet('okamoto_lang', currentLang);
       applyTranslations();
     }
 
@@ -827,6 +1022,7 @@
       if (isModalOpen('moveConfirmModal')) return true;
       if (isModalOpen('settingsModal')) return true;
       if (isModalOpen('adminAuthModal')) return true;
+      if (isModalOpen('myBookingsModal')) return true;
       return false;
     }
 
@@ -893,35 +1089,46 @@
         .filter(r => r.date >= minStr || r.endDate >= minStr);
     }
 
-    // GASへの認証付きPOST通信（busy時は1回自動リトライ）
-    async function callGasApi(payload, retryOnBusy = true) {
+    // ==========================================
+    // サーバー通信
+    // ==========================================
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    // GASへの認証付きPOST通信
+    //   ・混雑（busy）のときは少し待って最大3回まで自動で再試行
+    //   ・パスワードが無効になったら（ログイン操作以外）ログイン画面に戻す
+    //   ・通信自体に失敗したときは例外を投げる（呼び出し側で処理）
+    async function callGasApi(payload, opts = {}) {
       const body = JSON.stringify({
         ...payload,
         key: payload.key || authKey,
         actor: currentActor,
         lang: currentLang
       });
-      const res = await fetch(GAS_WEB_APP_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body
-      });
-      const json = await res.json();
-      if (json.status === "busy" && retryOnBusy) {
-        await new Promise(r => setTimeout(r, 1200));
-        return callGasApi(payload, false);
+      let json = null;
+      for (let attempt = 0; ; attempt++) {
+        const res = await fetch(GAS_WEB_APP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body
+        });
+        json = await res.json();
+        if (!json || typeof json !== 'object') throw new Error('invalid response');
+        if (json.status !== 'busy' || attempt >= 3) break;
+        const st = document.getElementById('syncStatus');
+        if (st) st.textContent = t('busyRetry', { n: attempt + 1 });
+        await sleep(1500 * (attempt + 1));
       }
-      if (json.status === "unauthorized") {
-        logout();
-        alert(json.message || "Unauthorized");
+      if (!opts.isLogin && (json.status === 'unauthorized' || json.status === 'rateLimited')) {
+        resetToLogin(t('pwChanged'));
       }
       return json;
     }
 
-    // ログイン処理（サーバー側でパスワード検証）
+    // ログイン処理（パスワードはサーバー側で検証）
     async function handleLogin(e) {
       e.preventDefault();
-      const actorVal = document.getElementById('loginActorInput').value.trim();
+      const actorVal = document.getElementById('loginActorInput').value.trim().slice(0, 40);
       const pwVal = document.getElementById('passwordInput').value;
       if (!actorVal || !pwVal) return;
 
@@ -932,21 +1139,28 @@
       hideEl('authError');
 
       try {
-        const res = await callGasApi({ action: "login", key: pwVal }, false);
+        const res = await callGasApi({ action: "login", key: pwVal }, { isLogin: true });
         if (res.status === "success") {
           authKey = pwVal;
-          userRole = res.role || "member";
-          currentActor = actorVal;
-          sessionStorage.setItem('okamoto_key', authKey);
-          sessionStorage.setItem('okamoto_role', userRole);
-          localStorage.setItem('okamoto_actor', currentActor);
+          userRole = res.role === 'admin' ? 'admin' : 'member';
+          setActor(actorVal);
+          ssSet('okamoto_key', authKey);
+          ssSet('okamoto_role', userRole);
+          // ログイン状態の保持（一般用パスワードのみ。管理者パスワードはブラウザに長期保存しない）
+          if (document.getElementById('rememberLogin').checked && userRole === 'member') {
+            lsSet('okamoto_key_persist', JSON.stringify({ key: pwVal, exp: Date.now() + REMEMBER_LOGIN_DAYS * 86400000 }));
+          } else {
+            lsRemove('okamoto_key_persist');
+          }
+          document.getElementById('passwordInput').value = "";
           unlockApp();
         } else {
-          errEl.textContent = res.message || "Incorrect password";
+          errEl.textContent = res.message || t('pwIncorrect');
           showEl('authError');
         }
       } catch (err) {
-        errEl.textContent = t('syncError');
+        console.error(err);
+        errEl.textContent = t('networkFail');
         showEl('authError');
       } finally {
         btn.disabled = false;
@@ -954,27 +1168,135 @@
       }
     }
 
-    function logout() {
+    // ログイン画面に戻す（パスワードが無効になったとき・ログアウトしたとき）
+    function resetToLogin(errorMessage) {
       authKey = "";
       userRole = "";
       isUnlocked = false;
-      sessionStorage.removeItem('okamoto_key');
-      sessionStorage.removeItem('okamoto_role');
-      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
-      hideEl('mainApp');
+      editingId = null;
+      pendingMoveData = null;
+      dragState = null;
+      reservations = [];
+      ssRemove('okamoto_key');
+      ssRemove('okamoto_role');
+      lsRemove('okamoto_key_persist');
+      lsRemove('okamoto_res_v1'); // 共用PCで予約内容が残らないように
+      if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
+      ['bookingModal', 'moveConfirmModal', 'settingsModal', 'adminAuthModal', 'myBookingsModal', 'mainApp'].forEach(hideEl);
       document.body.style.backgroundColor = '#0f172a';
       document.getElementById('passwordInput').value = "";
+      const errEl = document.getElementById('authError');
+      if (errorMessage) {
+        errEl.textContent = errorMessage;
+        showEl('authError');
+      } else {
+        hideEl('authError');
+      }
       showEl('authModal');
     }
 
+    function logout() {
+      if (!confirm(t('confirmLogout'))) return;
+      resetToLogin(null);
+    }
+
+    // 自分の名前（予約の自動入力・自分の予約の強調・操作ログに使用）
+    function setActor(name) {
+      currentActor = String(name || "").trim().slice(0, 40);
+      if (currentActor) lsSet('okamoto_actor', currentActor);
+      const badge = document.getElementById('currentActorBadge');
+      if (badge) badge.textContent = currentActor || "User";
+    }
+
+    // ヘッダーの名前ボタン：自分の予約画面（名前の変更もここで行う）を開く
     function changeActorName() {
-      const next = prompt(t('promptActor'), currentActor);
-      if (next && next.trim()) {
-        currentActor = next.trim().slice(0, 40);
-        localStorage.setItem('okamoto_actor', currentActor);
-        document.getElementById('currentActorBadge').textContent = currentActor;
-        renderCalendar();
+      openMyBookings();
+    }
+
+    // 予約者名の入力候補を更新
+    //   これまでの予約で使われた名前を集計し、大文字・小文字の違いは1つにまとめる
+    //   （表記は一番多く使われているもの）。自分の名前を先頭に、あとは使用回数順。
+    function updateNameSuggestions() {
+      const groups = {};
+      reservations.forEach(r => {
+        const name = String(r.title || "").trim();
+        if (!name) return;
+        const key = name.toLowerCase();
+        groups[key] = groups[key] || {};
+        groups[key][name] = (groups[key][name] || 0) + 1;
+      });
+      const names = Object.values(groups).map(g => {
+        const entries = Object.entries(g).sort((a, b) => b[1] - a[1]);
+        return { name: entries[0][0], count: entries.reduce((sum, e) => sum + e[1], 0) };
+      });
+      const me = currentActor.trim().toLowerCase();
+      names.sort((a, b) => {
+        if (me && a.name.toLowerCase() === me) return -1;
+        if (me && b.name.toLowerCase() === me) return 1;
+        return b.count - a.count || a.name.localeCompare(b.name);
+      });
+      document.getElementById('nameSuggestions').innerHTML =
+        names.map(n => `<option value="${escapeHtml(n.name)}"></option>`).join('');
+    }
+
+    // ---------- 自分の予約一覧 ----------
+    function openMyBookings() {
+      updateNameSuggestions();
+      document.getElementById('myNameInput').value = currentActor;
+      renderMyBookings();
+      showEl('myBookingsModal');
+    }
+
+    function closeMyBookings() {
+      hideEl('myBookingsModal');
+      renderMiniCalendar();
+      renderCalendar(); // 名前を変えた場合の強調表示を反映
+    }
+
+    function updateMyName(value) {
+      if (String(value).trim()) setActor(value);
+      renderMyBookings();
+    }
+
+    function renderMyBookings() {
+      const box = document.getElementById('myBookingsList');
+      if (!currentActor) {
+        box.innerHTML = `<p class="text-sm text-slate-500 text-center py-8">${escapeHtml(t('myNoName'))}</p>`;
+        return;
       }
+      const nowAbs = nowAbsMin();
+      const list = reservations
+        .filter(r => isMyBooking(r) && absEndMin(r) > nowAbs)
+        .sort((a, b) => absStartMin(a) - absStartMin(b));
+      if (list.length === 0) {
+        box.innerHTML = `<p class="text-sm text-slate-500 text-center py-8">${escapeHtml(t('myEmpty'))}</p>`;
+        return;
+      }
+      box.innerHTML = list.map(r => `
+        <button type="button" data-res-id="${escapeHtml(r.id)}" onclick="jumpToBooking(this.dataset.resId)"
+          class="w-full text-left bg-emerald-50/60 hover:bg-emerald-50 border border-emerald-200 hover:border-emerald-500 rounded-lg px-3 py-2 transition">
+          <div class="flex items-center gap-1.5 text-xs">
+            <span class="font-bold text-emerald-800">${escapeHtml(rangeLabel(r))}</span>
+            ${r.seriesId ? '<i class="fa-solid fa-rotate text-[10px] text-emerald-600"></i>' : ''}
+          </div>
+          <div class="text-sm font-bold text-slate-900 flex items-center gap-1.5"><span class="truncate">${escapeHtml(r.equipment)}</span>${statusBadgeHtml(r.equipment)}</div>
+          ${r.notes ? `<div class="text-xs text-slate-500 truncate">${escapeHtml(r.notes)}</div>` : ''}
+        </button>`).join('');
+    }
+
+    // 一覧から選んだ予約の日に移動して編集画面を開く
+    function jumpToBooking(id) {
+      const item = reservations.find(r => String(r.id) === String(id));
+      if (!item) return;
+      hideEl('myBookingsModal');
+      currentDate = new Date(item.date + "T00:00:00");
+      miniCalDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      hasScrolledInitialToday = true;
+      if (currentFilter !== 'ALL' && currentFilter !== item.equipment) currentFilter = 'ALL';
+      if (viewMode !== 'day') setViewMode('day');
+      renderMiniCalendar();
+      renderCalendar();
+      openEditModal(item.id);
     }
 
     function updateRetentionLabel() {
@@ -982,8 +1304,8 @@
       const el = document.getElementById('retentionNote');
       if (!el) return;
       el.textContent = currentLang === 'en'
-        ? `*History kept from ${minD.getFullYear()}-${String(minD.getMonth()+1).padStart(2,'0')}-01`
-        : `※履歴保持: ${minD.getFullYear()}年${minD.getMonth()+1}月1日〜`;
+        ? `*History kept from ${minD.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}`
+        : `※履歴保持: ${minD.getFullYear()}年${minD.getMonth() + 1}月${minD.getDate()}日〜`;
     }
 
     function unlockApp() {
@@ -991,16 +1313,17 @@
       hideEl('authModal');
       showEl('mainApp');
       document.body.style.backgroundColor = '#f1f5f9';
-      document.getElementById('currentActorBadge').textContent = currentActor || "User";
+      setActor(currentActor);
       updateAdminIconState();
       updateRetentionLabel();
 
-      // キャッシュがあれば即描画しつつ裏で最新データを取得
+      // 手元の保存データがあれば即描画しつつ、裏で最新データを取得
       renderTagButtons();
       renderMiniCalendar();
       renderCalendar();
       loadFromCloud(false);
       startAutoRefreshTimer();
+      startNowTimer();
     }
 
     function updateAdminIconState() {
@@ -1022,29 +1345,37 @@
       }
     }
 
+    // 管理者認証（間違えてもログアウトしない）
     async function handleAdminLogin(e) {
       e.preventDefault();
-      const val = document.getElementById('adminPasswordInput').value;
+      const input = document.getElementById('adminPasswordInput');
+      const val = input.value;
       const errEl = document.getElementById('adminAuthError');
+      const btn = document.getElementById('uiAdminSubmit');
       hideEl('adminAuthError');
+      btn.disabled = true;
 
       try {
-        const res = await callGasApi({ action: "login", key: val }, false);
+        const res = await callGasApi({ action: "login", key: val }, { isLogin: true });
         if (res.status === "success" && res.role === "admin") {
           authKey = val;
           userRole = "admin";
-          sessionStorage.setItem('okamoto_key', authKey);
-          sessionStorage.setItem('okamoto_role', userRole);
+          ssSet('okamoto_key', authKey);
+          ssSet('okamoto_role', userRole);
+          input.value = "";
           updateAdminIconState();
           hideEl('adminAuthModal');
           openSettingsModal();
         } else {
-          errEl.textContent = res.message || "Admin password incorrect";
+          errEl.textContent = res.status === 'rateLimited' ? (res.message || t('pwIncorrect')) : t('pwIncorrect');
           showEl('adminAuthError');
         }
       } catch (err) {
-        errEl.textContent = t('syncError');
+        console.error(err);
+        errEl.textContent = t('networkFail');
         showEl('adminAuthError');
+      } finally {
+        btn.disabled = false;
       }
     }
 
@@ -1056,38 +1387,41 @@
       if (status && !isBackgroundAuto) status.textContent = t('syncing');
 
       try {
-        const json = await callGasApi({ action: "list" }, true);
+        const json = await callGasApi({ action: "list" });
+        if (!authKey) return; // ログイン画面に戻った
+        if (json.status !== "success") {
+          if (status) status.textContent = t('syncFailed');
+          return;
+        }
         if (isBackgroundAuto && isUserOperating()) return;
 
-        if (json.status === "success") {
-          if (json.cutoffDate) minCutoffStr = json.cutoffDate;
-          if (json.maxFutureDate) maxFutureStr = json.maxFutureDate;
-          if (json.role) {
-            userRole = json.role;
-            sessionStorage.setItem('okamoto_role', userRole);
-            updateAdminIconState();
-          }
-          reservations = normalizeList(json.reservations || []);
-          localStorage.setItem('okamoto_res_v1', JSON.stringify(reservations));
-
-          if (Array.isArray(json.equipments) && json.equipments.length > 0) {
-            equipments = json.equipments;
-            localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
-          }
-          equipmentStatus = json.equipmentStatus || {};
-          localStorage.setItem('okamoto_eq_status_v1', JSON.stringify(equipmentStatus));
-
-          if (status) {
-            const now = new Date();
-            const hh = String(now.getHours()).padStart(2, '0');
-            const mm = String(now.getMinutes()).padStart(2, '0');
-            status.textContent = isBackgroundAuto ? `Auto (${hh}:${mm})` : t('syncDone');
-          }
-          updateRetentionLabel();
-          renderTagButtons();
-          renderMiniCalendar();
-          renderCalendar();
+        if (json.cutoffDate) minCutoffStr = json.cutoffDate;
+        if (json.maxFutureDate) maxFutureStr = json.maxFutureDate;
+        if (json.role) {
+          userRole = json.role;
+          ssSet('okamoto_role', userRole);
+          updateAdminIconState();
         }
+        reservations = normalizeList(json.reservations || []);
+        lsSet('okamoto_res_v1', JSON.stringify(reservations));
+
+        if (Array.isArray(json.equipments) && json.equipments.length > 0) {
+          equipments = json.equipments;
+          lsSet('okamoto_eq_v1', JSON.stringify(equipments));
+        }
+        equipmentStatus = (json.equipmentStatus && typeof json.equipmentStatus === 'object') ? json.equipmentStatus : {};
+        lsSet('okamoto_eq_status_v1', JSON.stringify(equipmentStatus));
+
+        if (status) {
+          const now = new Date();
+          const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          status.textContent = isBackgroundAuto ? t('autoSynced', { time }) : t('syncDone');
+        }
+        updateRetentionLabel();
+        updateNameSuggestions();
+        renderTagButtons();
+        renderMiniCalendar();
+        renderCalendar();
       } catch (err) {
         console.error(err);
         if (status && !isBackgroundAuto) status.textContent = t('syncError');
@@ -1102,39 +1436,60 @@
       }, AUTO_REFRESH_INTERVAL_MS);
     }
 
+    // 書き込み系の操作をサーバーへ送る。
+    // 戻り値は必ずオブジェクト（status が "success" 以外は失敗。呼び出し側で notifyFailure を使って知らせる）
     async function sendTransaction(payload) {
       const status = document.getElementById('syncStatus');
-      if (isSyncing) return null;
+      if (isSyncing) return { status: "syncing", message: t('stillSyncing') };
       isSyncing = true;
       if (status) status.textContent = t('syncing');
 
       try {
-        const result = await callGasApi(payload, true);
-        if (result.reservations) {
+        const result = await callGasApi(payload);
+        if (result.status === 'unauthorized' || result.status === 'rateLimited') {
+          return { ...result, silent: true }; // ログイン画面に戻したので通知しない
+        }
+        if (result.status === 'forbidden') {
+          userRole = 'member';
+          ssSet('okamoto_role', userRole);
+          updateAdminIconState();
+          hideEl('settingsModal');
+        }
+        // 成功・失敗にかかわらず、サーバーが最新の一覧を返してきたら反映する
+        if (Array.isArray(result.reservations)) {
           reservations = normalizeList(result.reservations);
-          localStorage.setItem('okamoto_res_v1', JSON.stringify(reservations));
+          lsSet('okamoto_res_v1', JSON.stringify(reservations));
         }
         if (Array.isArray(result.equipments) && result.equipments.length > 0) {
           equipments = result.equipments;
-          localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
+          lsSet('okamoto_eq_v1', JSON.stringify(equipments));
         }
-        if (result.equipmentStatus) {
+        if (result.equipmentStatus && typeof result.equipmentStatus === 'object') {
           equipmentStatus = result.equipmentStatus;
-          localStorage.setItem('okamoto_eq_status_v1', JSON.stringify(equipmentStatus));
+          lsSet('okamoto_eq_status_v1', JSON.stringify(equipmentStatus));
         }
-        if (status) status.textContent = t('syncDone');
-        renderTagButtons();
-        renderMiniCalendar();
-        renderCalendar();
+        if (status) status.textContent = result.status === 'success' ? t('syncDone') : t('syncFailed');
         return result;
       } catch (err) {
         console.error(err);
         if (status) status.textContent = t('syncError');
-        alert(t('syncError'));
-        return null;
+        return { status: "network", message: t('networkFail') };
       } finally {
         isSyncing = false;
+        // 成功・失敗どちらでも、手元のデータの状態で描き直す（ドラッグで動かしたバーも元に戻る）
+        if (isUnlocked) {
+          updateNameSuggestions();
+          renderTagButtons();
+          renderMiniCalendar();
+          renderCalendar();
+        }
       }
+    }
+
+    // 失敗した操作を利用者に知らせる（成功・ログイン画面に戻った場合は何もしない）
+    function notifyFailure(res, fallbackMessage) {
+      if (!res || res.silent || res.status === "success") return;
+      alert(res.message || fallbackMessage || t('opFailed'));
     }
 
     // 機器の稼働状態ヘルパー
@@ -1159,6 +1514,105 @@
       return item.title.trim().toLowerCase() === currentActor.trim().toLowerCase();
     }
 
+    // 機器名の横に出す状態バッジ（HTML）
+    function statusBadgeHtml(eq) {
+      const stInfo = getEqStatusInfo(eq);
+      return stInfo ? `<span class="shrink-0 text-[9px] px-1.5 py-0.5 rounded border font-bold ${stInfo.cls}">${escapeHtml(stInfo.label)}</span>` : '';
+    }
+
+    // ---------- 日時の計算（日をまたぐ予約・24:00終了に対応） ----------
+    // "yyyy-MM-dd" → 通算日数
+    function dayNum(s) {
+      const [y, m, d] = String(s).split('-').map(Number);
+      return Math.round(Date.UTC(y, m - 1, d) / 86400000);
+    }
+    function addDaysStr(s, n) {
+      const dt = new Date(s + "T00:00:00");
+      dt.setDate(dt.getDate() + n);
+      return formatDateStr(dt);
+    }
+    function resEndDate(r) {
+      return r.endDate || r.date;
+    }
+    function absStartMin(r) {
+      return dayNum(r.date) * 1440 + timeToMinutes(r.startTime);
+    }
+    function absEndMin(r) {
+      return dayNum(resEndDate(r)) * 1440 + timeToMinutes(r.endTime);
+    }
+    function nowAbsMin() {
+      const n = new Date();
+      return dayNum(formatDateStr(n)) * 1440 + n.getHours() * 60 + n.getMinutes();
+    }
+    // 翌日0:00に終わる予約は「その日の24:00まで」の1日の予約として扱う
+    function endsAtMidnight(r) {
+      return dayNum(resEndDate(r)) - dayNum(r.date) === 1 && r.endTime === "00:00";
+    }
+    function isMultiDay(r) {
+      return resEndDate(r) !== r.date && !endsAtMidnight(r);
+    }
+    function endTimeLabel(r) {
+      return endsAtMidnight(r) ? "24:00" : r.endTime;
+    }
+    // 指定日に表示する区間（その日の0:00からの分）。その日にかからなければ null
+    function segmentOnDay(r, dateStr) {
+      const base = dayNum(dateStr) * 1440;
+      const s = absStartMin(r) - base;
+      const e = absEndMin(r) - base;
+      const ss = Math.max(0, s);
+      const ee = Math.min(1440, e);
+      if (ee <= ss) return null;
+      return { s: ss, e: ee, startsBefore: s < 0, endsAfter: e > 1440 };
+    }
+    // "M/D (曜)"
+    function shortDateLabel(dateStr) {
+      const dt = new Date(dateStr + "T00:00:00");
+      return `${dt.getMonth() + 1}/${dt.getDate()} (${t('weekdays')[dt.getDay()]})`;
+    }
+    // 予約の日時範囲の表示用文字列
+    function rangeLabel(r) {
+      const sep = currentLang === 'en' ? '–' : '〜';
+      const end = isMultiDay(r) ? `${shortDateLabel(resEndDate(r))} ${r.endTime}` : endTimeLabel(r);
+      return `${shortDateLabel(r.date)} ${r.startTime} ${sep} ${end}`;
+    }
+
+    // ---------- 現在時刻の線 ----------
+    const WEEK_HOUR_HEIGHT = 36;
+    let nowTimer = null;
+
+    // data-now="x"（日表示：横方向の位置）/ "y"（週表示：縦方向の位置）の要素を現在時刻に合わせる
+    function updateNowIndicators() {
+      const now = new Date();
+      const todayStr = formatDateStr(now);
+      const mins = now.getHours() * 60 + now.getMinutes();
+      const label = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      document.querySelectorAll('[data-now]').forEach(el => {
+        const show = el.dataset.date === todayStr;
+        el.style.display = show ? '' : 'none';
+        if (!show) return;
+        if (el.dataset.now === 'y') el.style.top = `${(mins / 60) * WEEK_HOUR_HEIGHT}px`;
+        else el.style.left = `${(mins / 1440) * 100}%`;
+        if (el.classList.contains('now-pill')) el.textContent = label;
+      });
+    }
+
+    function startNowTimer() {
+      if (nowTimer) clearInterval(nowTimer);
+      nowTimer = setInterval(updateNowIndicators, 30000);
+    }
+
+    // 同じ機器で時間帯が重なる予約があるか（日をまたぐ予約にも対応）
+    function hasConflict(eq, sDate, eDate, st, et, ignoreIds = {}) {
+      const probe = { date: sDate, endDate: eDate, startTime: st, endTime: et };
+      const s1 = absStartMin(probe);
+      const e1 = absEndMin(probe);
+      return reservations.some(r => {
+        if (ignoreIds && ignoreIds[r.id]) return false;
+        if (r.equipment !== eq) return false;
+        return s1 < absEndMin(r) && e1 > absStartMin(r);
+      });
+    }
+
     // ミニ月間カレンダー描画
     function changeMiniCalMonth(diff) {
       const minD = getMinAllowedDate();
@@ -1181,7 +1635,7 @@
       const y = miniCalDate.getFullYear();
       const m = miniCalDate.getMonth();
       document.getElementById('miniCalTitle').textContent = currentLang === 'en'
-        ? `${y}-${String(m + 1).padStart(2, '0')}`
+        ? new Date(y, m, 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
         : `${y}年${m + 1}月`;
 
       const minD = getMinAllowedDate();
@@ -1203,7 +1657,10 @@
         const isDisabled = dStr < minStr;
         const isSelected = dStr === selectedStr;
         const isToday = dStr === todayStr;
-        const hasRes = !isDisabled && reservations.some(r => dStr >= r.date && dStr <= (r.endDate || r.date));
+        // その日にかかる予約があれば印（自分の予約があれば緑、なければ青）
+        const dayRes = isDisabled ? [] : reservations.filter(r => r.date <= dStr && resEndDate(r) >= dStr && segmentOnDay(r, dStr));
+        const hasRes = dayRes.length > 0;
+        const hasMine = dayRes.some(isMyBooking);
         const dow = (firstDay + day - 1) % 7;
 
         let cls = "py-1.5 rounded-md relative font-medium transition ";
@@ -1216,7 +1673,7 @@
 
         html += `<div ${isDisabled ? '' : `onclick="selectDateFromMiniCal('${dStr}')"`} class="${cls}">
           ${day}
-          ${hasRes && !isSelected ? '<span class="block w-1 h-1 bg-indigo-500 rounded-full mx-auto mt-0.5"></span>' : ''}
+          ${hasRes && !isSelected ? `<span class="block ${hasMine ? 'w-1.5 h-1.5 bg-emerald-500' : 'w-1 h-1 bg-indigo-400'} rounded-full mx-auto mt-0.5"></span>` : ''}
         </div>`;
       }
       document.getElementById('miniCalGrid').innerHTML = html;
@@ -1283,7 +1740,9 @@
       equipments.forEach((eq, i) => {
         const b = document.createElement('button');
         b.className = `px-2.5 py-1 rounded text-xs font-medium text-white ${tagColors[i % tagColors.length]} hover:opacity-90`;
-        b.textContent = eq;
+        const info = getEqStatusInfo(eq);
+        b.textContent = info ? `${eq} [${info.label}]` : eq;
+        if (info) b.classList.add('line-through', 'opacity-70');
         b.onclick = () => filterByEquipment(eq);
         box.appendChild(b);
       });
@@ -1307,7 +1766,7 @@
       if (viewMode === 'day') {
         const wd = t('weekdays')[currentDate.getDay()];
         label.textContent = currentLang === 'en'
-          ? `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')} (${wd})`
+          ? currentDate.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
           : `${y}年${m}月${d}日 (${wd})`;
         renderDayTimeline(container, eqs, formatDateStr(currentDate));
       } else {
@@ -1316,7 +1775,7 @@
         const end = new Date(start);
         end.setDate(start.getDate() + 6);
         label.textContent = currentLang === 'en'
-          ? `${start.getFullYear()}/${start.getMonth()+1}/${start.getDate()} – ${end.getMonth()+1}/${end.getDate()}`
+          ? `${start.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })} – ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
           : `${start.getFullYear()}年${start.getMonth()+1}月${start.getDate()}日 〜 ${end.getMonth()+1}月${end.getDate()}日`;
         renderWeekView(container);
       }
@@ -1350,93 +1809,98 @@
       });
     }
 
-    // 日表示タイムライン（XSSエスケープ徹底＋自分の予約ハイライト＋機器状態バッジ）
+    // 日表示タイムライン（日をまたぐ予約・24:00終了・現在時刻の線・自分の予約の強調に対応）
     function renderDayTimeline(container, eqs, dateStr) {
+      const isTodayView = dateStr === formatDateStr(new Date());
       let html = `<div id="timelineWrapper" class="min-w-[1893px] md:min-w-[1958px] relative">`;
       html += `<div class="timeline-grid bg-slate-100 border-b border-slate-300 text-xs font-bold text-slate-600 sticky top-0 z-30">`;
       html += `<div class="p-2.5 border-r border-slate-300 sticky left-0 bg-slate-100 z-40 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.12)]">${escapeHtml(t('eqColHeader'))}</div>`;
       for (let h = 0; h < 24; h++) {
         html += `<div class="p-2 border-r border-slate-200 text-center">${h}</div>`;
       }
+      // 現在時刻のラベル（見出し行の中に表示）
+      if (isTodayView) {
+        html += `<div class="absolute inset-y-0 left-[165px] md:left-[230px] right-0 pointer-events-none z-[35]"><span class="now-pill" data-now="x" data-date="${dateStr}"></span></div>`;
+      }
       html += `</div>`;
 
       eqs.forEach((eq, rowIdx) => {
-        const dayItems = reservations.filter(r => {
-          if (r.equipment !== eq) return false;
-          const sDate = r.date;
-          const eDate = r.endDate || r.date;
-          return dateStr >= sDate && dateStr <= eDate;
-        });
+        // この日にかかる予約（日をまたぐ予約も含む。翌日0:00終了の予約は翌日には出さない）
+        const dayItems = reservations
+          .filter(r => r.equipment === eq)
+          .map(r => ({ item: r, seg: segmentOnDay(r, dateStr) }))
+          .filter(x => x.seg);
 
         const stInfo = getEqStatusInfo(eq);
         const unav = !!stInfo;
         const safeEqAttr = escapeHtml(eq);
-        const safeEqJs = eq.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
         html += `<div data-eq-row="${rowIdx}" data-eq-name="${safeEqAttr}" data-eq-unav="${unav ? '1' : '0'}" class="eq-timeline-row timeline-grid border-b border-slate-200 ${unav ? 'bg-slate-100/80' : 'hover:bg-slate-50/70'} relative h-11">`;
         html += `<div class="px-2 py-1.5 border-r border-slate-300 text-xs font-semibold sticky left-0 ${unav ? 'bg-slate-100' : 'bg-white'} z-20 flex items-center justify-between gap-1 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]" title="${safeEqAttr}${stInfo && stInfo.note ? ' (' + escapeHtml(stInfo.note) + ')' : ''}">
           <span class="truncate ${unav ? 'text-slate-400 line-through' : ''}">${safeEqAttr}</span>
-          ${stInfo ? `<span class="shrink-0 text-[9px] px-1.5 py-0.5 rounded border font-bold ${stInfo.cls}">${escapeHtml(stInfo.label)}</span>` : ''}
+          ${statusBadgeHtml(eq)}
         </div>`;
 
         for (let h = 0; h < 24; h++) {
           html += `<div class="border-r border-slate-100 h-full pointer-events-none"></div>`;
         }
 
+        // 機器名は data 属性から読む（名前に記号が入っていても壊れないように）
         html += `<div class="timeline-track absolute top-0 bottom-0 left-[165px] md:left-[230px] right-0 ${unav ? 'cursor-not-allowed' : 'cursor-crosshair'} z-10 overflow-hidden"
-          ${unav ? '' : `onmousedown="startCreateDrag(event, '${safeEqJs}', '${dateStr}')" ontouchstart="handleTrackTouchStart(event, '${safeEqJs}', '${dateStr}')"`}>`;
+          ${unav ? '' : `onmousedown="startCreateDrag(event, this.closest('.eq-timeline-row').dataset.eqName, '${dateStr}')" ontouchstart="handleTrackTouchStart(event, this.closest('.eq-timeline-row').dataset.eqName, '${dateStr}')"`}>`;
 
-        dayItems.forEach(item => {
-          const sDate = item.date;
-          const eDate = item.endDate || item.date;
-          let startMin = (sDate === dateStr) ? timeToMinutes(item.startTime) : 0;
-          let endMin = (eDate === dateStr) ? Math.max(startMin + 15, timeToMinutes(item.endTime)) : 1440;
-
+        dayItems.forEach(({ item, seg }) => {
+          const startMin = seg.s;
+          const endMin = Math.min(1440, Math.max(seg.s + 15, seg.e));
           const leftPct = (startMin / 1440) * 100;
           const widthPct = ((endMin - startMin) / 1440) * 100;
           const rawText = item.notes ? `${item.title} | ${item.notes}` : item.title;
-          const safeText = escapeHtml(rawText);
-          const safeId = escapeHtml(item.id);
           const mine = isMyBooking(item);
+          const multi = isMultiDay(item);
 
-          const barColorCls = mine
-            ? "bg-emerald-50 border-emerald-600 hover:bg-emerald-100 text-emerald-950"
-            : "bg-white border-indigo-600 hover:bg-indigo-50 text-slate-900";
+          // 自分の予約：緑の塗りつぶし＋白文字＋人型アイコン ／ 他の人：白地に青枠
+          const barCls = mine
+            ? "bg-emerald-600 border-emerald-700 hover:bg-emerald-700 text-white ring-2 ring-emerald-200"
+            : "bg-white border-indigo-400 hover:bg-indigo-50 text-slate-800";
+          const iconCls = mine ? 'text-emerald-100' : 'text-indigo-500';
+          const tip = `${rangeLabel(item)}  ${rawText}${mine ? '  ★' + t('yourBooking') : ''}  (${t(multi ? 'clickEdit' : 'clickEditDrag')})`;
 
-          html += `<div data-res-id="${safeId}"
-            onmousedown="startMoveDrag(event, '${safeId}')"
-            ontouchstart="handleBarTouchStart(event, '${safeId}')"
-            title="${escapeHtml(item.startTime)}-${escapeHtml(item.endTime)} ${safeText}"
+          html += `<div data-res-id="${escapeHtml(item.id)}"
+            onmousedown="startMoveDrag(event, this.dataset.resId)"
+            ontouchstart="handleBarTouchStart(event, this.dataset.resId)"
+            title="${escapeHtml(tip)}"
             style="left:${leftPct}%; width:${widthPct}%;"
-            class="res-bar absolute top-1.5 bottom-1.5 border-2 rounded px-1.5 text-xs font-bold flex items-center overflow-hidden shadow-sm cursor-pointer z-10 ${barColorCls}">
-            ${item.seriesId ? '<i class="fa-solid fa-rotate text-[9px] text-indigo-600 mr-0.5 shrink-0"></i>' : ''}<span class="res-label whitespace-nowrap overflow-hidden leading-none">${safeText}</span>
+            class="res-bar absolute top-1.5 bottom-1.5 border-2 rounded px-1.5 text-xs font-bold flex items-center overflow-hidden shadow-sm cursor-pointer z-10 ${barCls}">
+            ${seg.startsBefore ? `<i class="fa-solid fa-caret-left text-[10px] ${iconCls} mr-0.5 shrink-0"></i>` : ''}${mine ? '<i class="fa-solid fa-user text-[9px] mr-1 shrink-0"></i>' : ''}${item.seriesId ? `<i class="fa-solid fa-rotate text-[9px] ${iconCls} mr-0.5 shrink-0"></i>` : ''}<span class="res-label whitespace-nowrap overflow-hidden leading-none">${escapeHtml(rawText)}</span>${seg.endsAfter ? `<i class="fa-solid fa-caret-right text-[10px] ${iconCls} ml-auto pl-0.5 shrink-0"></i>` : ''}
           </div>`;
         });
 
         html += `</div></div>`;
       });
 
-      html += `<div id="createGhostBar" class="force-hidden pointer-events-none absolute bg-indigo-500/35 border-2 border-dashed border-indigo-700 rounded z-25 flex items-center justify-center text-[11px] font-bold text-indigo-950 shadow-md"></div>`;
+      // 現在時刻の縦線（予約バーの上・機器名の列の下に重ねる）
+      if (isTodayView) {
+        html += `<div class="absolute top-0 bottom-0 left-[165px] md:left-[230px] right-0 pointer-events-none z-[15]"><div class="now-line" data-now="x" data-date="${dateStr}"></div></div>`;
+      }
+      html += `<div id="createGhostBar" class="force-hidden pointer-events-none absolute bg-indigo-500/35 border-2 border-dashed border-indigo-700 rounded z-[25] flex items-center justify-center text-[11px] font-bold text-indigo-950 shadow-md"></div>`;
       html += `</div>`;
       container.innerHTML = html;
+      updateNowIndicators();
 
       requestAnimationFrame(() => {
         fitReservationBarFonts();
 
-        const isToday = formatDateStr(currentDate) === formatDateStr(new Date());
-        let targetMinutes = 600; // 別日は午前10時
-        if (isToday && !hasScrolledInitialToday) {
+        // 今日を開いたときは現在時刻の1時間前から、別の日は午前10時から表示
+        let targetMinutes = 600;
+        if (isTodayView && !hasScrolledInitialToday) {
           const now = new Date();
-          targetMinutes = now.getHours() * 60 + now.getMinutes();
+          targetMinutes = Math.max(0, now.getHours() * 60 + now.getMinutes() - 60);
         }
-
         const wrapper = document.getElementById('calendarContainer');
         if (wrapper) {
-          const totalTimelineWidth = wrapper.scrollWidth;
           const leftColWidth = window.innerWidth >= 768 ? 230 : 165;
-          const scrollableWidth = totalTimelineWidth - leftColWidth;
-          const targetX = (targetMinutes / 1440) * scrollableWidth;
-          wrapper.scrollLeft = Math.max(0, targetX);
+          const scrollableWidth = wrapper.scrollWidth - leftColWidth;
+          wrapper.scrollLeft = Math.max(0, (targetMinutes / 1440) * scrollableWidth);
         }
       });
     }
@@ -1483,13 +1947,15 @@
 
       const trackEl = barEl.closest('.timeline-track');
       const startMin = timeToMinutes(item.startTime);
-      const endMin = timeToMinutes(item.endTime);
-      const duration = Math.max(15, endMin - startMin);
+      // 24:00終了（翌日0:00）にも対応するため通算の分で長さを求める
+      const duration = Math.max(15, absEndMin(item) - absStartMin(item));
       const pointerOffsetMin = clientXToMinutes(trackEl, clientX) - startMin;
+      const locked = isMultiDay(item); // 日をまたぐ予約はドラッグ移動不可（編集画面で変更）
 
       dragState = {
         mode: 'move',
         isTouch,
+        locked,
         resId: String(resId),
         item,
         barEl,
@@ -1500,10 +1966,10 @@
         pointerOffsetMin,
         newStartMin: startMin,
         targetEq: item.equipment,
-        moved: isTouch
+        moved: isTouch && !locked
       };
 
-      if (isTouch) barEl.classList.add('dragging');
+      if (isTouch && !locked) barEl.classList.add('dragging');
       return true;
     }
 
@@ -1515,6 +1981,7 @@
         dragState.currMin = clientXToMinutes(dragState.trackEl, clientX);
         updateCreateGhost();
       } else if (dragState.mode === 'move') {
+        if (dragState.locked) return;
         const dx = Math.abs(clientX - dragState.startX);
         const dy = Math.abs(clientY - dragState.startY);
         if (!dragState.moved && dx < 10 && dy < 10) return;
@@ -1527,14 +1994,12 @@
         newStart = Math.max(0, Math.min(1440 - dragState.duration, newStart));
         dragState.newStartMin = newStart;
 
-        const leftPct = (newStart / 1440) * 100;
-        dragState.barEl.style.left = `${leftPct}%`;
+        dragState.barEl.style.left = `${(newStart / 1440) * 100}%`;
 
-        const rows = document.querySelectorAll('.eq-timeline-row');
-        rows.forEach(row => {
+        document.querySelectorAll('.eq-timeline-row').forEach(row => {
           const rect = row.getBoundingClientRect();
           if (clientY >= rect.top && clientY <= rect.bottom && row.getAttribute('data-eq-unav') !== '1') {
-            dragState.targetEq = row.getAttribute('data-eq-name');
+            dragState.targetEq = row.dataset.eqName;
             row.classList.add('bg-indigo-100/70');
             const targetTrack = row.querySelector('.timeline-track');
             if (targetTrack && dragState.barEl.parentElement !== targetTrack) {
@@ -1552,35 +2017,47 @@
 
       if (dragState.mode === 'create') {
         hideEl('createGhostBar');
-        const s = Math.min(dragState.startMin, dragState.currMin);
+        // 開始は最大23:45、終了は最大24:00（右端をクリックしても開始＞終了にならないように）
+        const s = Math.min(1425, Math.min(dragState.startMin, dragState.currMin));
         const e = dragState.moved
-          ? Math.max(s + 15, Math.max(dragState.startMin, dragState.currMin))
-          : Math.min(1425, s + 60);
+          ? Math.min(1440, Math.max(s + 15, Math.max(dragState.startMin, dragState.currMin)))
+          : Math.min(1440, s + 60);
 
         const { eq, dateStr } = dragState;
         dragState = null;
-        openNewModal(eq, dateStr, minutesToTime(s), minutesToTime(e));
+        openNewModal(eq, dateStr, minutesToTime(s), e >= 1440 ? '24:00' : minutesToTime(e));
       } else if (dragState.mode === 'move') {
-        const { resId, item, barEl, moved, newStartMin, duration, targetEq } = dragState;
+        const { resId, item, barEl, moved, locked, newStartMin, duration, targetEq } = dragState;
         barEl.classList.remove('dragging');
         document.querySelectorAll('.eq-timeline-row').forEach(r => r.classList.remove('bg-indigo-100/70'));
         dragState = null;
 
-        if (!moved) {
+        if (!moved || locked) {
           openEditModal(resId);
           return;
         }
 
         const newStStr = minutesToTime(newStartMin);
-        const newEtStr = minutesToTime(newStartMin + duration);
+        const newEndMin = newStartMin + duration;
+        // 24:00 に終わる場合は「翌日 0:00」として保存する
+        const newEtStr = newEndMin >= 1440 ? "00:00" : minutesToTime(newEndMin);
+        const newEndDate = newEndMin >= 1440 ? addDaysStr(item.date, 1) : item.date;
 
-        if (targetEq === item.equipment && newStStr === item.startTime && newEtStr === item.endTime) {
+        if (targetEq === item.equipment && newStStr === item.startTime && newEtStr === item.endTime && newEndDate === resEndDate(item)) {
           renderCalendar();
           return;
         }
 
-        if (hasConflict(targetEq, item.date, item.endDate || item.date, newStStr, newEtStr, resId)) {
-          alert(currentLang === 'en' ? "Overlaps with another booking." : "移動先にすでに別の予約が入っているため移動できません。");
+        if (targetEq !== item.equipment && isEqUnavailable(targetEq)) {
+          const info = getEqStatusInfo(targetEq);
+          alert(t('eqUnavailableAlert', { eq: targetEq, status: info ? info.label : '' }));
+          renderCalendar();
+          return;
+        }
+
+        // 自分自身との重なりは除外して判定
+        if (hasConflict(targetEq, item.date, newEndDate, newStStr, newEtStr, { [resId]: true })) {
+          alert(t('moveConflict'));
           renderCalendar();
           return;
         }
@@ -1589,7 +2066,8 @@
           ...item,
           equipment: targetEq,
           startTime: newStStr,
-          endTime: newEtStr
+          endTime: newEtStr,
+          endDate: newEndDate
         });
       }
     }
@@ -1612,14 +2090,14 @@
       const wrapRect = document.getElementById('timelineWrapper').getBoundingClientRect();
       const trackLeftOffset = trackRect.left - wrapRect.left;
 
-      const s = Math.min(dragState.startMin, dragState.currMin);
-      const e = Math.max(s + 15, Math.max(dragState.startMin, dragState.currMin));
+      const s = Math.min(1425, Math.min(dragState.startMin, dragState.currMin));
+      const e = Math.min(1440, Math.max(s + 15, Math.max(dragState.startMin, dragState.currMin)));
       const leftPx = trackLeftOffset + (s / 1440) * trackRect.width;
       const widthPx = ((e - s) / 1440) * trackRect.width;
 
       ghost.style.left = `${leftPx}px`;
       ghost.style.width = `${Math.max(20, widthPx)}px`;
-      ghost.textContent = `${minutesToTime(s)} - ${minutesToTime(e)}`;
+      ghost.textContent = `${minutesToTime(s)} - ${e >= 1440 ? '24:00' : minutesToTime(e)}`;
     }
 
     window.addEventListener('mousemove', (e) => {
@@ -1722,11 +2200,11 @@
       pendingMoveData = afterItem;
       const noteText = beforeItem.notes ? ` (${beforeItem.notes})` : "";
       document.getElementById('confirmMoveTitle').textContent = `${beforeItem.title}${noteText}`;
-      document.getElementById('confirmMoveBefore').textContent = `${beforeItem.equipment} ｜ ${beforeItem.date} ${beforeItem.startTime} 〜 ${beforeItem.endDate || beforeItem.date} ${beforeItem.endTime}`;
-      document.getElementById('confirmMoveAfter').textContent = `${afterItem.equipment} ｜ ${afterItem.date} ${afterItem.startTime} 〜 ${afterItem.endDate || afterItem.date} ${afterItem.endTime}`;
+      document.getElementById('confirmMoveBefore').textContent = `${beforeItem.equipment} ｜ ${rangeLabel(beforeItem)}`;
+      document.getElementById('confirmMoveAfter').textContent = `${afterItem.equipment} ｜ ${rangeLabel(afterItem)}`;
 
       if (!isMyBooking(beforeItem)) {
-        document.getElementById('moveOtherWarningText').textContent = t('otherWarnPrefix').replace('{name}', beforeItem.title);
+        document.getElementById('moveOtherWarningText').textContent = t('otherWarnPrefix', { name: beforeItem.title });
         showEl('moveOtherWarning');
       } else {
         hideEl('moveOtherWarning');
@@ -1750,10 +2228,9 @@
 
       try {
         hideEl('moveConfirmModal');
+        // 失敗したときは sendTransaction が手元のデータで描き直すので、バーは元の位置に戻る
         const res = await sendTransaction({ action: "update", item: updatedItem });
-        if (res && res.status !== "success") {
-          alert(res.message || "Error");
-        }
+        notifyFailure(res, t('opFailed'));
       } finally {
         btn.disabled = false;
       }
@@ -1807,13 +2284,11 @@
         filtered.forEach((eq) => {
           const origIdx = equipments.indexOf(eq);
           const colorCls = tagColors[origIdx % tagColors.length];
-          const stInfo = getEqStatusInfo(eq);
-          const safeEqJs = eq.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-          html += `<button onclick="selectWeekEquipment('${safeEqJs}')"
+          html += `<button data-eq="${escapeHtml(eq)}" onclick="selectWeekEquipment(this.dataset.eq)"
             class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/50 text-left transition shadow-sm group">
             <span class="w-3 h-8 rounded-full ${colorCls} shrink-0"></span>
             <span class="text-sm font-bold text-slate-800 group-hover:text-indigo-700 truncate flex-1">${escapeHtml(eq)}</span>
-            ${stInfo ? `<span class="text-[10px] px-1.5 py-0.5 rounded border font-bold ${stInfo.cls}">${escapeHtml(stInfo.label)}</span>` : ''}
+            ${statusBadgeHtml(eq)}
           </button>`;
         });
         html += `</div></div>`;
@@ -1837,12 +2312,7 @@
         const dt = new Date(start);
         dt.setDate(start.getDate() + i);
         const s = formatDateStr(dt);
-        days.push({
-          str: s,
-          label: `${dt.getMonth()+1}/${dt.getDate()} (${wNames[i]})`,
-          dow: i,
-          disabled: s < minStr
-        });
+        days.push({ str: s, label: `${dt.getMonth() + 1}/${dt.getDate()} (${wNames[i]})`, dow: i, disabled: s < minStr });
       }
 
       let html = `<div class="bg-indigo-50/80 border-b border-indigo-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3 sticky left-0">`;
@@ -1863,11 +2333,11 @@
           ${escapeHtml(t('weekNextEq'))} <i class="fa-solid fa-chevron-right"></i>
         </button>
         <button onclick="selectWeekEquipment(null)" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-xs font-bold ml-1">
-          <i class="fa-solid fa-grid-2 mr-1"></i>${escapeHtml(t('weekBackList'))}
+          <i class="fa-solid fa-table-cells-large mr-1"></i>${escapeHtml(t('weekBackList'))}
         </button>
       </div></div>`;
 
-      const hourHeight = 36;
+      const hourHeight = WEEK_HOUR_HEIGHT;
       html += `<div class="min-w-[860px]">`;
       html += `<div class="week-grid bg-slate-100 border-b border-slate-300 text-xs font-bold text-center sticky top-0 z-20">`;
       html += `<div class="p-2.5 border-r border-slate-300 text-slate-500">${escapeHtml(t('weekTimeCol'))}</div>`;
@@ -1887,56 +2357,58 @@
       }
       html += `</div>`;
 
-      const safeWeekEqJs = weekSelectedEq.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      const safeWeekEq = escapeHtml(weekSelectedEq);
       days.forEach(d => {
-        const dayItems = d.disabled ? [] : reservations.filter(r => {
-          if (r.equipment !== weekSelectedEq) return false;
-          const sDate = r.date;
-          const eDate = r.endDate || r.date;
-          return d.str >= sDate && d.str <= eDate;
-        });
+        // この日にかかる予約（日をまたぐ予約も含む）
+        const dayItems = d.disabled ? [] : reservations
+          .filter(r => r.equipment === weekSelectedEq)
+          .map(r => ({ item: r, seg: segmentOnDay(r, d.str) }))
+          .filter(x => x.seg);
+        const canClick = !d.disabled && !unav;
 
         html += `<div class="border-r border-slate-200 relative ${d.disabled || unav ? 'bg-slate-100/70' : d.str === todayStr ? 'bg-indigo-50/20' : ''}">`;
         for (let h = 0; h < 24; h++) {
-          const tStr = `${String(h).padStart(2,'0')}:00`;
-          const eStr = `${String(Math.min(23, h+1)).padStart(2,'0')}:00`;
-          const canClick = !d.disabled && !unav;
-          html += `<div ${canClick ? `onclick="openNewModal('${safeWeekEqJs}', '${d.str}', '${tStr}', '${eStr}')"` : ''}
+          const tStr = `${String(h).padStart(2, '0')}:00`;
+          const eStr = h === 23 ? '24:00' : `${String(h + 1).padStart(2, '0')}:00`;
+          html += `<div data-eq="${safeWeekEq}" ${canClick ? `onclick="openNewModal(this.dataset.eq, '${d.str}', '${tStr}', '${eStr}')"` : ''}
             style="height:${hourHeight}px;"
             class="border-b border-slate-100 ${canClick ? 'hover:bg-indigo-50/70 cursor-pointer' : ''}"></div>`;
         }
 
-        dayItems.forEach(item => {
-          const sDate = item.date;
-          const eDate = item.endDate || item.date;
-          let startMin = (sDate === d.str) ? timeToMinutes(item.startTime) : 0;
-          let endMin = (eDate === d.str) ? Math.max(startMin + 15, timeToMinutes(item.endTime)) : 1440;
+        dayItems.forEach(({ item, seg }) => {
+          const startMin = seg.s;
+          const endMin = Math.min(1440, Math.max(startMin + 15, seg.e));
           const durationMin = endMin - startMin;
-
           const topPx = (startMin / 60) * hourHeight;
           const heightPx = Math.max(16, (durationMin / 60) * hourHeight);
-          const safeTitle = escapeHtml(item.title);
-          const safeNotes = escapeHtml(item.notes || "");
           const fontSizeClass = durationMin <= 30 ? 'text-[9px]' : durationMin <= 45 ? 'text-[10px]' : 'text-[11px]';
           const mine = isMyBooking(item);
+          // 自分の予約：緑の塗りつぶし＋白文字＋人型アイコン ／ 他の人：薄い青
           const weekBarCls = mine
-            ? "bg-emerald-600 hover:bg-emerald-700 border-emerald-800"
-            : "bg-indigo-600 hover:bg-indigo-700 border-indigo-800";
+            ? "bg-emerald-600 hover:bg-emerald-700 border-emerald-800 text-white ring-2 ring-emerald-200"
+            : "bg-indigo-50 hover:bg-indigo-100 border-indigo-300 text-indigo-950";
+          const timeText = `${seg.startsBefore ? '▲' : ''}${item.startTime}-${endTimeLabel(item)}${seg.endsAfter ? '▼' : ''}`;
+          const tip = `${rangeLabel(item)}  ${item.title}${item.notes ? ' | ' + item.notes : ''}${mine ? '  ★' + t('yourBooking') : ''}`;
 
-          html += `<div onclick="event.stopPropagation(); openEditModal('${escapeHtml(item.id)}')"
+          html += `<div data-res-id="${escapeHtml(item.id)}" onclick="event.stopPropagation(); openEditModal(this.dataset.resId)"
             style="top:${topPx}px; height:${heightPx}px;"
-            title="${escapeHtml(item.startTime)}-${escapeHtml(item.endTime)} ${safeTitle}"
-            class="absolute left-1 right-1 ${weekBarCls} text-white rounded-md px-1.5 py-0.5 ${fontSizeClass} shadow-sm cursor-pointer overflow-hidden flex flex-col justify-center border z-10">
-            <div class="font-bold leading-tight whitespace-nowrap overflow-hidden">${escapeHtml(item.startTime)}-${escapeHtml(item.endTime)} ${safeTitle}</div>
-            ${safeNotes && heightPx >= 32 ? `<div class="text-[9.5px] opacity-90 whitespace-nowrap overflow-hidden">${safeNotes}</div>` : ''}
+            title="${escapeHtml(tip)}"
+            class="absolute left-1 right-1 ${weekBarCls} rounded-md px-1.5 py-0.5 ${fontSizeClass} shadow-sm cursor-pointer overflow-hidden flex flex-col justify-center border z-10">
+            <div class="font-bold leading-tight whitespace-nowrap overflow-hidden">${mine ? '<i class="fa-solid fa-user text-[8px] mr-1"></i>' : ''}${escapeHtml(timeText)} ${escapeHtml(item.title)}</div>
+            ${item.notes && heightPx >= 32 ? `<div class="text-[9.5px] ${mine ? 'text-emerald-50' : 'text-indigo-700'} whitespace-nowrap overflow-hidden">${escapeHtml(item.notes)}</div>` : ''}
           </div>`;
         });
 
+        // 今日の列に現在時刻の横線
+        if (d.str === todayStr) {
+          html += `<div class="now-line-h" data-now="y" data-date="${d.str}"></div>`;
+        }
         html += `</div>`;
       });
 
       html += `</div></div>`;
       container.innerHTML = html;
+      updateNowIndicators();
     }
 
     // 開始日時変更時の30分自動連動
@@ -2004,8 +2476,10 @@
     }
 
     // モーダル操作
+    // 機器の選択肢（予約不可の機器は選べない。リストから消えた機器の予約も編集できるよう残す）
     function buildEquipmentOptions(selectedEq, allowUnavailableEq = null) {
-      return equipments.map(e => {
+      const list = (!selectedEq || equipments.includes(selectedEq)) ? equipments : [selectedEq, ...equipments];
+      return list.map(e => {
         const stInfo = getEqStatusInfo(e);
         const disabled = stInfo && e !== allowUnavailableEq ? 'disabled' : '';
         const suffix = stInfo ? ` [${stInfo.label}]` : '';
@@ -2013,7 +2487,18 @@
       }).join('');
     }
 
+    function setModalDateLimits() {
+      const minStr = getMinAllowedDateStr();
+      const maxStr = getMaxFutureDateStr();
+      ['modalStartDate', 'modalEndDate'].forEach(id => {
+        const el = document.getElementById(id);
+        el.min = minStr;
+        el.max = maxStr;
+      });
+    }
+
     function openNewModal(eq = '', date = '', startTime = '09:00', endTime = '10:00') {
+      updateNameSuggestions();
       editingId = null;
       document.getElementById('modalTitle').textContent = t('newBooking');
       hideEl('deleteBtn');
@@ -2030,27 +2515,26 @@
       const defaultEq = eq || (viewMode === 'week' && weekSelectedEq ? weekSelectedEq : '');
       document.getElementById('modalEquipment').innerHTML = buildEquipmentOptions(defaultEq, null);
 
-      const minStr = getMinAllowedDateStr();
-      const maxStr = getMaxFutureDateStr();
-      const sDateEl = document.getElementById('modalStartDate');
-      const eDateEl = document.getElementById('modalEndDate');
-      sDateEl.min = minStr;
-      sDateEl.max = maxStr;
-      eDateEl.min = minStr;
-      eDateEl.max = maxStr;
-
+      setModalDateLimits();
       const targetDate = date || formatDateStr(currentDate);
-      sDateEl.value = targetDate;
-      eDateEl.value = targetDate;
-
+      // "24:00" 終了は「翌日 0:00」として入力欄に入れる
+      let et = cleanTime(endTime);
+      let endDateVal = targetDate;
+      if (et === '24:00') {
+        et = '00:00';
+        endDateVal = addDaysStr(targetDate, 1);
+      }
+      document.getElementById('modalStartDate').value = targetDate;
+      document.getElementById('modalEndDate').value = endDateVal;
       document.getElementById('modalStartTime').value = cleanTime(startTime);
-      document.getElementById('modalEndTime').value = cleanTime(endTime);
+      document.getElementById('modalEndTime').value = et;
       showEl('bookingModal');
     }
 
     function openEditModal(id) {
       const item = reservations.find(r => String(r.id) === String(id));
       if (!item) return;
+      updateNameSuggestions();
       editingId = String(item.id);
       document.getElementById('modalTitle').textContent = t('editBooking');
       showEl('deleteBtn');
@@ -2065,26 +2549,16 @@
       }
 
       if (!isMyBooking(item)) {
-        document.getElementById('modalOtherWarningText').textContent = t('otherWarnPrefix').replace('{name}', item.title);
+        document.getElementById('modalOtherWarningText').textContent = t('otherWarnPrefix', { name: item.title });
         showEl('modalOtherWarning');
       } else {
         hideEl('modalOtherWarning');
       }
 
       document.getElementById('modalEquipment').innerHTML = buildEquipmentOptions(item.equipment, item.equipment);
-
-      const minStr = getMinAllowedDateStr();
-      const maxStr = getMaxFutureDateStr();
-      const sDateEl = document.getElementById('modalStartDate');
-      const eDateEl = document.getElementById('modalEndDate');
-      sDateEl.min = minStr;
-      sDateEl.max = maxStr;
-      eDateEl.min = minStr;
-      eDateEl.max = maxStr;
-
-      sDateEl.value = cleanDate(item.date);
-      eDateEl.value = cleanDate(item.endDate || item.date);
-
+      setModalDateLimits();
+      document.getElementById('modalStartDate').value = cleanDate(item.date);
+      document.getElementById('modalEndDate').value = cleanDate(resEndDate(item));
       document.getElementById('modalName').value = item.title || "";
       document.getElementById('modalStartTime').value = cleanTime(item.startTime);
       document.getElementById('modalEndTime').value = cleanTime(item.endTime);
@@ -2102,19 +2576,6 @@
       else showEl('repeatCountBox');
     }
 
-    function hasConflict(eq, sDate, eDate, st, et, ignoreIds = {}) {
-      const startDT = new Date(`${sDate}T${st}:00`).getTime();
-      const endDT = new Date(`${eDate}T${et}:00`).getTime();
-
-      return reservations.some(r => {
-        if (ignoreIds && ignoreIds[r.id]) return false;
-        if (r.equipment !== eq) return false;
-        const rStartDT = new Date(`${r.date}T${r.startTime}:00`).getTime();
-        const rEndDT = new Date(`${r.endDate || r.date}T${r.endTime}:00`).getTime();
-        return startDT < rEndDT && endDT > rStartDT;
-      });
-    }
-
     async function saveBooking(e) {
       e.preventDefault();
       if (isSyncing) return;
@@ -2127,94 +2588,112 @@
       const endTime = cleanTime(document.getElementById('modalEndTime').value);
       const notes = document.getElementById('modalNotes').value.trim();
 
-      const startDT = new Date(`${sDate}T${startTime}:00`).getTime();
-      const endDT = new Date(`${eDate}T${endTime}:00`).getTime();
-
-      if (endDT <= startDT) {
-        alert(currentLang === 'en' ? "End time must be after start time." : "終了日時は開始日時より後に設定してください。");
+      // ---- 入力チェック ----
+      if (!sDate || !eDate || !document.getElementById('modalStartTime').value || !document.getElementById('modalEndTime').value) {
+        alert(t('dateRequired'));
         return;
       }
+      const probe = { date: sDate, endDate: eDate, startTime, endTime };
+      if (absEndMin(probe) <= absStartMin(probe)) {
+        alert(t('endAfterStart'));
+        return;
+      }
+      const span = dayNum(eDate) - dayNum(sDate);
+      if (span > MAX_SPAN_DAYS) {
+        alert(t('spanTooLong', { n: MAX_SPAN_DAYS }));
+        return;
+      }
+      const minStr = getMinAllowedDateStr();
+      const maxStr = getMaxFutureDateStr();
+      if (sDate < minStr) {
+        alert(t('dateBeforeRetention', { date: minStr }));
+        return;
+      }
+      if (eDate > maxStr) {
+        alert(t('dateTooFar', { date: maxStr }));
+        return;
+      }
+
+      const orig = editingId ? reservations.find(r => String(r.id) === String(editingId)) : null;
+      if (editingId && !orig) {
+        alert(t('bookingNotFound'));
+        return;
+      }
+      // 故障中などの機器には新規予約・機器の変更ができない
+      if (isEqUnavailable(eq) && (!orig || orig.equipment !== eq)) {
+        const info = getEqStatusInfo(eq);
+        alert(t('eqUnavailableAlert', { eq, status: info ? info.label : '' }));
+        return;
+      }
+      // 他の人の予約を変更するときは確認
+      if (orig && !isMyBooking(orig) && !confirm(t('confirmEditOther', { name: orig.title }))) return;
 
       const btn = document.getElementById('saveSubmitBtn');
       btn.disabled = true;
       btn.textContent = t('btnSaving');
 
       try {
-        if (editingId) {
-          const orig = reservations.find(r => String(r.id) === String(editingId));
-          if (!orig) return;
-
+        if (orig) {
           const scopeEl = document.querySelector('input[name="seriesScope"]:checked');
           const scope = (orig.seriesId && scopeEl) ? scopeEl.value : 'single';
+          let res;
 
           if (scope === 'future') {
-            const spanDays = Math.round((new Date(eDate + "T00:00:00") - new Date(sDate + "T00:00:00")) / 86400000);
-            const res = await sendTransaction({
+            // 繰り返し予約：この日以降すべてをまとめて変更（日付の変更はできない）
+            if (sDate !== orig.date) {
+              alert(t('seriesDateChange'));
+              return;
+            }
+            res = await sendTransaction({
               action: "updateSeries",
               seriesId: orig.seriesId,
               fromDate: orig.date,
-              changes: { equipment: eq, title, notes, spanDays, startTime, endTime }
+              changes: { equipment: eq, title, notes, spanDays: span, startTime, endTime }
             });
-            if (res) {
-              if (res.status !== "success") {
-                alert(res.message || "Error");
-                return;
-              }
-              closeBookingModal();
-            }
           } else {
-            if (hasConflict(eq, sDate, eDate, startTime, endTime, { [editingId]: true })) {
-              alert(currentLang === 'en' ? "Overlaps with another booking." : "同じ時間帯にすでに別の予約が入っています。");
+            if (hasConflict(eq, sDate, eDate, startTime, endTime, { [orig.id]: true })) {
+              alert(t('conflictSame'));
               return;
             }
-            const updatedItem = {
-              ...orig,
-              id: String(editingId),
-              equipment: eq,
-              title,
-              date: sDate,
-              endDate: eDate,
-              startTime,
-              endTime,
-              notes
-            };
-            const res = await sendTransaction({ action: "update", item: updatedItem });
-            if (res) {
-              if (res.status !== "success") {
-                alert(res.message || "Error");
-                return;
-              }
-              closeBookingModal();
-            }
+            res = await sendTransaction({
+              action: "update",
+              item: { ...orig, equipment: eq, title, date: sDate, endDate: eDate, startTime, endTime, notes }
+            });
           }
+          if (res.status !== "success") {
+            notifyFailure(res, t('opFailed'));
+            // 他の人が先に変更していた場合は、最新の内容を確認してもらうため閉じる
+            if (res.status === "stale") closeBookingModal();
+            return;
+          }
+          closeBookingModal();
         } else {
-          // 新規作成時は入力した名前を自分の名前として記憶
-          if (title) {
-            currentActor = title.slice(0, 40);
-            localStorage.setItem('okamoto_actor', currentActor);
-            document.getElementById('currentActorBadge').textContent = currentActor;
-          }
-
           const rep = document.getElementById('modalRepeatType').value;
-          const count = rep === 'none' ? 1 : Math.max(2, parseInt(document.getElementById('modalRepeatCount').value) || 4);
+          const count = rep === 'none' ? 1 : Math.min(30, Math.max(2, parseInt(document.getElementById('modalRepeatCount').value, 10) || 4));
           const seriesId = rep === 'none' ? "" : "ser_" + Date.now();
           const randSuffix = Math.random().toString(36).slice(2, 6);
+          const base = new Date(sDate + "T00:00:00");
           const candidateItems = [];
 
           for (let i = 0; i < count; i++) {
-            const dt = new Date(sDate + "T00:00:00");
-            const edt = new Date(eDate + "T00:00:00");
-            if (rep === 'daily') { dt.setDate(dt.getDate() + i); edt.setDate(edt.getDate() + i); }
-            else if (rep === 'weekly') { dt.setDate(dt.getDate() + i * 7); edt.setDate(edt.getDate() + i * 7); }
-            else if (rep === 'biweekly') { dt.setDate(dt.getDate() + i * 14); edt.setDate(edt.getDate() + i * 14); }
-            else if (rep === 'monthly') { dt.setMonth(dt.getMonth() + i); edt.setMonth(edt.getMonth() + i); }
+            let dStr;
+            if (rep === 'daily') dStr = addDaysStr(sDate, i);
+            else if (rep === 'weekly') dStr = addDaysStr(sDate, i * 7);
+            else if (rep === 'biweekly') dStr = addDaysStr(sDate, i * 14);
+            else if (rep === 'monthly') {
+              // 毎月：その月に同じ日がなければ月末にそろえる（1/31 → 2/28 → 3/31 …）
+              const y = base.getFullYear();
+              const m = base.getMonth() + i;
+              const lastDay = new Date(y, m + 1, 0).getDate();
+              dStr = formatDateStr(new Date(y, m, Math.min(base.getDate(), lastDay)));
+            } else dStr = sDate;
 
             candidateItems.push({
               id: `res_${Date.now()}_${randSuffix}_${i}`,
               equipment: eq,
               title,
-              date: formatDateStr(dt),
-              endDate: formatDateStr(edt),
+              date: dStr,
+              endDate: addDaysStr(dStr, span),
               startTime,
               endTime,
               notes,
@@ -2222,23 +2701,27 @@
             });
           }
 
-          const res = await sendTransaction({ action: "add", items: candidateItems });
-          if (res) {
-            if (res.status !== "success") {
-              alert(res.message || "Error");
-              return;
-            }
-            if (res.added === 0) {
-              alert(currentLang === 'en' ? "Could not book due to time conflict." : "指定した時間帯はすでに他の予約と重複しているため登録できませんでした。");
-              return;
-            }
-            if (res.skipped > 0) {
-              alert(currentLang === 'en'
-                ? `Added ${res.added} booking(s) (${res.skipped} skipped due to conflicts).`
-                : `${res.added}件を登録しました（重複していた${res.skipped}件はスキップしました）。`);
-            }
-            closeBookingModal();
+          // 予約できる期間（1年先まで）を超える回があれば、送る前に知らせる
+          const tooFar = candidateItems.filter(c => c.endDate > maxStr).length;
+          if (tooFar > 0) {
+            alert(t('repeatTooFar', { n: tooFar, date: maxStr }));
+            return;
           }
+
+          const res = await sendTransaction({ action: "add", items: candidateItems });
+          if (res.status !== "success") {
+            notifyFailure(res, t('opFailed'));
+            return;
+          }
+          if (res.added === 0) {
+            alert(res.skippedRange > 0 ? t('addRangeSkipped', { n: res.skippedRange }) : t('addAllConflict'));
+            return;
+          }
+          const notes2 = [];
+          if (res.skipped > 0) notes2.push(t('addPartial', { added: res.added, skipped: res.skipped }));
+          if (res.skippedRange > 0) notes2.push(t('addRangeSkipped', { n: res.skippedRange }));
+          if (notes2.length) alert(notes2.join('\n'));
+          closeBookingModal();
         }
       } finally {
         btn.disabled = false;
@@ -2253,50 +2736,57 @@
 
       const scopeEl = document.querySelector('input[name="seriesScope"]:checked');
       const scope = (orig.seriesId && scopeEl) ? scopeEl.value : 'single';
+      const isOther = !isMyBooking(orig);
 
-      let confirmMsg = !isMyBooking(orig)
-        ? t('confirmDeleteOther').replace('{name}', orig.title)
-        : (scope === 'future' ? t('confirmDeleteSeries') : t('confirmDeleteSelf'));
-
+      let confirmMsg;
+      if (scope === 'future') confirmMsg = isOther ? t('confirmDeleteOtherSeries', { name: orig.title }) : t('confirmDeleteSeries');
+      else confirmMsg = isOther ? t('confirmDeleteOther', { name: orig.title }) : t('confirmDeleteSelf');
       if (!confirm(confirmMsg)) return;
 
       closeBookingModal();
-      if (scope === 'future') {
-        await sendTransaction({ action: "deleteSeries", seriesId: orig.seriesId, fromDate: orig.date });
-      } else {
-        await sendTransaction({ action: "delete", id: orig.id, updatedAt: orig.updatedAt });
-      }
+      const res = scope === 'future'
+        ? await sendTransaction({ action: "deleteSeries", seriesId: orig.seriesId, fromDate: orig.date })
+        : await sendTransaction({ action: "delete", id: orig.id, updatedAt: orig.updatedAt });
+      notifyFailure(res, t('opFailed'));
     }
 
-    // 機器管理（管理者専用・ステータス変更対応）
+    // ==========================================
+    // 機器管理（管理者専用・状態の設定も可能）
+    // ==========================================
+    let isSavingEquipments = false; // 保存中は操作を受け付けない（連打で変更が抜け落ちないように）
+
     function openSettingsModal() {
       if (userRole !== 'admin') {
         requestAdminSettings();
         return;
       }
+      const dis = isSavingEquipments ? 'disabled' : '';
+      document.getElementById('uiBtnAddEq').disabled = isSavingEquipments;
+      document.getElementById('newEquipmentName').disabled = isSavingEquipments;
       const box = document.getElementById('equipmentListContainer');
       box.innerHTML = equipments.map((eq, i) => {
         const stObj = equipmentStatus[eq] || { status: "", note: "" };
+        const noteDisabled = !stObj.status || isSavingEquipments;
         return `
-        <div class="bg-slate-50 p-2.5 rounded-lg border text-sm space-y-1.5">
+        <div class="bg-slate-50 p-2.5 rounded-lg border ${stObj.status ? 'border-amber-300' : ''} text-sm space-y-1.5">
           <div class="flex justify-between items-center gap-2">
             <span class="truncate flex-1 font-bold text-slate-800">${i + 1}. ${escapeHtml(eq)}</span>
             <div class="flex items-center gap-1 shrink-0">
-              <button type="button" onclick="moveEquipment(${i}, -1)" ${i === 0 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30">▲</button>
-              <button type="button" onclick="moveEquipment(${i}, 1)" ${i === equipments.length - 1 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30">▼</button>
-              <button type="button" onclick="removeEquipment(${i})" class="ml-1 px-2 py-0.5 text-red-600 hover:bg-red-50 rounded text-xs font-bold">${escapeHtml(t('btnDelete'))}</button>
+              <button type="button" onclick="moveEquipment(${i}, -1)" ${i === 0 || isSavingEquipments ? 'disabled' : ''} title="${escapeHtml(t('moveUp'))}" class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30">▲</button>
+              <button type="button" onclick="moveEquipment(${i}, 1)" ${i === equipments.length - 1 || isSavingEquipments ? 'disabled' : ''} title="${escapeHtml(t('moveDown'))}" class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30">▼</button>
+              <button type="button" onclick="removeEquipment(${i})" ${dis} class="ml-1 px-2 py-0.5 text-red-600 hover:bg-red-50 rounded text-xs font-bold disabled:opacity-30">${escapeHtml(t('btnDelete'))}</button>
             </div>
           </div>
           <div class="flex gap-1.5 items-center">
-            <select onchange="changeEqStatus(${i}, this.value)" class="border rounded px-2 py-1 text-xs bg-white">
-              <option value="" ${stObj.status === '' ? 'selected' : ''}>${escapeHtml(t('statusAvailable'))}</option>
+            <select onchange="changeEqStatus(${i}, this.value)" ${dis} class="border rounded px-2 py-1 text-xs bg-white ${stObj.status ? 'font-bold text-amber-800' : ''}">
+              <option value="" ${!stObj.status ? 'selected' : ''}>${escapeHtml(t('statusAvailable'))}</option>
               <option value="broken" ${stObj.status === 'broken' ? 'selected' : ''}>${escapeHtml(t('statusBroken'))}</option>
               <option value="maintenance" ${stObj.status === 'maintenance' ? 'selected' : ''}>${escapeHtml(t('statusMaint'))}</option>
               <option value="stopped" ${stObj.status === 'stopped' ? 'selected' : ''}>${escapeHtml(t('statusStopped'))}</option>
             </select>
-            <input type="text" value="${escapeHtml(stObj.note || '')}" onchange="changeEqStatusNote(${i}, this.value)"
-              placeholder="${escapeHtml(t('statusNotePlaceholder'))}"
-              class="flex-1 border rounded px-2 py-1 text-xs bg-white" />
+            <input type="text" maxlength="100" value="${escapeHtml(stObj.note || '')}" onchange="changeEqStatusNote(${i}, this.value)" ${noteDisabled ? 'disabled' : ''}
+              placeholder="${escapeHtml(stObj.status ? t('statusNotePlaceholder') : t('statusNoteDisabled'))}"
+              class="flex-1 border rounded px-2 py-1 text-xs bg-white disabled:bg-slate-100 disabled:text-slate-400" />
           </div>
         </div>`;
       }).join('');
@@ -2309,80 +2799,114 @@
       renderCalendar();
     }
 
-    async function syncEquipmentsToCloud() {
-      localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
-      localStorage.setItem('okamoto_eq_status_v1', JSON.stringify(equipmentStatus));
+    function snapshotEquipments() {
+      return [equipments.slice(), JSON.parse(JSON.stringify(equipmentStatus))];
+    }
+
+    // 変更前の状態を受け取り、保存に失敗したらその状態に戻す
+    async function syncEquipmentsToCloud(prevEquipments, prevStatus) {
+      isSavingEquipments = true;
       openSettingsModal();
-      await sendTransaction({ action: "saveEquipments", equipments, equipmentStatus });
+      const res = await sendTransaction({ action: "saveEquipments", equipments, equipmentStatus });
+      isSavingEquipments = false;
+      if (res.status === "success") {
+        lsSet('okamoto_eq_v1', JSON.stringify(equipments));
+        lsSet('okamoto_eq_status_v1', JSON.stringify(equipmentStatus));
+      } else if (!res.silent) {
+        // サーバーが一覧を返さなかった失敗（通信エラー・混雑など）は手元で元に戻す
+        if (!Array.isArray(res.equipments)) {
+          equipments = prevEquipments;
+          equipmentStatus = prevStatus;
+        }
+        renderTagButtons();
+        renderCalendar();
+        notifyFailure(res, t('eqSaveFailed'));
+      }
+      if (isModalOpen('settingsModal')) openSettingsModal();
     }
 
     async function changeEqStatus(index, newStatus) {
-      if (userRole !== 'admin') return;
+      if (userRole !== 'admin' || isSavingEquipments) return;
+      const [prevEq, prevSt] = snapshotEquipments();
       const eq = equipments[index];
       if (!newStatus) {
         delete equipmentStatus[eq];
       } else {
         equipmentStatus[eq] = { status: newStatus, note: (equipmentStatus[eq] && equipmentStatus[eq].note) || "" };
       }
-      await syncEquipmentsToCloud();
+      await syncEquipmentsToCloud(prevEq, prevSt);
     }
 
     async function changeEqStatusNote(index, noteVal) {
-      if (userRole !== 'admin') return;
       const eq = equipments[index];
-      if (equipmentStatus[eq]) {
-        equipmentStatus[eq].note = noteVal.trim();
-        await syncEquipmentsToCloud();
-      }
+      if (userRole !== 'admin' || isSavingEquipments || !equipmentStatus[eq]) return;
+      const [prevEq, prevSt] = snapshotEquipments();
+      equipmentStatus[eq].note = String(noteVal).trim().slice(0, 100);
+      await syncEquipmentsToCloud(prevEq, prevSt);
     }
 
     async function addEquipment() {
-      if (userRole !== 'admin') return;
-      const val = document.getElementById('newEquipmentName').value.trim();
-      if (val && !equipments.includes(val)) {
-        equipments.push(val);
-        document.getElementById('newEquipmentName').value = "";
-        await syncEquipmentsToCloud();
+      if (userRole !== 'admin' || isSavingEquipments) return;
+      const input = document.getElementById('newEquipmentName');
+      const val = input.value.trim();
+      if (!val) return;
+      if (equipments.includes(val)) {
+        alert(t('eqDuplicate', { eq: val }));
+        return;
       }
+      const [prevEq, prevSt] = snapshotEquipments();
+      equipments.push(val);
+      input.value = "";
+      await syncEquipmentsToCloud(prevEq, prevSt);
     }
 
     async function moveEquipment(index, delta) {
-      if (userRole !== 'admin') return;
+      if (userRole !== 'admin' || isSavingEquipments) return;
       const targetIdx = index + delta;
       if (targetIdx < 0 || targetIdx >= equipments.length) return;
+      const [prevEq, prevSt] = snapshotEquipments();
       const temp = equipments[index];
       equipments[index] = equipments[targetIdx];
       equipments[targetIdx] = temp;
-      await syncEquipmentsToCloud();
+      await syncEquipmentsToCloud(prevEq, prevSt);
     }
 
     async function removeEquipment(i) {
-      if (userRole !== 'admin') return;
-      if (confirm(`Delete "${equipments[i]}"?`)) {
-        const removedName = equipments[i];
-        equipments.splice(i, 1);
-        delete equipmentStatus[removedName];
-        await syncEquipmentsToCloud();
-      }
+      if (userRole !== 'admin' || isSavingEquipments) return;
+      const eq = equipments[i];
+      // まだ終わっていない予約が残っていれば件数を警告する
+      const nowAbs = nowAbsMin();
+      const upcoming = reservations.filter(r => r.equipment === eq && absEndMin(r) > nowAbs).length;
+      const question = t('eqRemoveConfirm', { eq }) + (upcoming > 0 ? "\n\n" + t('eqRemoveUpcoming', { n: upcoming }) : "");
+      if (!confirm(question)) return;
+      const [prevEq, prevSt] = snapshotEquipments();
+      equipments.splice(i, 1);
+      delete equipmentStatus[eq];
+      await syncEquipmentsToCloud(prevEq, prevSt);
     }
 
-    // 初期起動処理
+    // ==========================================
+    // 初期起動処理（保存データが壊れていても止まらないように読み込む）
+    // ==========================================
     (function initImmediate() {
-      const savedEq = localStorage.getItem('okamoto_eq_v1');
-      if (savedEq) equipments = JSON.parse(savedEq);
-      const savedStatus = localStorage.getItem('okamoto_eq_status_v1');
-      if (savedStatus) equipmentStatus = JSON.parse(savedStatus);
-      const savedRes = localStorage.getItem('okamoto_res_v1');
-      if (savedRes) reservations = normalizeList(JSON.parse(savedRes));
+      const savedEq = lsGetJSON('okamoto_eq_v1', null);
+      if (Array.isArray(savedEq)) equipments = savedEq.filter(x => typeof x === 'string');
+      const savedStatus = lsGetJSON('okamoto_eq_status_v1', {});
+      equipmentStatus = (savedStatus && typeof savedStatus === 'object' && !Array.isArray(savedStatus)) ? savedStatus : {};
+      const savedRes = lsGetJSON('okamoto_res_v1', null);
+      if (Array.isArray(savedRes)) {
+        try { reservations = normalizeList(savedRes); } catch (e) { reservations = []; }
+      }
 
       if (currentActor) {
         document.getElementById('loginActorInput').value = currentActor;
       }
 
       applyTranslations();
+      updateNameSuggestions();
 
       if (authKey && userRole) {
-        unlockApp();
+        unlockApp(); // 保存済みのパスワードが無効なら、読み込み時にログイン画面へ戻る
       }
     })();
 
