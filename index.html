@@ -374,36 +374,38 @@
           <label id="uiLblEq" class="block text-xs font-bold text-slate-600 mb-1">実験機器</label>
           <select id="modalEquipment" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm"></select>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label id="uiLblName" class="block text-xs font-bold text-slate-600 mb-1">予約者名</label>
-            <input type="text" id="modalName" required maxlength="100" list="nameSuggestions" autocomplete="off" onkeydown="if (event.key === 'Enter') event.preventDefault();" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+        <!-- 予約者名 -->
+        <div>
+          <label id="uiLblName" class="block text-xs font-bold text-slate-600 mb-1">予約者名</label>
+          <input type="text" id="modalName" required maxlength="100" list="nameSuggestions" autocomplete="off" onkeydown="if (event.key === 'Enter') event.preventDefault();" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
             <p id="uiNameHint" class="text-[10.5px] leading-snug text-slate-500 mt-1"></p>
-          </div>
+        </div>
+        <!-- 開始：日付と時間を横並び -->
+        <div class="grid grid-cols-2 gap-3">
           <div>
             <label id="uiLblStartDate" class="block text-xs font-bold text-slate-600 mb-1">開始日付</label>
             <input type="date" id="modalStartDate" onchange="handleStartDateChange()" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
           </div>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label id="uiLblStartTime" class="block text-xs font-bold text-slate-600 mb-1">開始時間</label>
             <input type="time" id="modalStartTime" onchange="handleStartTimeChange()" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
           </div>
+        </div>
+        <!-- 終了：日付と時間を横並び -->
+        <div class="grid grid-cols-2 gap-3">
           <div>
             <label id="uiLblEndDate" class="block text-xs font-bold text-slate-600 mb-1">終了日付</label>
             <input type="date" id="modalEndDate" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
           </div>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label id="uiLblEndTime" class="block text-xs font-bold text-slate-600 mb-1">終了時間</label>
             <input type="time" id="modalEndTime" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
           </div>
-          <div>
-            <label id="uiLblNotes" class="block text-xs font-bold text-slate-600 mb-1">備考テキスト</label>
-            <input type="text" id="modalNotes" maxlength="200" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
-          </div>
+        </div>
+        <!-- 備考 -->
+        <div>
+          <label id="uiLblNotes" class="block text-xs font-bold text-slate-600 mb-1">備考テキスト</label>
+          <input type="text" id="modalNotes" maxlength="200" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
         </div>
 
         <!-- 新規作成時：繰り返し設定 -->
