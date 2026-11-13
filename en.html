@@ -366,7 +366,7 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 mb-1">Name</label>
-          <input type="text" id="modalName" required maxlength="100" list="nameSuggestions" autocomplete="off" placeholder="e.g., Oiwa" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+          <input type="text" id="modalName" required maxlength="100" list="nameSuggestions" autocomplete="off" onkeydown="if (event.key === 'Enter') event.preventDefault();" placeholder="e.g., Oiwa" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
           <p class="text-[11px] text-slate-500 mt-1">Enter your family name in romaji (e.g., Oiwa). External users: "Family name (Affiliation)" (e.g., Tanaka (Kyoto Univ.)). Picking from the suggestions keeps names consistent.</p>
         </div>
         <div class="grid grid-cols-2 gap-3">
@@ -985,7 +985,13 @@
 
       try {
         const key = payload.action === "saveEquipments" ? adminKey : memberKey;
-        const result = await postToServer({ ...payload, key });
+        // サーバーが混雑（他の書き込み処理中）のときは、少し待って最大3回まで自動で再試行
+        let result = await postToServer({ ...payload, key });
+        for (let retry = 1; result && result.status === "busy" && retry <= 3; retry++) {
+          status.innerText = `Server busy, retrying (${retry}/3)...`;
+          await new Promise(r => setTimeout(r, 1500 * retry));
+          result = await postToServer({ ...payload, key });
+        }
         if (result.status === "unauthorized") {
           handleUnauthorized();
           return null;
