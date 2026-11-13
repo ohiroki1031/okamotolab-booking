@@ -193,6 +193,9 @@
           <button onclick="openNewModal()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-sm font-bold transition">
             <i class="fa-solid fa-plus mr-1"></i>新規予約
           </button>
+          <button onclick="openMyBookings()" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition">
+            <i class="fa-solid fa-user mr-1"></i>自分の予約
+          </button>
           <button onclick="toggleTagBar()" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition">
             <i class="fa-solid fa-tags mr-1"></i>機器タグ
           </button>
@@ -269,6 +272,8 @@
           <p>• <b>範囲予約</b>：空欄を横ドラッグ（スマホは<b>長押し→スライド</b>）</p>
           <p>• <b>バー移動</b>：予約バーをドラッグ（スマホは<b>長押し→スライド</b>）</p>
           <p>• <b>編集/削除</b>：予約バーをクリック（タップ）</p>
+          <p>• <b>日をまたぐ予約</b>：予約画面で「終了日」を変更</p>
+          <p>• <span class="inline-block w-2.5 h-2.5 rounded-sm border-2 border-emerald-600 bg-emerald-50 align-middle"></span> 緑の枠は自分の予約（「自分の予約」で名前を設定）</p>
           <p class="text-[11px] text-slate-400 pt-1 border-t border-slate-100">※10分おきに自動更新（操作中はスキップ）</p>
         </div>
       </aside>
@@ -335,6 +340,9 @@
           <div id="confirmMoveAfter" class="text-xs font-bold text-indigo-950 bg-indigo-50 px-2.5 py-1.5 rounded border border-indigo-300"></div>
         </div>
       </div>
+      <p id="confirmMoveOthersWarn" class="force-hidden -mt-2 mb-4 text-xs font-bold text-amber-800 bg-amber-50 border border-amber-300 rounded-lg px-3 py-2">
+        <i class="fa-solid fa-triangle-exclamation mr-1"></i><span id="confirmMoveOthersText"></span>
+      </p>
 
       <div class="flex gap-2 justify-end">
         <button type="button" onclick="cancelPendingMove()" class="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">
@@ -356,29 +364,44 @@
           <label class="block text-xs font-bold text-slate-600 mb-1">実験機器</label>
           <select id="modalEquipment" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm"></select>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">予約者名</label>
-            <input type="text" id="modalName" required placeholder="例: Oiwa" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">日付</label>
-            <input type="date" id="modalDate" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
-          </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">予約者名</label>
+          <input type="text" id="modalName" required maxlength="100" list="nameSuggestions" autocomplete="off" placeholder="例: Oiwa" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+          <p class="text-[11px] text-slate-500 mt-1">ローマ字の姓で入力してください（例: Oiwa）。ラボ外の方は「姓 (所属)」（例: Tanaka (Kyoto Univ.)）。候補から選ぶと表記がそろいます。</p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">開始時間 (分単位)</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1">開始日</label>
+            <input type="date" id="modalDate" onchange="handleStartDateChange()" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">開始時間</label>
             <input type="time" id="modalStartTime" onchange="handleStartTimeChange()" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
           </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">終了時間 (分単位)</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1">終了日 <span class="font-normal text-slate-400">（日をまたぐ場合）</span></label>
+            <input type="date" id="modalEndDate" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">終了時間</label>
             <input type="time" id="modalEndTime" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
           </div>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 mb-1">備考テキスト</label>
-          <input type="text" id="modalNotes" placeholder="例: RNA合成 / サンプル名など" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+          <input type="text" id="modalNotes" maxlength="200" placeholder="例: RNA合成 / サンプル名など" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+        </div>
+
+        <!-- 繰り返し予約の変更範囲（編集時・シリーズの予約のみ表示） -->
+        <div id="seriesScopeSection" class="force-hidden border-t pt-3">
+          <label class="block text-xs font-bold text-indigo-900 mb-1"><i class="fa-solid fa-rotate mr-1"></i>繰り返し予約の変更範囲</label>
+          <select id="modalSeriesScope" class="w-full border border-slate-300 rounded-lg p-2 text-sm">
+            <option value="one">この予約のみ</option>
+            <option value="future">この日以降のすべて</option>
+          </select>
+          <p class="text-[11px] text-slate-500 mt-1">「この日以降のすべて」では、日付以外の内容（機器・名前・時間・日数・備考）がまとめて変更されます。</p>
         </div>
 
         <!-- 繰り返し設定 -->
@@ -429,6 +452,46 @@
     </div>
   </div>
 
+  <!-- 予約者名の入力候補（これまでの予約で使われた名前から自動生成） -->
+  <datalist id="nameSuggestions"></datalist>
+
+  <!-- 繰り返し予約の削除範囲モーダル -->
+  <div id="deleteScopeModal" class="force-hidden fixed inset-0 bg-black/55 z-[60] flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-lg shrink-0">
+          <i class="fa-solid fa-trash"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900">繰り返し予約の削除</h3>
+          <p class="text-xs text-slate-500">削除する範囲を選んでください</p>
+        </div>
+      </div>
+      <div class="space-y-2">
+        <button type="button" onclick="executeDelete('one')" class="w-full py-2.5 border border-slate-300 rounded-lg text-sm font-bold text-slate-800 hover:bg-slate-50">この予約のみ</button>
+        <button type="button" onclick="executeDelete('future')" class="w-full py-2.5 border border-red-300 rounded-lg text-sm font-bold text-red-700 hover:bg-red-50">この日以降のすべて</button>
+        <button type="button" onclick="executeDelete('all')" class="w-full py-2.5 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-bold text-white">シリーズのすべて</button>
+        <button type="button" onclick="hideEl('deleteScopeModal')" class="w-full py-2 text-sm text-slate-500 hover:text-slate-700">キャンセル</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 自分の予約一覧モーダル -->
+  <div id="myBookingsModal" class="force-hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-lg font-bold text-indigo-950"><i class="fa-solid fa-user text-indigo-600 mr-1.5"></i>自分の予約</h3>
+        <button type="button" onclick="closeMyBookings()" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 text-lg leading-none">&times;</button>
+      </div>
+      <div class="flex items-center gap-2 mb-1">
+        <label for="myNameInput" class="text-xs font-bold text-slate-600 shrink-0">あなたの名前</label>
+        <input type="text" id="myNameInput" maxlength="100" list="nameSuggestions" autocomplete="off" oninput="updateMyName(this.value)" placeholder="例: Oiwa" class="flex-1 border border-slate-300 rounded-lg p-2 text-sm" />
+      </div>
+      <p class="text-[11px] text-slate-500 mb-3">予約者名がこの名前と一致する、今日以降の予約を表示します（大文字・小文字は区別しません）。名前はこのブラウザに保存され、新規予約時に自動入力されます。</p>
+      <div id="myBookingsList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
+    </div>
+  </div>
+
   <script>
     // ==========================================
     // ★設定エリア
@@ -469,9 +532,16 @@
       const res = await fetch(GAS_WEB_APP_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ ...body, lang: PAGE_LANG }) // サーバーのメッセージ言語を指定
+        // lang: サーバーのメッセージ言語 / actor: 操作ログに記録する名前
+        body: JSON.stringify({ ...body, lang: PAGE_LANG, actor: myName })
       });
       return res.json();
+    }
+
+    function applyEquipmentStatus(obj) {
+      if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return;
+      equipmentStatus = obj;
+      localStorage.setItem('okamoto_eqst_v1', JSON.stringify(equipmentStatus));
     }
 
     // 言語切り替えボタンの表示を設定
@@ -554,7 +624,102 @@
       if (isModalOpen('moveConfirmModal')) return true;
       if (isModalOpen('settingsModal')) return true;
       if (isModalOpen('adminAuthModal')) return true;
+      if (isModalOpen('deleteScopeModal')) return true;
       return false;
+    }
+
+    // ==========================================
+    // 新機能用の共通ヘルパー
+    // ==========================================
+    const MAX_SPAN_DAYS = 14; // 1件の予約で日をまたげる最大日数（GAS側と同じ値）
+    const WEEKDAY_NAMES = ['日','月','火','水','木','金','土'];
+    const EQ_STATUS_LABELS = { broken: "故障中", maintenance: "メンテナンス中", stopped: "使用停止" };
+
+    // 機器の状態 { 機器名: { status, note } }（status が空なら利用可）
+    let equipmentStatus = {};
+    // このブラウザに保存した自分の名前
+    let myName = localStorage.getItem('okamoto_my_name') || "";
+
+    function eqStatusOf(eq) {
+      return (equipmentStatus[eq] && equipmentStatus[eq].status) || "";
+    }
+    function isEqAvailable(eq) {
+      return !eqStatusOf(eq);
+    }
+    function eqStatusLabel(eq) {
+      const st = eqStatusOf(eq);
+      return st ? (EQ_STATUS_LABELS[st] || st) : "";
+    }
+    // 機器名の横に出す状態バッジ（HTML）
+    function eqStatusBadge(eq) {
+      const st = eqStatusOf(eq);
+      if (!st) return '';
+      const note = equipmentStatus[eq].note || '';
+      const color = st === 'broken' ? 'bg-red-600' : st === 'maintenance' ? 'bg-amber-500' : 'bg-slate-500';
+      return `<span title="${esc(note)}" class="ml-1 shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold text-white ${color}">${esc(EQ_STATUS_LABELS[st] || st)}</span>`;
+    }
+
+    // "yyyy-MM-dd" → 通算日数
+    function dayNum(s) {
+      const [y, m, d] = String(s).split('-').map(Number);
+      return Math.round(Date.UTC(y, m - 1, d) / 86400000);
+    }
+    function addDaysStr(s, n) {
+      const dt = new Date(s + "T00:00:00");
+      dt.setDate(dt.getDate() + n);
+      return formatDateStr(dt);
+    }
+    function resEndDate(r) {
+      return r.endDate || r.date;
+    }
+    function isMultiDay(r) {
+      return resEndDate(r) !== r.date;
+    }
+    function absStartMin(r) {
+      return dayNum(r.date) * 1440 + timeToMinutes(r.startTime);
+    }
+    function absEndMin(r) {
+      return dayNum(resEndDate(r)) * 1440 + timeToMinutes(r.endTime);
+    }
+    // 指定日に表示する区間（その日の0:00からの分）。その日にかからなければ null
+    function segmentOnDay(r, dateStr) {
+      const base = dayNum(dateStr) * 1440;
+      const s = absStartMin(r) - base;
+      const e = absEndMin(r) - base;
+      const ss = Math.max(0, s);
+      const ee = Math.min(1440, e);
+      if (ee <= ss) return null;
+      return { s: ss, e: ee, startsBefore: s < 0, endsAfter: e > 1440 };
+    }
+    // "M/D (曜)" 形式
+    function shortDateLabel(dateStr) {
+      const dt = new Date(dateStr + "T00:00:00");
+      return `${dt.getMonth() + 1}/${dt.getDate()} (${WEEKDAY_NAMES[dt.getDay()]})`;
+    }
+    // 予約の日時範囲の表示用文字列
+    function rangeLabel(r) {
+      const end = isMultiDay(r) ? `${shortDateLabel(resEndDate(r))} ${r.endTime}` : r.endTime;
+      return `${shortDateLabel(r.date)} ${r.startTime} 〜 ${end}`;
+    }
+
+    function sameName(a, b) {
+      return String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
+    }
+    // 名前が保存されていて、予約者名がそれと違えば「他人の予約」
+    function isOthersBooking(item) {
+      return !!myName && !!item && !sameName(item.title, myName);
+    }
+    function othersWarningText(item) {
+      return `${item.title} さんの予約です。`;
+    }
+    function confirmIfOthers(item, actionText) {
+      if (!isOthersBooking(item)) return true;
+      return confirm(`${othersWarningText(item)}${actionText}`);
+    }
+    function setMyName(name) {
+      myName = String(name || "").trim();
+      if (myName) localStorage.setItem('okamoto_my_name', myName);
+      else localStorage.removeItem('okamoto_my_name');
     }
 
     function formatDateStr(d) {
@@ -612,10 +777,11 @@
           ...r,
           id: String(r.id).trim(),
           date: cleanDate(r.date),
+          endDate: cleanDate(r.endDate) || cleanDate(r.date),
           startTime: cleanTime(r.startTime),
           endTime: cleanTime(r.endTime)
         }))
-        .filter(r => r.date >= minStr);
+        .filter(r => resEndDate(r) >= minStr);
     }
 
     function startPrefetch(isBackgroundAuto = false) {
@@ -642,6 +808,7 @@
             equipments = json.equipments;
             localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
           }
+          applyEquipmentStatus(json && json.equipmentStatus);
 
           if (isUnlocked) {
             const st = document.getElementById('syncStatus');
@@ -789,6 +956,7 @@
     (function initImmediate() {
       const savedEq = localStorage.getItem('okamoto_eq_v1');
       if (savedEq) equipments = JSON.parse(savedEq);
+      try { equipmentStatus = JSON.parse(localStorage.getItem('okamoto_eqst_v1') || "{}") || {}; } catch (e) { equipmentStatus = {}; }
       const savedRes = localStorage.getItem('okamoto_res_v1');
       if (savedRes) reservations = normalizeList(JSON.parse(savedRes));
 
@@ -839,6 +1007,9 @@
         if (Array.isArray(result.equipments) && result.equipments.length > 0) {
           equipments = result.equipments;
           localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
+        }
+        if (result.equipmentStatus) {
+          applyEquipmentStatus(result.equipmentStatus);
           renderTagButtons();
         }
         status.innerText = "同期完了";
@@ -899,7 +1070,7 @@
         const isDisabled = dStr < minStr;
         const isSelected = dStr === selectedStr;
         const isToday = dStr === todayStr;
-        const hasRes = !isDisabled && reservations.some(r => r.date === dStr);
+        const hasRes = !isDisabled && reservations.some(r => r.date <= dStr && resEndDate(r) >= dStr);
         const dow = (firstDay + day - 1) % 7;
 
         let cls = "py-1.5 rounded-md relative font-medium transition ";
@@ -980,7 +1151,9 @@
       equipments.forEach((eq, i) => {
         const b = document.createElement('button');
         b.className = `px-2.5 py-1 rounded text-xs font-medium text-white ${tagColors[i % tagColors.length]} hover:opacity-90`;
-        b.innerText = eq;
+        const stLabel = eqStatusLabel(eq);
+        b.innerText = stLabel ? `${eq}（${stLabel}）` : eq;
+        if (stLabel) b.classList.add('line-through', 'opacity-70');
         b.onclick = () => filterByEquipment(eq);
         box.appendChild(b);
       });
@@ -1056,33 +1229,45 @@
       html += `</div>`;
 
       eqs.forEach((eq, rowIdx) => {
-        const dayItems = reservations.filter(r => r.equipment === eq && r.date === dateStr);
+        // この日にかかる予約（日をまたぐ予約も含む）
+        const dayItems = reservations
+          .filter(r => r.equipment === eq)
+          .map(r => ({ item: r, seg: segmentOnDay(r, dateStr) }))
+          .filter(x => x.seg);
         const safeEqAttr = esc(eq);
+        const available = isEqAvailable(eq);
+        const stNote = available ? '' : (equipmentStatus[eq].note || '');
         html += `<div data-eq-row="${rowIdx}" data-eq-name="${safeEqAttr}" class="eq-timeline-row timeline-grid border-b border-slate-200 hover:bg-slate-50/70 relative h-11">`;
-        html += `<div class="px-2.5 py-2 border-r border-slate-300 text-xs font-semibold truncate sticky left-0 bg-white z-20 flex items-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]" title="${safeEqAttr}">${safeEqAttr}</div>`;
+        html += `<div class="px-2.5 py-2 border-r border-slate-300 text-xs font-semibold sticky left-0 bg-white z-20 flex items-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]" title="${safeEqAttr}${stNote ? ' : ' + esc(stNote) : ''}"><span class="truncate">${safeEqAttr}</span>${eqStatusBadge(eq)}</div>`;
 
         for (let h = 0; h < 24; h++) {
           html += `<div class="border-r border-slate-100 h-full pointer-events-none"></div>`;
         }
 
-        html += `<div class="timeline-track absolute top-0 bottom-0 left-[160px] md:left-[220px] right-0 cursor-crosshair z-10 overflow-hidden"
+        // 予約不可の機器は斜線で表示し、新規ドラッグを無効化
+        const trackStyle = available ? '' : `style="background-image: repeating-linear-gradient(45deg, rgba(148,163,184,0.22) 0 8px, transparent 8px 16px);"`;
+        html += `<div class="timeline-track absolute top-0 bottom-0 left-[160px] md:left-[220px] right-0 ${available ? 'cursor-crosshair' : 'cursor-not-allowed'} z-10 overflow-hidden" ${trackStyle}
           onmousedown="startCreateDrag(event, this.closest('.eq-timeline-row').dataset.eqName, '${dateStr}')"
           ontouchstart="handleTrackTouchStart(event, this.closest('.eq-timeline-row').dataset.eqName, '${dateStr}')">`;
 
-        dayItems.forEach(item => {
-          const startMin = timeToMinutes(item.startTime);
-          const endMin = Math.max(startMin + 15, timeToMinutes(item.endTime));
+        dayItems.forEach(({ item, seg }) => {
+          const startMin = seg.s;
+          const endMin = Math.max(startMin + 15, seg.e);
           const leftPct = (startMin / 1440) * 100;
-          const widthPct = ((endMin - startMin) / 1440) * 100;
+          const widthPct = ((Math.min(1440, endMin) - startMin) / 1440) * 100;
           const text = esc(item.notes ? `${item.title} | ${item.notes}` : item.title);
+          const multi = isMultiDay(item);
+          const mine = !!myName && sameName(item.title, myName);
+          const colorCls = mine ? 'bg-emerald-50 border-emerald-600 hover:bg-emerald-100' : 'bg-white border-indigo-600 hover:bg-indigo-50';
+          const hint = multi ? '（クリックで編集）' : '（クリックで編集 / ドラッグで移動）';
 
           html += `<div data-res-id="${esc(item.id)}"
             onmousedown="startMoveDrag(event, this.dataset.resId)"
             ontouchstart="handleBarTouchStart(event, this.dataset.resId)"
-            title="${esc(item.startTime)}-${esc(item.endTime)} ${text}（クリックで編集 / ドラッグで移動）"
+            title="${esc(rangeLabel(item))} ${text}${hint}"
             style="left:${leftPct}%; width:${widthPct}%;"
-            class="res-bar absolute top-1.5 bottom-1.5 bg-white border-2 border-indigo-600 text-slate-900 rounded px-1.5 text-xs font-bold flex items-center overflow-hidden shadow-sm cursor-pointer hover:bg-indigo-50 z-10">
-            ${item.seriesId ? '<i class="fa-solid fa-rotate text-[9px] text-indigo-600 mr-0.5 shrink-0"></i>' : ''}<span class="res-label whitespace-nowrap overflow-hidden leading-none">${text}</span>
+            class="res-bar absolute top-1.5 bottom-1.5 border-2 ${colorCls} text-slate-900 rounded px-1.5 text-xs font-bold flex items-center overflow-hidden shadow-sm cursor-pointer z-10">
+            ${seg.startsBefore ? '<i class="fa-solid fa-caret-left text-[10px] text-indigo-600 mr-0.5 shrink-0"></i>' : ''}${item.seriesId ? '<i class="fa-solid fa-rotate text-[9px] text-indigo-600 mr-0.5 shrink-0"></i>' : ''}<span class="res-label whitespace-nowrap overflow-hidden leading-none">${text}</span>${seg.endsAfter ? '<i class="fa-solid fa-caret-right text-[10px] text-indigo-600 ml-auto pl-0.5 shrink-0"></i>' : ''}
           </div>`;
         });
 
@@ -1192,6 +1377,7 @@
       } else if (dragState.mode === 'move') {
         const dx = Math.abs(clientX - dragState.startX);
         const dy = Math.abs(clientY - dragState.startY);
+        if (isMultiDay(dragState.item)) return; // 日をまたぐ予約はドラッグ移動不可（編集画面で変更）
         if (!dragState.moved && dx < 10 && dy < 10) return;
 
         dragState.moved = true;
@@ -1242,7 +1428,8 @@
         document.querySelectorAll('.eq-timeline-row').forEach(r => r.classList.remove('bg-indigo-100/70'));
         dragState = null;
 
-        if (!moved) {
+        if (!moved || isMultiDay(item)) {
+          if (moved) renderCalendar();
           openEditModal(resId);
           return;
         }
@@ -1251,6 +1438,12 @@
         const newEtStr = minutesToTime(newStartMin + duration);
 
         if (targetEq === item.equipment && newStStr === item.startTime && newEtStr === item.endTime) {
+          renderCalendar();
+          return;
+        }
+
+        if (targetEq !== item.equipment && !isEqAvailable(targetEq)) {
+          alert(`「${targetEq}」は現在${eqStatusLabel(targetEq)}のため予約できません。`);
           renderCalendar();
           return;
         }
@@ -1272,6 +1465,7 @@
 
     function startCreateDrag(e, eq, dateStr) {
       if (e.button !== 0 || isSyncing) return;
+      if (!isEqAvailable(eq)) return; // 故障中・メンテナンス中などは新規予約不可
       initCreateDragState(e.currentTarget, eq, dateStr, e.clientX, false);
     }
 
@@ -1317,6 +1511,7 @@
 
     function handleTrackTouchStart(e, eq, dateStr) {
       if (isSyncing || e.touches.length !== 1) return;
+      if (!isEqAvailable(eq)) return;
       cancelTouchHoldTimer();
       const touch = e.touches[0];
       const trackEl = e.currentTarget;
@@ -1415,6 +1610,13 @@
       document.getElementById('confirmMoveTitle').innerText = `${beforeItem.title}${noteText}`;
       document.getElementById('confirmMoveBefore').innerText = `${beforeItem.equipment} ｜ ${beforeItem.startTime} 〜 ${beforeItem.endTime}`;
       document.getElementById('confirmMoveAfter').innerText = `${afterItem.equipment} ｜ ${afterItem.startTime} 〜 ${afterItem.endTime}`;
+      // 他人の予約を動かそうとしているときは警告を表示
+      if (isOthersBooking(beforeItem)) {
+        document.getElementById('confirmMoveOthersText').innerText = `${othersWarningText(beforeItem)}本当に移動しますか？`;
+        showEl('confirmMoveOthersWarn');
+      } else {
+        hideEl('confirmMoveOthersWarn');
+      }
       showEl('moveConfirmModal');
     }
 
@@ -1500,7 +1702,7 @@
           html += `<button data-eq="${esc(eq)}" onclick="selectWeekEquipment(this.dataset.eq)"
             class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/50 text-left transition shadow-sm group">
             <span class="w-3 h-8 rounded-full ${colorCls} shrink-0"></span>
-            <span class="text-sm font-bold text-slate-800 group-hover:text-indigo-700 truncate">${esc(eq)}</span>
+            <span class="text-sm font-bold text-slate-800 group-hover:text-indigo-700 truncate">${esc(eq)}</span>${eqStatusBadge(eq)}
           </button>`;
         });
         html += `</div></div>`;
@@ -1510,6 +1712,7 @@
 
       const eqIdx = equipments.indexOf(weekSelectedEq);
       const badgeColor = tagColors[eqIdx % tagColors.length];
+      const weekEqAvailable = isEqAvailable(weekSelectedEq);
 
       const start = new Date(currentDate);
       start.setDate(start.getDate() - start.getDay());
@@ -1533,7 +1736,8 @@
       let html = `<div class="bg-indigo-50/80 border-b border-indigo-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3 sticky left-0">`;
       html += `<div class="flex items-center gap-2.5">
         <span class="px-2.5 py-1 rounded-md text-xs font-bold text-white ${badgeColor}">表示中</span>
-        <span class="text-base sm:text-lg font-extrabold text-indigo-950">${esc(weekSelectedEq)}</span>
+        <span class="text-base sm:text-lg font-extrabold text-indigo-950">${esc(weekSelectedEq)}</span>${eqStatusBadge(weekSelectedEq)}
+        ${!weekEqAvailable && equipmentStatus[weekSelectedEq].note ? `<span class="text-xs text-slate-600">${esc(equipmentStatus[weekSelectedEq].note)}</span>` : ''}
       </div>`;
 
       html += `<div class="flex flex-wrap items-center gap-2">
@@ -1572,30 +1776,40 @@
       html += `</div>`;
 
       days.forEach(d => {
-        const dayItems = d.disabled ? [] : reservations.filter(r => r.equipment === weekSelectedEq && r.date === d.str);
-        html += `<div class="border-r border-slate-200 relative ${d.disabled ? 'bg-slate-100/70' : d.str === todayStr ? 'bg-indigo-50/20' : ''}">`;
+        // この日にかかる予約（日をまたぐ予約も含む）
+        const dayItems = d.disabled ? [] : reservations
+          .filter(r => r.equipment === weekSelectedEq)
+          .map(r => ({ item: r, seg: segmentOnDay(r, d.str) }))
+          .filter(x => x.seg);
+        const clickable = !d.disabled && weekEqAvailable;
+        const colStyle = (!d.disabled && !weekEqAvailable)
+          ? `style="background-image: repeating-linear-gradient(45deg, rgba(148,163,184,0.22) 0 8px, transparent 8px 16px);"` : '';
+        html += `<div class="border-r border-slate-200 relative ${d.disabled ? 'bg-slate-100/70' : d.str === todayStr ? 'bg-indigo-50/20' : ''}" ${colStyle}>`;
         for (let h = 0; h < 24; h++) {
           const tStr = `${String(h).padStart(2,'0')}:00`;
           const eStr = `${String(Math.min(23, h+1)).padStart(2,'0')}:00`;
-          html += `<div data-eq="${esc(weekSelectedEq)}" ${d.disabled ? '' : `onclick="openNewModal(this.dataset.eq, '${d.str}', '${tStr}', '${eStr}')"`}
+          html += `<div data-eq="${esc(weekSelectedEq)}" ${clickable ? `onclick="openNewModal(this.dataset.eq, '${d.str}', '${tStr}', '${eStr}')"` : ''}
             style="height:${hourHeight}px;"
-            class="border-b border-slate-100 ${d.disabled ? '' : 'hover:bg-indigo-50/70 cursor-pointer'}"></div>`;
+            class="border-b border-slate-100 ${clickable ? 'hover:bg-indigo-50/70 cursor-pointer' : ''}"></div>`;
         }
 
-        dayItems.forEach(item => {
-          const startMin = timeToMinutes(item.startTime);
-          const endMin = Math.max(startMin + 15, timeToMinutes(item.endTime));
+        dayItems.forEach(({ item, seg }) => {
+          const startMin = seg.s;
+          const endMin = Math.min(1440, Math.max(startMin + 15, seg.e));
           const durationMin = endMin - startMin;
           const topPx = (startMin / 60) * hourHeight;
           const heightPx = Math.max(16, (durationMin / 60) * hourHeight);
           const text = esc(item.notes ? `${item.title} | ${item.notes}` : item.title);
           const fontSizeClass = durationMin <= 30 ? 'text-[9px]' : durationMin <= 45 ? 'text-[10px]' : 'text-[11px]';
+          const mine = !!myName && sameName(item.title, myName);
+          const colorCls = mine ? 'bg-emerald-600 hover:bg-emerald-700 border-emerald-800' : 'bg-indigo-600 hover:bg-indigo-700 border-indigo-800';
+          const timeText = `${seg.startsBefore ? '▲' : ''}${esc(item.startTime)}-${esc(item.endTime)}${seg.endsAfter ? '▼' : ''}`;
 
           html += `<div data-res-id="${esc(item.id)}" onclick="event.stopPropagation(); openEditModal(this.dataset.resId)"
             style="top:${topPx}px; height:${heightPx}px;"
-            title="${item.startTime}-${item.endTime} ${text}"
-            class="absolute left-1 right-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md px-1.5 py-0.5 ${fontSizeClass} shadow-sm cursor-pointer overflow-hidden flex flex-col justify-center border border-indigo-800 z-10">
-            <div class="font-bold leading-tight whitespace-nowrap overflow-hidden">${esc(item.startTime)}-${esc(item.endTime)} ${esc(item.title)}</div>
+            title="${esc(rangeLabel(item))} ${text}"
+            class="absolute left-1 right-1 ${colorCls} text-white rounded-md px-1.5 py-0.5 ${fontSizeClass} shadow-sm cursor-pointer overflow-hidden flex flex-col justify-center border z-10">
+            <div class="font-bold leading-tight whitespace-nowrap overflow-hidden">${timeText} ${esc(item.title)}</div>
             ${item.notes && heightPx >= 32 ? `<div class="text-[9.5px] text-indigo-100 whitespace-nowrap overflow-hidden">${esc(item.notes)}</div>` : ''}
           </div>`;
         });
@@ -1612,51 +1826,96 @@
       const stEl = document.getElementById('modalStartTime');
       const etEl = document.getElementById('modalEndTime');
       if (!stEl || !etEl) return;
-
       const stVal = stEl.value;
       if (!stVal) return;
 
-      // 終了時間の最小値（min属性）を開始時間に設定
-      etEl.min = stVal;
-
-      // 開始時間から30分後の時刻を自動計算してセットする
+      // 同じ日の予約のときだけ、終了時間が開始時間以前なら開始30分後に自動調整
+      const sameDay = document.getElementById('modalEndDate').value === document.getElementById('modalDate').value;
+      if (!sameDay) return;
       const [h, m] = stVal.split(':').map(Number);
       let totalMins = h * 60 + m + 30;
       if (totalMins >= 1440) totalMins = 1439; // 24時を超える場合は上限23:59にする
-      const newEh = Math.floor(totalMins / 60);
-      const newEm = totalMins % 60;
-      const newEtStr = `${String(newEh).padStart(2, '0')}:${String(newEm).padStart(2, '0')}`;
-
-      // 現在の終了時間が新しい開始時間より前、あるいは未設定の場合は自動更新
       if (!etEl.value || etEl.value <= stVal) {
-        etEl.value = newEtStr;
+        etEl.value = minutesToTime(totalMins);
       }
+    }
+
+    // 開始日を変えたら、終了日も同じ日数だけずらす
+    function handleStartDateChange() {
+      const dEl = document.getElementById('modalDate');
+      const edEl = document.getElementById('modalEndDate');
+      if (!dEl.value) return;
+      const prev = dEl.dataset.prev || dEl.value;
+      const span = edEl.value ? Math.max(0, dayNum(edEl.value) - dayNum(prev)) : 0;
+      edEl.value = addDaysStr(dEl.value, span);
+      edEl.min = dEl.value;
+      dEl.dataset.prev = dEl.value;
+    }
+
+    function setModalDates(startDate, endDate) {
+      const dEl = document.getElementById('modalDate');
+      const edEl = document.getElementById('modalEndDate');
+      dEl.min = getMinAllowedDateStr();
+      dEl.value = startDate;
+      dEl.dataset.prev = startDate;
+      edEl.min = startDate;
+      edEl.value = endDate || startDate;
+    }
+
+    // 機器の選択肢（予約不可の機器には状態を表示。リストから消えた機器の予約も編集できるよう残す）
+    function equipmentOptionsHtml(selectedEq) {
+      const list = (!selectedEq || equipments.includes(selectedEq)) ? equipments : [selectedEq, ...equipments];
+      return list.map(e => {
+        const st = eqStatusLabel(e);
+        return `<option value="${esc(e)}" ${e === selectedEq ? 'selected' : ''}>${esc(e)}${st ? `（${esc(st)}）` : ''}</option>`;
+      }).join('');
+    }
+
+    // 予約者名の入力候補を更新
+    //   これまでの予約で使われた名前を集計し、大文字・小文字の違いは1つにまとめる
+    //   （表記は一番多く使われているものを採用）。自分の名前を先頭に、あとは使用回数順。
+    function updateNameSuggestions() {
+      const groups = {}; // 小文字化した名前 → { 表記: 回数 }
+      reservations.forEach(r => {
+        const name = String(r.title || "").trim();
+        if (!name) return;
+        const key = name.toLowerCase();
+        groups[key] = groups[key] || {};
+        groups[key][name] = (groups[key][name] || 0) + 1;
+      });
+      const names = Object.values(groups).map(g => {
+        const entries = Object.entries(g).sort((a, b) => b[1] - a[1]);
+        return { name: entries[0][0], count: entries.reduce((s, e) => s + e[1], 0) };
+      });
+      names.sort((a, b) => {
+        if (myName && sameName(a.name, myName)) return -1;
+        if (myName && sameName(b.name, myName)) return 1;
+        return b.count - a.count || a.name.localeCompare(b.name);
+      });
+      document.getElementById('nameSuggestions').innerHTML =
+        names.map(n => `<option value="${esc(n.name)}"></option>`).join('');
     }
 
     // モーダル操作
     function openNewModal(eq = '', date = '', startTime = '09:00', endTime = '10:00') {
+      updateNameSuggestions();
       editingId = null;
       document.getElementById('modalTitle').innerText = "新規予約";
       hideEl('deleteBtn');
       showEl('repeatSection');
-      document.getElementById('modalName').value = "";
+      hideEl('seriesScopeSection');
+      document.getElementById('modalName').value = myName; // ブラウザに保存した名前を自動入力
       document.getElementById('modalNotes').value = "";
       document.getElementById('modalRepeatType').value = "none";
       hideEl('repeatCountBox');
 
       const defaultEq = eq || (viewMode === 'week' && weekSelectedEq ? weekSelectedEq : '');
-      const sel = document.getElementById('modalEquipment');
-      sel.innerHTML = equipments.map(e => `<option value="${esc(e)}" ${e === defaultEq ? 'selected' : ''}>${esc(e)}</option>`).join('');
+      document.getElementById('modalEquipment').innerHTML = equipmentOptionsHtml(defaultEq);
 
-      const dateInput = document.getElementById('modalDate');
-      dateInput.min = getMinAllowedDateStr();
-      dateInput.value = date || formatDateStr(currentDate);
-
-      const stEl = document.getElementById('modalStartTime');
-      const etEl = document.getElementById('modalEndTime');
-      stEl.value = cleanTime(startTime);
-      etEl.min = stEl.value;
-      etEl.value = cleanTime(endTime);
+      const d = date || formatDateStr(currentDate);
+      setModalDates(d, d);
+      document.getElementById('modalStartTime').value = cleanTime(startTime);
+      document.getElementById('modalEndTime').value = cleanTime(endTime);
 
       showEl('bookingModal');
     }
@@ -1664,24 +1923,22 @@
     function openEditModal(id) {
       const item = reservations.find(r => String(r.id) === String(id));
       if (!item) return;
+      updateNameSuggestions();
       editingId = String(item.id);
       document.getElementById('modalTitle').innerText = "予約の編集・削除";
       showEl('deleteBtn');
       hideEl('repeatSection');
+      if (item.seriesId) {
+        document.getElementById('modalSeriesScope').value = "one";
+        showEl('seriesScopeSection');
+      } else {
+        hideEl('seriesScopeSection');
+      }
 
-      const sel = document.getElementById('modalEquipment');
-      sel.innerHTML = equipments.map(e => `<option value="${esc(e)}" ${e === item.equipment ? 'selected' : ''}>${esc(e)}</option>`).join('');
-
-      const dateInput = document.getElementById('modalDate');
-      dateInput.min = getMinAllowedDateStr();
-      dateInput.value = cleanDate(item.date);
-
-      const stEl = document.getElementById('modalStartTime');
-      const etEl = document.getElementById('modalEndTime');
-      stEl.value = cleanTime(item.startTime);
-      etEl.min = stEl.value;
-      etEl.value = cleanTime(item.endTime);
-
+      document.getElementById('modalEquipment').innerHTML = equipmentOptionsHtml(item.equipment);
+      setModalDates(cleanDate(item.date), resEndDate(item));
+      document.getElementById('modalStartTime').value = cleanTime(item.startTime);
+      document.getElementById('modalEndTime').value = cleanTime(item.endTime);
       document.getElementById('modalName').value = item.title || "";
       document.getElementById('modalNotes').value = item.notes || "";
       showEl('bookingModal');
@@ -1697,15 +1954,15 @@
       else showEl('repeatCountBox');
     }
 
-    function hasConflict(eq, date, st, et, ignoreId = null) {
-      const s1 = timeToMinutes(st);
-      const e1 = timeToMinutes(et);
+    // 同じ機器で時間帯が重なる予約があるか（日をまたぐ予約にも対応）
+    function hasConflict(eq, date, st, et, ignoreId = null, endDate = null) {
+      const probe = { date, endDate: endDate || date, startTime: st, endTime: et };
+      const s1 = absStartMin(probe);
+      const e1 = absEndMin(probe);
       return reservations.some(r => {
         if (ignoreId && String(r.id) === String(ignoreId)) return false;
-        if (r.equipment !== eq || r.date !== date) return false;
-        const s2 = timeToMinutes(r.startTime);
-        const e2 = timeToMinutes(r.endTime);
-        return s1 < e2 && e1 > s2;
+        if (r.equipment !== eq) return false;
+        return s1 < absEndMin(r) && e1 > absStartMin(r);
       });
     }
 
@@ -1716,6 +1973,7 @@
       const eq = document.getElementById('modalEquipment').value;
       const title = document.getElementById('modalName').value.trim();
       const date = document.getElementById('modalDate').value;
+      const endDate = document.getElementById('modalEndDate').value || date;
       const startTime = cleanTime(document.getElementById('modalStartTime').value);
       const endTime = cleanTime(document.getElementById('modalEndTime').value);
       const notes = document.getElementById('modalNotes').value.trim();
@@ -1725,34 +1983,80 @@
         return;
       }
 
-      if (timeToMinutes(endTime) <= timeToMinutes(startTime)) {
+      const span = dayNum(endDate) - dayNum(date);
+      if (span < 0) {
+        alert("終了日は開始日以降の日付にしてください。");
+        return;
+      }
+      if (span > MAX_SPAN_DAYS) {
+        alert(`1件の予約で指定できるのは最大${MAX_SPAN_DAYS}日間までです。`);
+        return;
+      }
+      if (span === 0 && timeToMinutes(endTime) <= timeToMinutes(startTime)) {
         alert("終了時間は開始時間より後に設定してください。");
         return;
       }
+
+      const orig = editingId ? reservations.find(r => String(r.id) === String(editingId)) : null;
+      if (editingId && !orig) {
+        alert("対象の予約が見つかりません。「更新」ボタンで最新の状態にしてください。");
+        return;
+      }
+
+      // 故障中などの機器には新規予約・機器の変更ができない
+      if (!isEqAvailable(eq) && (!orig || orig.equipment !== eq)) {
+        alert(`「${eq}」は現在${eqStatusLabel(eq)}のため予約できません。`);
+        return;
+      }
+
+      // 他人の予約を変更する場合は確認
+      if (orig && !confirmIfOthers(orig, "変更してもよろしいですか？")) return;
 
       const btn = document.getElementById('saveSubmitBtn');
       btn.disabled = true;
       btn.innerText = "確認・保存中...";
 
       try {
-        if (editingId) {
-          if (hasConflict(eq, date, startTime, endTime, editingId)) {
-            alert("同じ時間帯にすでに別の予約が入っています。");
-            return;
-          }
-          const orig = reservations.find(r => String(r.id) === String(editingId)) || {};
-          const updatedItem = { ...orig, id: String(editingId), equipment: eq, title, date, startTime, endTime, notes };
-          const res = await sendTransaction({ action: "update", item: updatedItem });
-          if (res) {
-            if (res.status === "conflict" || res.status === "error") {
-              alert(res.message || "更新に失敗しました。");
+        if (orig) {
+          const scope = orig.seriesId ? document.getElementById('modalSeriesScope').value : 'one';
+
+          if (scope === 'future') {
+            // 繰り返し予約：この日以降のすべてをまとめて変更
+            if (date !== orig.date) {
+              alert("「この日以降のすべて」を変更するときは開始日を変えられません。日付を変えるときは「この予約のみ」を選んでください。");
               return;
             }
-            closeBookingModal();
+            const res = await sendTransaction({
+              action: "updateSeries",
+              seriesId: orig.seriesId,
+              fromDate: orig.date,
+              changes: { equipment: eq, title, notes, startTime, endTime, spanDays: span }
+            });
+            if (res) {
+              if (res.status !== "success") {
+                alert(res.message || "更新に失敗しました。");
+                return;
+              }
+              closeBookingModal();
+            }
+          } else {
+            if (hasConflict(eq, date, startTime, endTime, editingId, endDate)) {
+              alert("同じ時間帯にすでに別の予約が入っています。");
+              return;
+            }
+            const updatedItem = { ...orig, id: String(editingId), equipment: eq, title, date, endDate, startTime, endTime, notes };
+            const res = await sendTransaction({ action: "update", item: updatedItem });
+            if (res) {
+              if (res.status !== "success") {
+                alert(res.message || "更新に失敗しました。");
+                return;
+              }
+              closeBookingModal();
+            }
           }
         } else {
           const rep = document.getElementById('modalRepeatType').value;
-          const count = rep === 'none' ? 1 : Math.max(2, parseInt(document.getElementById('modalRepeatCount').value) || 4);
+          const count = rep === 'none' ? 1 : Math.min(30, Math.max(2, parseInt(document.getElementById('modalRepeatCount').value) || 4));
           const seriesId = rep === 'none' ? "" : "ser_" + Date.now();
           const randSuffix = Math.random().toString(36).slice(2, 6);
           const candidateItems = [];
@@ -1767,16 +2071,22 @@
 
             candidateItems.push({
               id: `res_${Date.now()}_${randSuffix}_${i}`,
-              equipment: eq, title, date: dStr, startTime, endTime, notes, seriesId
+              equipment: eq, title, date: dStr, endDate: addDaysStr(dStr, span), startTime, endTime, notes, seriesId
             });
           }
 
           const res = await sendTransaction({ action: "add", items: candidateItems });
           if (res) {
+            if (res.status !== "success") {
+              alert(res.message || "更新に失敗しました。");
+              return;
+            }
             if (res.added === 0) {
               alert("指定した時間帯はすでに他の予約（または同時操作された予約）と重複しているため登録できませんでした。");
               return;
             }
+            setMyName(title); // 入力した名前をこのブラウザに記憶
+            renderCalendar();
             if (res.skipped > 0) {
               alert(`${res.added}件を登録しました（重複していた${res.skipped}件はスキップしました）。`);
             }
@@ -1791,30 +2101,140 @@
 
     async function deleteCurrentBooking() {
       if (!editingId || isSyncing) return;
-      if (confirm("この予約を削除しますか？")) {
-        const targetId = editingId;
+      const item = reservations.find(r => String(r.id) === String(editingId));
+      if (!item) return;
+
+      // 繰り返し予約は削除範囲を選ぶ
+      if (item.seriesId) {
+        if (!confirmIfOthers(item, "削除してもよろしいですか？")) return;
+        showEl('deleteScopeModal');
+        return;
+      }
+
+      const question = isOthersBooking(item)
+        ? `${othersWarningText(item)}この予約を削除しますか？`
+        : "この予約を削除しますか？";
+      if (confirm(question)) {
         closeBookingModal();
-        await sendTransaction({ action: "delete", id: targetId });
+        await sendTransaction({ action: "delete", id: item.id });
       }
     }
 
+    // 繰り返し予約の削除（one: この予約のみ / future: この日以降 / all: シリーズ全体）
+    async function executeDelete(scope) {
+      const item = reservations.find(r => String(r.id) === String(editingId));
+      hideEl('deleteScopeModal');
+      if (!item || isSyncing) return;
+      closeBookingModal();
+      if (scope === 'one') {
+        await sendTransaction({ action: "delete", id: item.id });
+        return;
+      }
+      const res = await sendTransaction({
+        action: "deleteSeries",
+        seriesId: item.seriesId,
+        fromDate: scope === 'future' ? item.date : ""
+      });
+      if (res && res.status !== "success") {
+        alert(res.message || "削除に失敗しました。");
+      }
+    }
+
+    // ==========================================
+    // 自分の予約一覧
+    // ==========================================
+    function openMyBookings() {
+      updateNameSuggestions();
+      document.getElementById('myNameInput').value = myName;
+      renderMyBookings();
+      showEl('myBookingsModal');
+      if (!myName) setTimeout(() => document.getElementById('myNameInput').focus(), 50);
+    }
+
+    function closeMyBookings() {
+      hideEl('myBookingsModal');
+      renderCalendar(); // 自分の予約の色分けを反映
+    }
+
+    function updateMyName(value) {
+      setMyName(value);
+      renderMyBookings();
+    }
+
+    function renderMyBookings() {
+      const box = document.getElementById('myBookingsList');
+      if (!myName) {
+        box.innerHTML = `<p class="text-sm text-slate-500 text-center py-8">名前を入力すると、あなたの予約が表示されます。</p>`;
+        return;
+      }
+      const todayStr = formatDateStr(new Date());
+      const list = reservations
+        .filter(r => sameName(r.title, myName) && resEndDate(r) >= todayStr)
+        .sort((a, b) => absStartMin(a) - absStartMin(b));
+      if (list.length === 0) {
+        box.innerHTML = `<p class="text-sm text-slate-500 text-center py-8">今日以降の予約はありません。</p>`;
+        return;
+      }
+      box.innerHTML = list.map(r => `
+        <button type="button" data-res-id="${esc(r.id)}" onclick="jumpToBooking(this.dataset.resId)"
+          class="w-full text-left bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-400 rounded-lg px-3 py-2 transition">
+          <div class="flex items-center gap-1.5 text-xs">
+            <span class="font-bold text-indigo-700">${esc(rangeLabel(r))}</span>
+            ${r.seriesId ? '<i class="fa-solid fa-rotate text-[10px] text-indigo-500"></i>' : ''}
+          </div>
+          <div class="text-sm font-bold text-slate-900 flex items-center"><span class="truncate">${esc(r.equipment)}</span>${eqStatusBadge(r.equipment)}</div>
+          ${r.notes ? `<div class="text-xs text-slate-500 truncate">${esc(r.notes)}</div>` : ''}
+        </button>`).join('');
+    }
+
+    // 一覧から選んだ予約の日に移動して編集画面を開く
+    function jumpToBooking(id) {
+      const item = reservations.find(r => String(r.id) === String(id));
+      if (!item) return;
+      hideEl('myBookingsModal');
+      currentDate = new Date(item.date + "T00:00:00");
+      miniCalDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      hasScrolledInitialToday = true;
+      if (currentFilter !== 'ALL' && currentFilter !== item.equipment) currentFilter = 'ALL';
+      if (viewMode !== 'day') setViewMode('day');
+      renderMiniCalendar();
+      renderCalendar();
+      openEditModal(item.id);
+    }
+
+    // ==========================================
     // 機器管理（管理者専用・スプレッドシートへ即時同期）
+    // ==========================================
     function openSettingsModal() {
       if (!isAdminAuthenticated) {
         requestAdminSettings();
         return;
       }
       const box = document.getElementById('equipmentListContainer');
-      box.innerHTML = equipments.map((eq, i) => `
-        <div class="flex justify-between items-center bg-slate-50 px-3 py-2 rounded border text-sm gap-2">
-          <span class="truncate flex-1 font-medium text-slate-800">${i + 1}. ${esc(eq)}</span>
-          <div class="flex items-center gap-1 shrink-0">
-            <button onclick="moveEquipment(${i}, -1)" ${i === 0 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="上へ">▲</button>
-            <button onclick="moveEquipment(${i}, 1)" ${i === equipments.length - 1 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="下へ">▼</button>
-            <button onclick="removeEquipment(${i})" class="ml-1 px-2 py-0.5 text-red-600 hover:bg-red-50 rounded text-xs font-bold">削除</button>
+      box.innerHTML = equipments.map((eq, i) => {
+        const st = eqStatusOf(eq);
+        const note = st ? (equipmentStatus[eq].note || '') : '';
+        return `
+        <div class="bg-slate-50 px-3 py-2 rounded border ${st ? 'border-amber-300' : ''} text-sm space-y-1.5">
+          <div class="flex justify-between items-center gap-2">
+            <span class="truncate flex-1 font-medium text-slate-800">${i + 1}. ${esc(eq)}</span>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="moveEquipment(${i}, -1)" ${i === 0 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="上へ">▲</button>
+              <button onclick="moveEquipment(${i}, 1)" ${i === equipments.length - 1 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="下へ">▼</button>
+              <button onclick="removeEquipment(${i})" class="ml-1 px-2 py-0.5 text-red-600 hover:bg-red-50 rounded text-xs font-bold">削除</button>
+            </div>
           </div>
-        </div>
-      `).join('');
+          <div class="flex items-center gap-1.5">
+            <select onchange="setEquipmentStatus(${i}, this.value)" class="border rounded text-xs px-1.5 py-1 bg-white ${st ? 'font-bold text-amber-800' : 'text-slate-600'}">
+              <option value="" ${!st ? 'selected' : ''}>利用可</option>
+              <option value="broken" ${st === 'broken' ? 'selected' : ''}>故障中</option>
+              <option value="maintenance" ${st === 'maintenance' ? 'selected' : ''}>メンテナンス中</option>
+              <option value="stopped" ${st === 'stopped' ? 'selected' : ''}>使用停止</option>
+            </select>
+            ${st ? `<input type="text" maxlength="100" value="${esc(note)}" placeholder="理由・復旧予定など（任意）" onchange="setEquipmentNote(${i}, this.value)" class="flex-1 min-w-0 border rounded text-xs px-2 py-1" />` : ''}
+          </div>
+        </div>`;
+      }).join('');
       showEl('settingsModal');
     }
 
@@ -1826,8 +2246,29 @@
 
     async function syncEquipmentsToCloud() {
       localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
+      localStorage.setItem('okamoto_eqst_v1', JSON.stringify(equipmentStatus));
       openSettingsModal();
-      await sendTransaction({ action: "saveEquipments", equipments: equipments });
+      await sendTransaction({ action: "saveEquipments", equipments: equipments, equipmentStatus: equipmentStatus });
+      if (isModalOpen('settingsModal')) openSettingsModal(); // サーバーに保存された状態で再描画
+    }
+
+    // 機器の状態（故障中・メンテナンス中・使用停止）を設定
+    async function setEquipmentStatus(i, status) {
+      if (!isAdminAuthenticated) return;
+      const eq = equipments[i];
+      if (status) {
+        equipmentStatus[eq] = { status, note: (equipmentStatus[eq] && equipmentStatus[eq].note) || "" };
+      } else {
+        delete equipmentStatus[eq];
+      }
+      await syncEquipmentsToCloud();
+    }
+
+    async function setEquipmentNote(i, note) {
+      const eq = equipments[i];
+      if (!isAdminAuthenticated || !equipmentStatus[eq]) return;
+      equipmentStatus[eq].note = String(note).trim().slice(0, 100);
+      await syncEquipmentsToCloud();
     }
 
     async function addEquipment() {
@@ -1853,6 +2294,7 @@
     async function removeEquipment(i) {
       if (!isAdminAuthenticated) return;
       if (confirm(`「${equipments[i]}」をリストから削除しますか？`)) {
+        delete equipmentStatus[equipments[i]];
         equipments.splice(i, 1);
         await syncEquipmentsToCloud();
       }
