@@ -3,24 +3,234 @@
 <head>
   <meta charset="UTF-8" />
   <script>
-    // 表示言語（このファイルは日本語版。英語版は en.html）
-    var PAGE_LANG = "ja";
-    var LANG_PAGES = { ja: "index.html", en: "en.html" };
-    // 前回選んだ言語が違えば、そちらのページへ自動で移動
-    (function () {
+    // ==========================================
+    // 表示言語（日本語 / 英語）
+    //   ?lang=en / ?lang=ja が付いていればそれを使い、なければ前回選んだ言語（初期値は日本語）
+    // ==========================================
+    var LANG = (function () {
       try {
-        var pref = localStorage.getItem("okamoto_lang");
-        if (pref && pref !== PAGE_LANG && LANG_PAGES[pref]) location.replace(LANG_PAGES[pref]);
-      } catch (e) {}
+        var q = new URLSearchParams(location.search).get("lang");
+        if (q === "ja" || q === "en") {
+          localStorage.setItem("okamoto_lang", q);
+          return q;
+        }
+        return localStorage.getItem("okamoto_lang") === "en" ? "en" : "ja";
+      } catch (e) {
+        return "ja";
+      }
     })();
+    document.documentElement.lang = LANG;
+
     function switchLang(lang) {
       try { localStorage.setItem("okamoto_lang", lang); } catch (e) {}
-      if (lang !== PAGE_LANG && LANG_PAGES[lang]) location.href = LANG_PAGES[lang];
+      if (lang !== LANG) location.href = location.pathname + "?lang=" + lang;
+    }
+
+    // 英語訳の辞書（キーは日本語の原文）。辞書にない文はそのまま日本語で表示される
+    var I18N_EN = {
+      "パスワードが変更された可能性があります。再度入力してください。": "The password may have changed. Please enter it again.",
+      "ログアウトしますか？": "Do you want to log out?",
+      "{name} さんの予約です。": "This is {name}'s booking. ",
+      "自動更新済 ({time})": "Auto-updated ({time})",
+      "同期完了": "Synced",
+      "読込エラー": "Load error",
+      "確認中...": "Checking...",
+      "パスワードが正しくありません": "Incorrect password",
+      "サーバーに接続できませんでした": "Could not connect to the server",
+      "入室する": "Enter",
+      "※履歴保持: {date}〜": "* History kept from {date}",
+      "最新確認中...": "Checking for updates...",
+      "サーバーに接続できませんでした。": "Could not connect to the server.",
+      "同期中...": "Syncing...",
+      "前の処理がまだ終わっていません。少し待ってからもう一度お試しください。": "The previous operation is still in progress. Please wait a moment and try again.",
+      "サーバー同期中...": "Syncing with server...",
+      "混雑のため再試行中 ({n}/3)...": "Server busy, retrying ({n}/3)...",
+      "同期失敗": "Sync failed",
+      "通信エラー": "Connection error",
+      "サーバーとの通信に失敗しました。時間をおいて再度お試しください。": "Failed to communicate with the server. Please try again later.",
+      "処理に失敗しました。時間をおいて再度お試しください。": "The operation failed. Please try again later.",
+      "実験機器名": "Equipment",
+      "（クリックで編集）": " (click to edit)",
+      "（クリックで編集 / ドラッグで移動）": " (click to edit / drag to move)",
+      "「{eq}」は現在{status}のため予約できません。": "\"{eq}\" cannot be booked right now ({status}).",
+      "移動先にすでに別の予約が入っているため移動できません。": "Cannot move: another booking already occupies that time slot.",
+      "本当に移動しますか？": "Are you sure you want to move it?",
+      "変更中...": "Updating...",
+      "変更に失敗しました。": "Failed to change the booking.",
+      "この内容で変更する": "Confirm Change",
+      "週表示する実験機器を選択してください": "Select equipment for the weekly view",
+      "選択した機器の1週間（日曜〜土曜・24時間）の予約状況が表示されます": "Shows one full week (Sun–Sat, 24 h) of bookings for the selected equipment",
+      "機器名で絞り込み（例: HPLC, PCR, Centrifuge...）": "Filter by name (e.g., HPLC, PCR, Centrifuge...)",
+      "表示中": "Viewing",
+      "前の機器": "Previous",
+      "次の機器": "Next",
+      "機器一覧に戻る": "Back to list",
+      "時間": "Time",
+      "今日": "Today",
+      "新規予約": "New Booking",
+      "予約の編集・削除": "Edit / Delete Booking",
+      "日付を入力してください。": "Please enter the dates.",
+      "保持期間（3ヶ月前）より過去の日付は指定できません。": "Dates before the retention period (3 months ago) cannot be selected.",
+      "終了日は開始日以降の日付にしてください。": "The end date must be on or after the start date.",
+      "1件の予約で指定できるのは最大{n}日間までです。": "A single booking can span at most {n} days.",
+      "終了時間は開始時間より後に設定してください。": "End time must be later than start time.",
+      "対象の予約が見つかりません。「更新」ボタンで最新の状態にしてください。": "The booking could not be found. Press \"Refresh\" to load the latest data.",
+      "変更してもよろしいですか？": "Do you want to change it?",
+      "確認・保存中...": "Saving...",
+      "「この日以降のすべて」を変更するときは開始日を変えられません。日付を変えるときは「この予約のみ」を選んでください。": "You cannot change the start date when updating \"This and all following\". To change the date, choose \"This booking only\".",
+      "更新に失敗しました。": "Failed to update the booking.",
+      "同じ時間帯にすでに別の予約が入っています。": "Another booking already exists in this time slot.",
+      "登録に失敗しました。": "Failed to create the booking.",
+      "指定した時間帯はすでに他の予約（または同時操作された予約）と重複しているため登録できませんでした。": "Could not book: the selected time overlaps with an existing booking (or one made at the same moment).",
+      "{added}件を登録しました（重複していた{skipped}件はスキップしました）。": "Booked {added} slot(s); skipped {skipped} overlapping slot(s).",
+      "保存する": "Save",
+      "削除してもよろしいですか？": "Do you want to delete it?",
+      "この予約を削除しますか？": "Delete this booking?",
+      "削除に失敗しました。": "Failed to delete.",
+      "名前を入力すると、あなたの予約が表示されます。": "Enter your name to see your bookings.",
+      "今後の予約はありません。": "No upcoming bookings.",
+      "上へ": "Move up",
+      "下へ": "Move down",
+      "削除": "Delete",
+      "利用可": "Available",
+      "理由・復旧予定など（任意）": "Reason, expected recovery, etc. (optional)",
+      "機器リストの保存に失敗しました。": "Failed to save the equipment list.",
+      "「{eq}」はすでにリストにあります。": "\"{eq}\" is already in the list.",
+      "「{eq}」をリストから削除しますか？": "Remove \"{eq}\" from the list?",
+      "この機器には今後の予約が {n} 件あります。削除すると予約表に表示されなくなります（予約のデータ自体は残り、「自分の予約」からは確認できます）。": "This equipment has {n} upcoming booking(s). After removal they will no longer appear in the schedule (the data is kept and can still be seen in \"My Bookings\").",
+      "岡本研 実験機器予約システム": "Okamoto Lab Equipment Booking System",
+      "• <b>範囲予約</b>：空欄を横ドラッグ（スマホは<b>長押し→スライド</b>）": "• <b>Book a range</b>: drag across empty slots (mobile: <b>long-press → slide</b>)",
+      "• <b>バー移動</b>：予約バーをドラッグ（スマホは<b>長押し→スライド</b>）": "• <b>Move</b>: drag a booking bar (mobile: <b>long-press → slide</b>)",
+      "• <b>編集/削除</b>：予約バーをクリック（タップ）": "• <b>Edit/Delete</b>: click (tap) a booking bar",
+      "• <b>日をまたぐ予約</b>：予約画面で「終了日」を変更": "• <b>Multi-day booking</b>: change the \"End date\" in the booking form",
+      "岡本研究室 実験機器予約": "Okamoto Lab Equipment Booking",
+      "利用するには研究室の合言葉を入力してください": "Enter the lab passphrase to continue",
+      "このブラウザでログイン状態を保持する（30日間）": "Keep me signed in on this browser (30 days)",
+      "岡本研 実験機器予約": "Okamoto Lab Equipment Booking",
+      "更新": "Refresh",
+      "自分の予約": "My Bookings",
+      "機器タグ": "Equipment Tags",
+      "機器管理": "Manage Equipment",
+      "全て表示": "Show All",
+      "前へ": "Prev",
+      "本日": "Today",
+      "次へ": "Next",
+      "空欄を横ドラッグ（スマホは長押し後スライド）で範囲予約 ／ 予約バー移動": "Drag across empty slots to book (mobile: long-press, then slide) / drag a bar to move it",
+      "日表示 (一覧)": "Day (All)",
+      "週表示": "Week",
+      "日": "Su",
+      "月": "Mo",
+      "火": "Tu",
+      "水": "We",
+      "木": "Th",
+      "金": "Fr",
+      "土": "Sa",
+      "◀ 前へ": "◀ Prev",
+      "次へ ▶": "Next ▶",
+      "操作ガイド": "Quick Guide",
+      "緑の枠は自分の予約（「自分の予約」で名前を設定）": "Green outline = your bookings (set your name in \"My Bookings\")",
+      "※10分おきに自動更新（操作中はスキップ）": "* Auto-refreshes every 10 minutes (skipped while you are editing)",
+      "管理者認証": "Admin Authentication",
+      "実験機器リストの編集は管理者のみ許可されています。": "Only admins can edit the equipment list.",
+      "管理者パスワードが正しくありません": "Incorrect admin password",
+      "キャンセル": "Cancel",
+      "認証する": "Authenticate",
+      "予約内容の変更確認": "Confirm Booking Change",
+      "以下の内容で予約を変更してよろしいですか？": "Change the booking as shown below?",
+      "予約者": "Booked by",
+      "変更前": "Before",
+      "変更後": "After",
+      "実験機器": "Equipment",
+      "予約者名": "Name",
+      "ローマ字の姓で入力してください（例: Oiwa）。ラボ外の方は「姓 (所属)」（例: Tanaka (Kyoto Univ.)）。候補から選ぶと表記がそろいます。": "Enter your family name in romaji (e.g., Oiwa). External users: \"Family name (Affiliation)\" (e.g., Tanaka (Kyoto Univ.)). Picking from the suggestions keeps names consistent.",
+      "開始日": "Start date",
+      "開始時間": "Start time",
+      "終了日": "End date",
+      "（日をまたぐ場合）": "(for multi-day bookings)",
+      "終了時間": "End time",
+      "終了を 0:00 にすると、その日の終わり（24:00）までの予約になります。": "Set the end time to 0:00 to book until the end of the day (24:00).",
+      "備考テキスト": "Notes",
+      "繰り返し予約の変更範囲": "Apply changes to",
+      "この予約のみ": "This booking only",
+      "この日以降のすべて": "This and all following",
+      "「この日以降のすべて」では、日付以外の内容（機器・名前・時間・日数・備考）がまとめて変更されます。": "\"This and all following\" updates everything except the date (equipment, name, times, number of days, notes) at once.",
+      "繰り返し予約": "Repeat",
+      "繰り返さない": "Does not repeat",
+      "毎日": "Daily",
+      "毎週": "Weekly",
+      "隔週 (2週間ごと)": "Every 2 weeks",
+      "毎月": "Monthly",
+      "回分": "times",
+      "実験機器リスト管理": "Equipment List",
+      "管理者モード": "Admin Mode",
+      "追加・削除・並び替え・状態の変更はスプレッドシートへ自動保存され、全員の画面に反映されます。": "Additions, removals, reordering, and status changes are saved to the spreadsheet automatically and appear on everyone's screen.",
+      "追加": "Add",
+      "閉じる": "Close",
+      "繰り返し予約の削除": "Delete Recurring Booking",
+      "削除する範囲を選んでください": "Choose which bookings to delete",
+      "シリーズのすべて": "All in the series",
+      "あなたの名前": "Your name",
+      "予約者名がこの名前と一致する、まだ終わっていない予約を表示します（大文字・小文字は区別しません）。名前はこのブラウザに保存され、新規予約時に自動入力されます。": "Shows bookings that have not ended yet whose name matches yours (case-insensitive). Your name is saved in this browser and filled in automatically for new bookings.",
+      "パスワードを入力": "Enter password",
+      "最新データを手動で再読込（10分ごとに自動更新されます）": "Reload the latest data manually (auto-refreshes every 10 minutes)",
+      "管理者のみ機器の追加・削除が可能": "Only admins can add or remove equipment",
+      "ログアウト": "Log out",
+      "管理者パスワードを入力": "Enter admin password",
+      "例: Oiwa": "e.g., Oiwa",
+      "例: RNA合成 / サンプル名など": "e.g., RNA synthesis / sample name",
+      "追加する機器名": "New equipment name"
+    };
+
+    // 翻訳して {name} などの部分を埋める
+    function t(ja, params) {
+      var text = (LANG === "en" && Object.prototype.hasOwnProperty.call(I18N_EN, ja)) ? I18N_EN[ja] : ja;
+      if (params) {
+        Object.keys(params).forEach(function (k) {
+          text = text.split("{" + k + "}").join(String(params[k]));
+        });
+      }
+      return text;
+    }
+
+    // HTML に直接書かれた文言（テキスト・placeholder・title）を翻訳する
+    function translateStaticDom(root) {
+      if (LANG !== "en") return;
+      document.title = t(document.title);
+      // 太字などを含む段落は、要素の中身ごと置き換える
+      root.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+        var key = el.innerHTML.trim();
+        if (Object.prototype.hasOwnProperty.call(I18N_EN, key)) el.innerHTML = I18N_EN[key];
+      });
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (n) {
+          var p = n.parentNode;
+          if (!p || p.nodeName === "SCRIPT" || p.nodeName === "STYLE") return NodeFilter.FILTER_REJECT;
+          if (p.closest && p.closest("[data-i18n-html]")) return NodeFilter.FILTER_REJECT;
+          return n.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      });
+      var nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(function (n) {
+        var raw = n.nodeValue;
+        var key = raw.trim();
+        if (Object.prototype.hasOwnProperty.call(I18N_EN, key)) {
+          n.nodeValue = raw.replace(key, I18N_EN[key]);
+        }
+      });
+      root.querySelectorAll("[placeholder],[title],[aria-label]").forEach(function (el) {
+        ["placeholder", "title", "aria-label"].forEach(function (attr) {
+          var v = el.getAttribute(attr);
+          if (v && Object.prototype.hasOwnProperty.call(I18N_EN, v.trim())) el.setAttribute(attr, I18N_EN[v.trim()]);
+        });
+      });
     }
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>岡本研 実験機器予約システム</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind CSS：このページで使っているクラスだけを事前に生成して埋め込んだもの（外部CDNに依存しない）。
+       ここにないクラスを新しく使うときは、Tailwind CLI v3 でこのページを読み込ませて CSS を生成し直す必要があります -->
+  <style id="tailwind-css">/*TW_START*/*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.bottom-0{bottom:0}.bottom-1\.5{bottom:.375rem}.left-0{left:0}.left-1{left:.25rem}.left-3\.5{left:.875rem}.left-\[160px\]{left:160px}.right-0{right:0}.right-1{right:.25rem}.top-0{top:0}.top-1\.5{top:.375rem}.top-3{top:.75rem}.z-10{z-index:10}.z-20{z-index:20}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.z-\[25\]{z-index:25}.z-\[60\]{z-index:60}.mx-auto{margin-left:auto;margin-right:auto}.-mt-2{margin-top:-.5rem}.mb-0\.5{margin-bottom:.125rem}.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.ml-1{margin-left:.25rem}.ml-auto{margin-left:auto}.mr-0\.5{margin-right:.125rem}.mr-1{margin-right:.25rem}.mr-1\.5{margin-right:.375rem}.mr-2{margin-right:.5rem}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1{height:.25rem}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-12{height:3rem}.h-2\.5{height:.625rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-full{height:100%}.max-h-\[85vh\]{max-height:85vh}.max-h-\[92vh\]{max-height:92vh}.min-h-screen{min-height:100vh}.w-1{width:.25rem}.w-10{width:2.5rem}.w-12{width:3rem}.w-16{width:4rem}.w-2\.5{width:.625rem}.w-3{width:.75rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-full{width:100%}.min-w-0{min-width:0}.min-w-\[1888px\]{min-width:1888px}.min-w-\[860px\]{min-width:860px}.max-w-5xl{max-width:64rem}.max-w-\[1700px\]{max-width:1700px}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-crosshair{cursor:crosshair}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.resize{resize:both}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-7{grid-template-columns:repeat(7,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0\.5{gap:.125rem}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.space-y-1\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.375rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.375rem*var(--tw-space-y-reverse))}.space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem*var(--tw-space-y-reverse))}.space-y-2\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.625rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.625rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.rounded-sm{border-radius:.125rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-amber-300{--tw-border-opacity:1;border-color:rgb(252 211 77/var(--tw-border-opacity,1))}.border-emerald-600{--tw-border-opacity:1;border-color:rgb(5 150 105/var(--tw-border-opacity,1))}.border-emerald-800{--tw-border-opacity:1;border-color:rgb(6 95 70/var(--tw-border-opacity,1))}.border-indigo-200{--tw-border-opacity:1;border-color:rgb(199 210 254/var(--tw-border-opacity,1))}.border-indigo-300{--tw-border-opacity:1;border-color:rgb(165 180 252/var(--tw-border-opacity,1))}.border-indigo-600{--tw-border-opacity:1;border-color:rgb(79 70 229/var(--tw-border-opacity,1))}.border-indigo-700{--tw-border-opacity:1;border-color:rgb(67 56 202/var(--tw-border-opacity,1))}.border-indigo-800{--tw-border-opacity:1;border-color:rgb(55 48 163/var(--tw-border-opacity,1))}.border-red-300{--tw-border-opacity:1;border-color:rgb(252 165 165/var(--tw-border-opacity,1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249/var(--tw-border-opacity,1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240/var(--tw-border-opacity,1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225/var(--tw-border-opacity,1))}.bg-amber-100{--tw-bg-opacity:1;background-color:rgb(254 243 199/var(--tw-bg-opacity,1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235/var(--tw-bg-opacity,1))}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11/var(--tw-bg-opacity,1))}.bg-amber-600{--tw-bg-opacity:1;background-color:rgb(217 119 6/var(--tw-bg-opacity,1))}.bg-black\/50{background-color:rgba(0,0,0,.5)}.bg-black\/55{background-color:rgba(0,0,0,.55)}.bg-black\/60{background-color:rgba(0,0,0,.6)}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235/var(--tw-bg-opacity,1))}.bg-cyan-600{--tw-bg-opacity:1;background-color:rgb(8 145 178/var(--tw-bg-opacity,1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245/var(--tw-bg-opacity,1))}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105/var(--tw-bg-opacity,1))}.bg-indigo-100{--tw-bg-opacity:1;background-color:rgb(224 231 255/var(--tw-bg-opacity,1))}.bg-indigo-100\/70{background-color:rgba(224,231,255,.7)}.bg-indigo-100\/80{background-color:rgba(224,231,255,.8)}.bg-indigo-50{--tw-bg-opacity:1;background-color:rgb(238 242 255/var(--tw-bg-opacity,1))}.bg-indigo-50\/20{background-color:rgba(238,242,255,.2)}.bg-indigo-50\/80{background-color:rgba(238,242,255,.8)}.bg-indigo-500{--tw-bg-opacity:1;background-color:rgb(99 102 241/var(--tw-bg-opacity,1))}.bg-indigo-500\/35{background-color:rgba(99,102,241,.35)}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229/var(--tw-bg-opacity,1))}.bg-indigo-800{--tw-bg-opacity:1;background-color:rgb(55 48 163/var(--tw-bg-opacity,1))}.bg-indigo-950{--tw-bg-opacity:1;background-color:rgb(30 27 75/var(--tw-bg-opacity,1))}.bg-pink-600{--tw-bg-opacity:1;background-color:rgb(219 39 119/var(--tw-bg-opacity,1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234/var(--tw-bg-opacity,1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226/var(--tw-bg-opacity,1))}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38/var(--tw-bg-opacity,1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.bg-slate-100\/70{background-color:rgba(241,245,249,.7)}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity,1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.bg-slate-500{--tw-bg-opacity:1;background-color:rgb(100 116 139/var(--tw-bg-opacity,1))}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85/var(--tw-bg-opacity,1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.bg-teal-600{--tw-bg-opacity:1;background-color:rgb(13 148 136/var(--tw-bg-opacity,1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-1{padding:.25rem}.p-2{padding:.5rem}.p-2\.5{padding:.625rem}.p-3{padding:.75rem}.p-3\.5{padding:.875rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-1\.5{padding-left:.375rem;padding-right:.375rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-2{padding-bottom:.5rem}.pl-0\.5{padding-left:.125rem}.pl-10{padding-left:2.5rem}.pr-1{padding-right:.25rem}.pr-2{padding-right:.5rem}.pr-4{padding-right:1rem}.pt-0{padding-top:0}.pt-0\.5{padding-top:.125rem}.pt-1{padding-top:.25rem}.pt-2{padding-top:.5rem}.pt-3{padding-top:.75rem}.text-left{text-align:left}.text-center{text-align:center}.align-middle{vertical-align:middle}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[9\.5px\]{font-size:9.5px}.text-\[9px\]{font-size:9px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.leading-none{line-height:1}.leading-tight{line-height:1.25}.tracking-wide{letter-spacing:.025em}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77/var(--tw-text-opacity,1))}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11/var(--tw-text-opacity,1))}.text-amber-600{--tw-text-opacity:1;color:rgb(217 119 6/var(--tw-text-opacity,1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14/var(--tw-text-opacity,1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235/var(--tw-text-opacity,1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153/var(--tw-text-opacity,1))}.text-indigo-100{--tw-text-opacity:1;color:rgb(224 231 255/var(--tw-text-opacity,1))}.text-indigo-200{--tw-text-opacity:1;color:rgb(199 210 254/var(--tw-text-opacity,1))}.text-indigo-300{--tw-text-opacity:1;color:rgb(165 180 252/var(--tw-text-opacity,1))}.text-indigo-500{--tw-text-opacity:1;color:rgb(99 102 241/var(--tw-text-opacity,1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229/var(--tw-text-opacity,1))}.text-indigo-700{--tw-text-opacity:1;color:rgb(67 56 202/var(--tw-text-opacity,1))}.text-indigo-800{--tw-text-opacity:1;color:rgb(55 48 163/var(--tw-text-opacity,1))}.text-indigo-900{--tw-text-opacity:1;color:rgb(49 46 129/var(--tw-text-opacity,1))}.text-indigo-950{--tw-text-opacity:1;color:rgb(30 27 75/var(--tw-text-opacity,1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68/var(--tw-text-opacity,1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38/var(--tw-text-opacity,1))}.text-red-700{--tw-text-opacity:1;color:rgb(185 28 28/var(--tw-text-opacity,1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225/var(--tw-text-opacity,1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity,1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity,1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity,1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59/var(--tw-text-opacity,1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.line-through{text-decoration-line:line-through}.opacity-70{opacity:.7}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color)}.shadow,.shadow-2xl{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgba(0,0,0,.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color)}.shadow-\[2px_0_4px_-2px_rgba\(0\2c 0\2c 0\2c 0\.08\)\]{--tw-shadow:2px 0 4px -2px rgba(0,0,0,.08);--tw-shadow-colored:2px 0 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-\[2px_0_4px_-2px_rgba\(0\2c 0\2c 0\2c 0\.12\)\]{--tw-shadow:2px 0 4px -2px rgba(0,0,0,.12);--tw-shadow-colored:2px 0 4px -2px var(--tw-shadow-color)}.shadow-\[2px_0_4px_-2px_rgba\(0\2c 0\2c 0\2c 0\.12\)\],.shadow-md{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.outline{outline-style:solid}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.hover\:border-indigo-400:hover{--tw-border-opacity:1;border-color:rgb(129 140 248/var(--tw-border-opacity,1))}.hover\:border-indigo-500:hover{--tw-border-opacity:1;border-color:rgb(99 102 241/var(--tw-border-opacity,1))}.hover\:bg-amber-700:hover{--tw-bg-opacity:1;background-color:rgb(180 83 9/var(--tw-bg-opacity,1))}.hover\:bg-emerald-100:hover{--tw-bg-opacity:1;background-color:rgb(209 250 229/var(--tw-bg-opacity,1))}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129/var(--tw-bg-opacity,1))}.hover\:bg-emerald-700:hover{--tw-bg-opacity:1;background-color:rgb(4 120 87/var(--tw-bg-opacity,1))}.hover\:bg-indigo-100:hover{--tw-bg-opacity:1;background-color:rgb(224 231 255/var(--tw-bg-opacity,1))}.hover\:bg-indigo-50:hover{--tw-bg-opacity:1;background-color:rgb(238 242 255/var(--tw-bg-opacity,1))}.hover\:bg-indigo-50\/50:hover{background-color:rgba(238,242,255,.5)}.hover\:bg-indigo-50\/70:hover{background-color:rgba(238,242,255,.7)}.hover\:bg-indigo-700:hover{--tw-bg-opacity:1;background-color:rgb(67 56 202/var(--tw-bg-opacity,1))}.hover\:bg-red-50:hover{--tw-bg-opacity:1;background-color:rgb(254 242 242/var(--tw-bg-opacity,1))}.hover\:bg-red-700:hover{--tw-bg-opacity:1;background-color:rgb(185 28 28/var(--tw-bg-opacity,1))}.hover\:bg-slate-100:hover{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.hover\:bg-slate-200:hover{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity,1))}.hover\:bg-slate-300:hover{--tw-bg-opacity:1;background-color:rgb(203 213 225/var(--tw-bg-opacity,1))}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.hover\:bg-slate-50\/70:hover{background-color:rgba(248,250,252,.7)}.hover\:bg-slate-800:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.hover\:text-red-800:hover{--tw-text-opacity:1;color:rgb(153 27 27/var(--tw-text-opacity,1))}.hover\:text-slate-700:hover{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity,1))}.hover\:opacity-90:hover{opacity:.9}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus\:ring-amber-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(245 158 11/var(--tw-ring-opacity,1))}.focus\:ring-indigo-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(99 102 241/var(--tw-ring-opacity,1))}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-30:disabled{opacity:.3}.disabled\:opacity-40:disabled{opacity:.4}.group:hover .group-hover\:text-indigo-700{--tw-text-opacity:1;color:rgb(67 56 202/var(--tw-text-opacity,1))}@media (min-width:640px){.sm\:ml-2{margin-left:.5rem}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\:text-sm{font-size:.875rem;line-height:1.25rem}}@media (min-width:768px){.md\:left-\[220px\]{left:220px}.md\:w-60{width:15rem}.md\:min-w-\[1948px\]{min-width:1948px}.md\:flex-row{flex-direction:row}}@media (min-width:1024px){.lg\:inline{display:inline}.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}/*TW_END*/</style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
@@ -138,6 +348,18 @@
       font-weight: 700;
       cursor: pointer;
     }
+    .remember-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: -4px 0 16px 0;
+      font-size: 12px;
+      color: #64748b;
+      cursor: pointer;
+      user-select: none;
+    }
+    .remember-label input { width: 14px; height: 14px; cursor: pointer; }
     .auth-btn:hover {
       background-color: #4338ca;
     }
@@ -173,6 +395,10 @@
       <form onsubmit="handleLogin(event)" autocomplete="off">
         <input type="text" id="passwordInput" placeholder="パスワードを入力" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required autofocus class="auth-input" />
         <p id="authError" class="auth-error force-hidden">パスワードが正しくありません</p>
+        <label class="remember-label">
+          <input type="checkbox" id="rememberLogin" />
+          <span>このブラウザでログイン状態を保持する（30日間）</span>
+        </label>
         <button type="submit" class="auth-btn">入室する</button>
       </form>
     </div>
@@ -199,12 +425,15 @@
           <button onclick="toggleTagBar()" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition">
             <i class="fa-solid fa-tags mr-1"></i>機器タグ
           </button>
-          <button onclick="switchLang(PAGE_LANG === 'ja' ? 'en' : 'ja')" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition" title="Language / 言語">
+          <button onclick="switchLang(LANG === 'ja' ? 'en' : 'ja')" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition" title="Language / 言語">
             <i class="fa-solid fa-language mr-1"></i><span id="headerLangLabel"></span>
           </button>
           <button onclick="requestAdminSettings()" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition flex items-center gap-1.5" title="管理者のみ機器の追加・削除が可能">
             <i id="adminLockIcon" class="fa-solid fa-lock text-amber-300 text-xs"></i>
             <span>機器管理</span>
+          </button>
+          <button onclick="logout()" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition" title="ログアウト">
+            <i class="fa-solid fa-right-from-bracket"></i>
           </button>
         </div>
       </div>
@@ -269,11 +498,11 @@
 
         <div class="bg-white rounded-xl shadow border border-slate-200 p-3 text-xs text-slate-600 space-y-1.5">
           <div class="font-bold text-slate-800"><i class="fa-solid fa-circle-info text-indigo-600 mr-1"></i>操作ガイド</div>
-          <p>• <b>範囲予約</b>：空欄を横ドラッグ（スマホは<b>長押し→スライド</b>）</p>
-          <p>• <b>バー移動</b>：予約バーをドラッグ（スマホは<b>長押し→スライド</b>）</p>
-          <p>• <b>編集/削除</b>：予約バーをクリック（タップ）</p>
-          <p>• <b>日をまたぐ予約</b>：予約画面で「終了日」を変更</p>
-          <p>• <span class="inline-block w-2.5 h-2.5 rounded-sm border-2 border-emerald-600 bg-emerald-50 align-middle"></span> 緑の枠は自分の予約（「自分の予約」で名前を設定）</p>
+          <p data-i18n-html>• <b>範囲予約</b>：空欄を横ドラッグ（スマホは<b>長押し→スライド</b>）</p>
+          <p data-i18n-html>• <b>バー移動</b>：予約バーをドラッグ（スマホは<b>長押し→スライド</b>）</p>
+          <p data-i18n-html>• <b>編集/削除</b>：予約バーをクリック（タップ）</p>
+          <p data-i18n-html>• <b>日をまたぐ予約</b>：予約画面で「終了日」を変更</p>
+          <p>• <span class="inline-block w-2.5 h-2.5 rounded-sm border-2 border-emerald-600 bg-emerald-50 align-middle"></span> <span>緑の枠は自分の予約（「自分の予約」で名前を設定）</span></p>
           <p class="text-[11px] text-slate-400 pt-1 border-t border-slate-100">※10分おきに自動更新（操作中はスキップ）</p>
         </div>
       </aside>
@@ -389,6 +618,7 @@
             <input type="time" id="modalEndTime" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
           </div>
         </div>
+        <p class="text-[11px] text-slate-500 -mt-2">終了を 0:00 にすると、その日の終わり（24:00）までの予約になります。</p>
         <div>
           <label class="block text-xs font-bold text-slate-600 mb-1">備考テキスト</label>
           <input type="text" id="modalNotes" maxlength="200" placeholder="例: RNA合成 / サンプル名など" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
@@ -442,11 +672,11 @@
         <h3 class="text-lg font-bold text-indigo-950"><i class="fa-solid fa-shield-halved text-amber-500 mr-1.5"></i>実験機器リスト管理</h3>
         <span class="text-[11px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">管理者モード</span>
       </div>
-      <p class="text-xs text-slate-500 mb-3">追加・削除・並び替えを行うとスプレッドシートへ自動保存され、全員の画面に反映されます。</p>
+      <p class="text-xs text-slate-500 mb-3">追加・削除・並び替え・状態の変更はスプレッドシートへ自動保存され、全員の画面に反映されます。</p>
       <div id="equipmentListContainer" class="flex-1 overflow-y-auto space-y-1.5 mb-3 pr-1"></div>
       <div class="flex gap-2 pt-2 border-t">
         <input type="text" id="newEquipmentName" placeholder="追加する機器名" class="flex-1 border rounded-lg p-2 text-sm" />
-        <button type="button" onclick="addEquipment()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold">追加</button>
+        <button type="button" id="addEquipmentBtn" onclick="addEquipment()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold">追加</button>
       </div>
       <button onclick="closeSettingsModal()" class="mt-3 w-full py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-bold">閉じる</button>
     </div>
@@ -487,12 +717,15 @@
         <label for="myNameInput" class="text-xs font-bold text-slate-600 shrink-0">あなたの名前</label>
         <input type="text" id="myNameInput" maxlength="100" list="nameSuggestions" autocomplete="off" oninput="updateMyName(this.value)" placeholder="例: Oiwa" class="flex-1 border border-slate-300 rounded-lg p-2 text-sm" />
       </div>
-      <p class="text-[11px] text-slate-500 mb-3">予約者名がこの名前と一致する、今日以降の予約を表示します（大文字・小文字は区別しません）。名前はこのブラウザに保存され、新規予約時に自動入力されます。</p>
+      <p class="text-[11px] text-slate-500 mb-3">予約者名がこの名前と一致する、まだ終わっていない予約を表示します（大文字・小文字は区別しません）。名前はこのブラウザに保存され、新規予約時に自動入力されます。</p>
       <div id="myBookingsList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
     </div>
   </div>
 
   <script>
+    // HTML に書かれた文言を表示言語に合わせる（最初に1回）
+    translateStaticDom(document.body);
+
     // ==========================================
     // ★設定エリア
     //   パスワードはここには書きません。GASの「スクリプト プロパティ」
@@ -518,10 +751,44 @@
     let autoRefreshTimer = null;
     let hasScrolledInitialToday = false;
 
-    // 入力されたパスワードはタブを閉じると消える sessionStorage にだけ保持し、
-    // 毎回のリクエストに付けてGAS側で照合してもらう
-    let memberKey = sessionStorage.getItem('okamoto_key') || "";
-    let adminKey  = sessionStorage.getItem('okamoto_admin_key') || "";
+    // ブラウザの保存領域を安全に使うためのヘルパー
+    // （プライベートモードや容量超過、データ破損で例外が出ても画面全体が止まらないようにする）
+    function storageGet(store, key) {
+      try { return window[store].getItem(key); } catch (e) { return null; }
+    }
+    function storageSet(store, key, value) {
+      try { window[store].setItem(key, value); } catch (e) { /* 保存できなくても動作は続ける */ }
+    }
+    function storageRemove(store, key) {
+      try { window[store].removeItem(key); } catch (e) { /* 無視 */ }
+    }
+    function storageGetJSON(store, key, fallback) {
+      const raw = storageGet(store, key);
+      if (raw === null) return fallback;
+      try { return JSON.parse(raw); } catch (e) { storageRemove(store, key); return fallback; }
+    }
+    const lsGet = k => storageGet('localStorage', k);
+    const lsSet = (k, v) => storageSet('localStorage', k, v);
+    const lsRemove = k => storageRemove('localStorage', k);
+    const ssGet = k => storageGet('sessionStorage', k);
+    const ssSet = (k, v) => storageSet('sessionStorage', k, v);
+    const ssRemove = k => storageRemove('sessionStorage', k);
+
+    // ログイン状態の保持期間（「ログイン状態を保持」にチェックしたとき）
+    const REMEMBER_LOGIN_DAYS = 30;
+    function getRememberedKey() {
+      const saved = storageGetJSON('localStorage', 'okamoto_key_persist', null);
+      if (!saved || typeof saved.key !== 'string' || !(saved.exp > Date.now())) {
+        lsRemove('okamoto_key_persist');
+        return "";
+      }
+      return saved.key;
+    }
+
+    // 入力されたパスワードは通常タブを閉じると消える sessionStorage にだけ保持し、
+    // 毎回のリクエストに付けてGAS側で照合してもらう（「ログイン状態を保持」を選んだ場合のみ localStorage にも保存）
+    let memberKey = ssGet('okamoto_key') || getRememberedKey();
+    let adminKey  = ssGet('okamoto_admin_key') || "";
 
     // HTMLエスケープ（XSS対策）：ユーザー入力を innerHTML に入れる前に必ず通す
     function esc(s) {
@@ -533,7 +800,7 @@
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         // lang: サーバーのメッセージ言語 / actor: 操作ログに記録する名前
-        body: JSON.stringify({ ...body, lang: PAGE_LANG, actor: myName })
+        body: JSON.stringify({ ...body, lang: LANG, actor: myName })
       });
       return res.json();
     }
@@ -541,32 +808,49 @@
     function applyEquipmentStatus(obj) {
       if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return;
       equipmentStatus = obj;
-      localStorage.setItem('okamoto_eqst_v1', JSON.stringify(equipmentStatus));
+      lsSet('okamoto_eqst_v1', JSON.stringify(equipmentStatus));
     }
 
     // 言語切り替えボタンの表示を設定
     document.querySelectorAll('[data-lang-btn]').forEach(b => {
-      b.classList.toggle('active', b.dataset.langBtn === PAGE_LANG);
+      b.classList.toggle('active', b.dataset.langBtn === LANG);
     });
-    document.getElementById('headerLangLabel').innerText = PAGE_LANG === 'ja' ? 'English' : '日本語';
+    document.getElementById('headerLangLabel').innerText = LANG === 'ja' ? 'English' : '日本語';
 
-    // パスワードが無効になった（変更された等）ときはログイン画面に戻す
-    function handleUnauthorized(message) {
-      sessionStorage.removeItem('okamoto_key');
-      sessionStorage.removeItem('okamoto_admin_key');
-      localStorage.removeItem('okamoto_res_v1');
+    // ログイン画面に戻す（パスワードが無効になったとき・ログアウトしたとき）
+    function resetToLogin(errorMessage) {
+      ssRemove('okamoto_key');
+      ssRemove('okamoto_admin_key');
+      lsRemove('okamoto_key_persist');
+      lsRemove('okamoto_res_v1');
       memberKey = "";
       adminKey = "";
       reservations = [];
+      editingId = null;
+      pendingMoveData = null;
+      dragState = null;
       isUnlocked = false;
       isAdminAuthenticated = false;
       if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
-      ['bookingModal', 'moveConfirmModal', 'settingsModal', 'adminAuthModal', 'mainApp'].forEach(hideEl);
+      ['bookingModal', 'moveConfirmModal', 'settingsModal', 'adminAuthModal', 'deleteScopeModal', 'myBookingsModal', 'mainApp'].forEach(hideEl);
       showEl('authModal');
       document.body.style.backgroundColor = '#0f172a';
       const errEl = document.getElementById('authError');
-      errEl.innerText = message || "パスワードが変更された可能性があります。再度入力してください。";
-      showEl('authError');
+      if (errorMessage) {
+        errEl.innerText = errorMessage;
+        showEl('authError');
+      } else {
+        hideEl('authError');
+      }
+    }
+
+    function handleUnauthorized() {
+      resetToLogin(t("パスワードが変更された可能性があります。再度入力してください。"));
+    }
+
+    function logout() {
+      if (!confirm(t("ログアウトしますか？"))) return;
+      resetToLogin(null);
     }
 
     let dragState = null;
@@ -574,10 +858,10 @@
 
     let equipments = [
       "Peptide synthesizer", "Glovebox", "DNA RNA synthesizer1", "DNA RNA synthesizer2",
-      "DNA synthesizer (left)", "HPLC(JASCO PDA for peptide)", "HPLC inert (JASCO PDA for pepti",
-      "HPLC(JASCO PDA for DNA 713)-1", "HPLC(JASCO PDA for DNA 713)-2", "BioSeperator @725",
-      "Clean bench", "Safe cabinet", "FACS", "plate reader", "photoirradiater",
-      "721Centrifuge", "725Centrifuge", "RT-PCR", "Photospectrometer(UV-2550)",
+      "DNA synthesizer (left)", "HPLC(JASCO PDA for peptide)", "HPLC inert (JASCO PDA for peptide)",
+      "HPLC(JASCO PDA for DNA 713)-1", "HPLC(JASCO PDA for DNA 713)-2", "BioSeparator @725",
+      "Clean bench", "Safe cabinet", "FACS", "plate reader", "photoirradiator",
+      "721Centrifuge", "725Centrifuge", "RT-PCR", "Spectrophotometer(UV-2550)",
       "Thermal cycler up", "Thermal cycler down", "Zetasizer", "vacuum dryer",
       "Freeze Dryer(for DNA)", "iMac", "iBind1 (WB)", "iBind2 (WB)",
       "Incubator1(721 E.coli.)", "Incubator2(721 E.coli.)", "BLI", "ESI-MS"
@@ -632,13 +916,19 @@
     // 新機能用の共通ヘルパー
     // ==========================================
     const MAX_SPAN_DAYS = 14; // 1件の予約で日をまたげる最大日数（GAS側と同じ値）
-    const WEEKDAY_NAMES = ['日','月','火','水','木','金','土'];
-    const EQ_STATUS_LABELS = { broken: "故障中", maintenance: "メンテナンス中", stopped: "使用停止" };
+    const WEEKDAY_NAMES = LANG === 'en' ? ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] : ['日','月','火','水','木','金','土'];
+    const EQ_STATUS_LABELS = LANG === 'en'
+      ? { broken: "Out of order", maintenance: "Maintenance", stopped: "Out of service" }
+      : { broken: "故障中", maintenance: "メンテナンス中", stopped: "使用停止" };
+    // 「名前（状態）」の表記
+    function withStatus(name, label) {
+      return LANG === 'en' ? `${name} (${label})` : `${name}（${label}）`;
+    }
 
     // 機器の状態 { 機器名: { status, note } }（status が空なら利用可）
     let equipmentStatus = {};
     // このブラウザに保存した自分の名前
-    let myName = localStorage.getItem('okamoto_my_name') || "";
+    let myName = lsGet('okamoto_my_name') || "";
 
     function eqStatusOf(eq) {
       return (equipmentStatus[eq] && equipmentStatus[eq].status) || "";
@@ -672,8 +962,17 @@
     function resEndDate(r) {
       return r.endDate || r.date;
     }
+    // 翌日0:00に終わる予約は「その日の24:00まで」の予約として扱う
+    function endsAtMidnight(r) {
+      return dayNum(resEndDate(r)) - dayNum(r.date) === 1 && r.endTime === "00:00";
+    }
+    // 日をまたぐ予約か（24:00終了は1日の予約として扱う）
     function isMultiDay(r) {
-      return resEndDate(r) !== r.date;
+      return resEndDate(r) !== r.date && !endsAtMidnight(r);
+    }
+    // 終了時刻の表示（24:00終了なら "24:00"）
+    function endTimeLabel(r) {
+      return endsAtMidnight(r) ? "24:00" : r.endTime;
     }
     function absStartMin(r) {
       return dayNum(r.date) * 1440 + timeToMinutes(r.startTime);
@@ -691,6 +990,32 @@
       if (ee <= ss) return null;
       return { s: ss, e: ee, startsBefore: s < 0, endsAfter: e > 1440 };
     }
+    // ---- 言語に合わせた日付の表示 ----
+    const RANGE_SEP = LANG === 'en' ? '–' : '〜';
+    const ITEM_SEP = LANG === 'en' ? '|' : '｜';
+    // 2026年11月 / November 2026
+    function formatYearMonth(y, m) {
+      return LANG === 'en'
+        ? new Date(y, m, 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
+        : `${y}年${m + 1}月`;
+    }
+    // 2026年11月13日 (金) / Fri, Nov 13, 2026
+    function formatFullDate(d, withWeekday) {
+      if (LANG === 'en') {
+        const opt = { year: 'numeric', month: 'short', day: 'numeric' };
+        if (withWeekday) opt.weekday = 'short';
+        return d.toLocaleDateString('en-US', opt);
+      }
+      return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日` + (withWeekday ? ` (${WEEKDAY_NAMES[d.getDay()]})` : '');
+    }
+    // 2026年11月8日 〜 11月14日 / Nov 8, 2026 – Nov 14
+    function formatWeekRange(start, end) {
+      if (LANG === 'en') {
+        return `${start.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })} – ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+      }
+      return `${start.getFullYear()}年${start.getMonth() + 1}月${start.getDate()}日 〜 ${end.getMonth() + 1}月${end.getDate()}日`;
+    }
+
     // "M/D (曜)" 形式
     function shortDateLabel(dateStr) {
       const dt = new Date(dateStr + "T00:00:00");
@@ -698,8 +1023,8 @@
     }
     // 予約の日時範囲の表示用文字列
     function rangeLabel(r) {
-      const end = isMultiDay(r) ? `${shortDateLabel(resEndDate(r))} ${r.endTime}` : r.endTime;
-      return `${shortDateLabel(r.date)} ${r.startTime} 〜 ${end}`;
+      const end = isMultiDay(r) ? `${shortDateLabel(resEndDate(r))} ${r.endTime}` : endTimeLabel(r);
+      return `${shortDateLabel(r.date)} ${r.startTime} ${RANGE_SEP} ${end}`;
     }
 
     function sameName(a, b) {
@@ -710,7 +1035,7 @@
       return !!myName && !!item && !sameName(item.title, myName);
     }
     function othersWarningText(item) {
-      return `${item.title} さんの予約です。`;
+      return t('{name} さんの予約です。', { name: item.title });
     }
     function confirmIfOthers(item, actionText) {
       if (!isOthersBooking(item)) return true;
@@ -718,8 +1043,8 @@
     }
     function setMyName(name) {
       myName = String(name || "").trim();
-      if (myName) localStorage.setItem('okamoto_my_name', myName);
-      else localStorage.removeItem('okamoto_my_name');
+      if (myName) lsSet('okamoto_my_name', myName);
+      else lsRemove('okamoto_my_name');
     }
 
     function formatDateStr(d) {
@@ -729,8 +1054,9 @@
       return `${y}-${m}-${day}`;
     }
 
+    // 分 → "HH:MM"（1440分は "24:00"。フォームに入れる前に toFormEnd などで変換すること）
     function minutesToTime(mins) {
-      const clamped = Math.max(0, Math.min(1439, Math.round(mins)));
+      const clamped = Math.max(0, Math.min(1440, Math.round(mins)));
       const h = Math.floor(clamped / 60);
       const m = clamped % 60;
       return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
@@ -802,11 +1128,11 @@
 
           const rawList = Array.isArray(json) ? json : (json.reservations || []);
           reservations = normalizeList(rawList);
-          localStorage.setItem('okamoto_res_v1', JSON.stringify(reservations));
+          lsSet('okamoto_res_v1', JSON.stringify(reservations));
 
           if (json && Array.isArray(json.equipments) && json.equipments.length > 0) {
             equipments = json.equipments;
-            localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
+            lsSet('okamoto_eq_v1', JSON.stringify(equipments));
           }
           applyEquipmentStatus(json && json.equipmentStatus);
 
@@ -816,7 +1142,7 @@
               const now = new Date();
               const hh = String(now.getHours()).padStart(2, '0');
               const mm = String(now.getMinutes()).padStart(2, '0');
-              st.innerText = isBackgroundAuto ? `自動更新済 (${hh}:${mm})` : "同期完了";
+              st.innerText = isBackgroundAuto ? t('自動更新済 ({time})', { time: `${hh}:${mm}` }) : t("同期完了");
             }
             renderTagButtons();
             renderMiniCalendar();
@@ -828,7 +1154,7 @@
           console.error(err);
           if (isUnlocked && !isBackgroundAuto) {
             const st = document.getElementById('syncStatus');
-            if (st) st.innerText = "読込エラー";
+            if (st) st.innerText = t("読込エラー");
           }
           return false;
         })
@@ -857,31 +1183,37 @@
       const inputVal = input.value;
       hideEl('authError');
       btn.disabled = true;
-      btn.innerText = "確認中...";
+      btn.innerText = t("確認中...");
       try {
         const json = await postToServer({ action: "login", key: inputVal });
         if (json && json.status === "success") {
           memberKey = inputVal;
-          sessionStorage.setItem('okamoto_key', inputVal);
+          ssSet('okamoto_key', inputVal);
+          // 「ログイン状態を保持」：一般用のパスワードだけ保存（管理者権限はタブを閉じると解除）
+          if (document.getElementById('rememberLogin').checked) {
+            lsSet('okamoto_key_persist', JSON.stringify({ key: inputVal, exp: Date.now() + REMEMBER_LOGIN_DAYS * 86400000 }));
+          } else {
+            lsRemove('okamoto_key_persist');
+          }
           if (json.role === "admin") {
             adminKey = inputVal;
             isAdminAuthenticated = true;
-            sessionStorage.setItem('okamoto_admin_key', inputVal);
+            ssSet('okamoto_admin_key', inputVal);
           }
           input.value = "";
           startPrefetch(false);
           unlockApp();
         } else {
-          errEl.innerText = "パスワードが正しくありません";
+          errEl.innerText = t("パスワードが正しくありません");
           showEl('authError');
         }
       } catch (err) {
         console.error(err);
-        errEl.innerText = "サーバーに接続できませんでした";
+        errEl.innerText = t("サーバーに接続できませんでした");
         showEl('authError');
       } finally {
         btn.disabled = false;
-        btn.innerText = "入室する";
+        btn.innerText = t("入室する");
       }
     }
 
@@ -893,7 +1225,7 @@
       updateAdminIconState();
 
       const minD = getMinAllowedDate();
-      document.getElementById('retentionNote').innerText = `※履歴保持: ${minD.getFullYear()}年${minD.getMonth()+1}月1日〜`;
+      document.getElementById('retentionNote').innerText = t('※履歴保持: {date}〜', { date: formatFullDate(minD, false) });
 
       renderTagButtons();
       renderMiniCalendar();
@@ -902,9 +1234,9 @@
 
       const st = document.getElementById('syncStatus');
       if (prefetchPromise) {
-        if (st) st.innerText = "最新確認中...";
+        if (st) st.innerText = t("最新確認中...");
       } else {
-        if (st) st.innerText = "同期完了";
+        if (st) st.innerText = t("同期完了");
       }
     }
 
@@ -939,7 +1271,7 @@
         if (json && json.status === "success" && json.role === "admin") {
           adminKey = val;
           isAdminAuthenticated = true;
-          sessionStorage.setItem('okamoto_admin_key', val);
+          ssSet('okamoto_admin_key', val);
           input.value = "";
           updateAdminIconState();
           hideEl('adminAuthModal');
@@ -949,16 +1281,19 @@
         }
       } catch (err) {
         console.error(err);
-        alert("サーバーに接続できませんでした。");
+        alert(t("サーバーに接続できませんでした。"));
       }
     }
 
     (function initImmediate() {
-      const savedEq = localStorage.getItem('okamoto_eq_v1');
-      if (savedEq) equipments = JSON.parse(savedEq);
-      try { equipmentStatus = JSON.parse(localStorage.getItem('okamoto_eqst_v1') || "{}") || {}; } catch (e) { equipmentStatus = {}; }
-      const savedRes = localStorage.getItem('okamoto_res_v1');
-      if (savedRes) reservations = normalizeList(JSON.parse(savedRes));
+      const savedEq = storageGetJSON('localStorage', 'okamoto_eq_v1', null);
+      if (Array.isArray(savedEq) && savedEq.length > 0) equipments = savedEq;
+      const savedSt = storageGetJSON('localStorage', 'okamoto_eqst_v1', {});
+      equipmentStatus = (savedSt && typeof savedSt === 'object' && !Array.isArray(savedSt)) ? savedSt : {};
+      const savedRes = storageGetJSON('localStorage', 'okamoto_res_v1', null);
+      if (Array.isArray(savedRes)) {
+        try { reservations = normalizeList(savedRes); } catch (e) { reservations = []; }
+      }
 
       if (adminKey) isAdminAuthenticated = true;
       if (memberKey) {
@@ -973,63 +1308,72 @@
 
     async function loadFromCloud(force = false) {
       const status = document.getElementById('syncStatus');
-      if (status) status.innerText = "同期中...";
+      if (status) status.innerText = t("同期中...");
       await startPrefetch(false);
     }
 
+    // サーバーへ書き込み系の操作を送る。
+    // 戻り値は必ずオブジェクト（status が "success" 以外なら失敗。呼び出し側で notifyFailure を使って知らせる）
     async function sendTransaction(payload) {
       const status = document.getElementById('syncStatus');
-      if (isSyncing) return null;
+      if (isSyncing) {
+        return { status: "syncing", message: t("前の処理がまだ終わっていません。少し待ってからもう一度お試しください。") };
+      }
       isSyncing = true;
-      status.innerText = "サーバー同期中...";
+      status.innerText = t("サーバー同期中...");
 
       try {
         const key = payload.action === "saveEquipments" ? adminKey : memberKey;
         // サーバーが混雑（他の書き込み処理中）のときは、少し待って最大3回まで自動で再試行
         let result = await postToServer({ ...payload, key });
         for (let retry = 1; result && result.status === "busy" && retry <= 3; retry++) {
-          status.innerText = `混雑のため再試行中 (${retry}/3)...`;
+          status.innerText = t('混雑のため再試行中 ({n}/3)...', { n: retry });
           await new Promise(r => setTimeout(r, 1500 * retry));
           result = await postToServer({ ...payload, key });
         }
+        if (!result || typeof result !== 'object') throw new Error("invalid response");
+
         if (result.status === "unauthorized") {
           handleUnauthorized();
-          return null;
+          return { status: "unauthorized", silent: true };
         }
         if (result.status === "forbidden") {
           adminKey = "";
           isAdminAuthenticated = false;
-          sessionStorage.removeItem('okamoto_admin_key');
+          ssRemove('okamoto_admin_key');
           updateAdminIconState();
           hideEl('settingsModal');
-          status.innerText = "同期完了";
-          alert(result.message || "管理者パスワードが必要です。");
-          return null;
         }
-        if (result.reservations) {
+        // 成功・失敗にかかわらず、サーバーが最新の一覧を返してきたら反映する
+        if (Array.isArray(result.reservations)) {
           reservations = normalizeList(result.reservations);
-          localStorage.setItem('okamoto_res_v1', JSON.stringify(reservations));
+          lsSet('okamoto_res_v1', JSON.stringify(reservations));
         }
         if (Array.isArray(result.equipments) && result.equipments.length > 0) {
           equipments = result.equipments;
-          localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
+          lsSet('okamoto_eq_v1', JSON.stringify(equipments));
         }
         if (result.equipmentStatus) {
           applyEquipmentStatus(result.equipmentStatus);
-          renderTagButtons();
         }
-        status.innerText = "同期完了";
+        status.innerText = result.status === "success" ? t("同期完了") : t("同期失敗");
+        renderTagButtons();
         renderMiniCalendar();
         renderCalendar();
         return result;
       } catch (err) {
         console.error(err);
-        status.innerText = "通信エラー";
-        alert("サーバーとの通信に失敗しました。GASが「新バージョン」でデプロイされているか確認してください。");
-        return null;
+        status.innerText = t("通信エラー");
+        return { status: "network", message: t("サーバーとの通信に失敗しました。時間をおいて再度お試しください。") };
       } finally {
         isSyncing = false;
       }
+    }
+
+    // 失敗した操作を利用者に知らせる（成功・ログイン画面に戻った場合は何もしない）
+    function notifyFailure(res, fallbackMessage) {
+      if (!res || res.silent || res.status === "success") return;
+      alert(res.message || fallbackMessage || t("処理に失敗しました。時間をおいて再度お試しください。"));
     }
 
     // ミニ月間カレンダー描画
@@ -1053,7 +1397,7 @@
     function renderMiniCalendar() {
       const y = miniCalDate.getFullYear();
       const m = miniCalDate.getMonth();
-      document.getElementById('miniCalTitle').innerText = `${y}年${m + 1}月`;
+      document.getElementById('miniCalTitle').innerText = formatYearMonth(y, m);
 
       const minD = getMinAllowedDate();
       const minMonthFirst = new Date(minD.getFullYear(), minD.getMonth(), 1);
@@ -1076,7 +1420,7 @@
         const isDisabled = dStr < minStr;
         const isSelected = dStr === selectedStr;
         const isToday = dStr === todayStr;
-        const hasRes = !isDisabled && reservations.some(r => r.date <= dStr && resEndDate(r) >= dStr);
+        const hasRes = !isDisabled && reservations.some(r => r.date <= dStr && resEndDate(r) >= dStr && segmentOnDay(r, dStr));
         const dow = (firstDay + day - 1) % 7;
 
         let cls = "py-1.5 rounded-md relative font-medium transition ";
@@ -1158,7 +1502,7 @@
         const b = document.createElement('button');
         b.className = `px-2.5 py-1 rounded text-xs font-medium text-white ${tagColors[i % tagColors.length]} hover:opacity-90`;
         const stLabel = eqStatusLabel(eq);
-        b.innerText = stLabel ? `${eq}（${stLabel}）` : eq;
+        b.innerText = stLabel ? withStatus(eq, stLabel) : eq;
         if (stLabel) b.classList.add('line-through', 'opacity-70');
         b.onclick = () => filterByEquipment(eq);
         box.appendChild(b);
@@ -1181,15 +1525,14 @@
       const eqs = currentFilter === 'ALL' ? equipments : [currentFilter];
 
       if (viewMode === 'day') {
-        const weekdays = ['日','月','火','水','木','金','土'];
-        label.innerText = `${y}年${m}月${d}日 (${weekdays[currentDate.getDay()]})`;
+        label.innerText = formatFullDate(currentDate, true);
         renderDayTimeline(container, eqs, formatDateStr(currentDate));
       } else {
         const start = new Date(currentDate);
         start.setDate(start.getDate() - start.getDay());
         const end = new Date(start);
         end.setDate(start.getDate() + 6);
-        label.innerText = `${start.getFullYear()}年${start.getMonth()+1}月${start.getDate()}日 〜 ${end.getMonth()+1}月${end.getDate()}日`;
+        label.innerText = formatWeekRange(start, end);
         renderWeekView(container);
       }
     }
@@ -1228,7 +1571,7 @@
     function renderDayTimeline(container, eqs, dateStr) {
       let html = `<div id="timelineWrapper" class="min-w-[1888px] md:min-w-[1948px] relative">`;
       html += `<div class="timeline-grid bg-slate-100 border-b border-slate-300 text-xs font-bold text-slate-600 sticky top-0 z-30">`;
-      html += `<div class="p-2.5 border-r border-slate-300 sticky left-0 bg-slate-100 z-40 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.12)]">実験機器名</div>`;
+      html += `<div class="p-2.5 border-r border-slate-300 sticky left-0 bg-slate-100 z-40 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.12)]">${t('実験機器名')}</div>`;
       for (let h = 0; h < 24; h++) {
         html += `<div class="p-2 border-r border-slate-200 text-center">${h}</div>`;
       }
@@ -1265,7 +1608,7 @@
           const multi = isMultiDay(item);
           const mine = !!myName && sameName(item.title, myName);
           const colorCls = mine ? 'bg-emerald-50 border-emerald-600 hover:bg-emerald-100' : 'bg-white border-indigo-600 hover:bg-indigo-50';
-          const hint = multi ? '（クリックで編集）' : '（クリックで編集 / ドラッグで移動）';
+          const hint = multi ? t('（クリックで編集）') : t('（クリックで編集 / ドラッグで移動）');
 
           html += `<div data-res-id="${esc(item.id)}"
             onmousedown="startMoveDrag(event, this.dataset.resId)"
@@ -1280,7 +1623,7 @@
         html += `</div></div>`;
       });
 
-      html += `<div id="createGhostBar" class="force-hidden pointer-events-none absolute bg-indigo-500/35 border-2 border-dashed border-indigo-700 rounded z-25 flex items-center justify-center text-[11px] font-bold text-indigo-950 shadow-md"></div>`;
+      html += `<div id="createGhostBar" class="force-hidden pointer-events-none absolute bg-indigo-500/35 border-2 border-dashed border-indigo-700 rounded z-[25] flex items-center justify-center text-[11px] font-bold text-indigo-950 shadow-md"></div>`;
       html += `</div>`;
       container.innerHTML = html;
 
@@ -1347,8 +1690,8 @@
 
       const trackEl = barEl.closest('.timeline-track');
       const startMin = timeToMinutes(item.startTime);
-      const endMin = timeToMinutes(item.endTime);
-      const duration = Math.max(15, endMin - startMin);
+      // 24:00終了（翌日0:00）にも対応するため通算の分で長さを求める
+      const duration = Math.max(15, absEndMin(item) - absStartMin(item));
       const pointerOffsetMin = clientXToMinutes(trackEl, clientX) - startMin;
 
       dragState = {
@@ -1420,10 +1763,11 @@
       if (dragState.mode === 'create') {
         hideEl('createGhostBar');
 
-        const s = Math.min(dragState.startMin, dragState.currMin);
+        // 開始は最大23:45、終了は最大24:00（右端をクリックしても開始＞終了にならないように）
+        const s = Math.min(1425, Math.min(dragState.startMin, dragState.currMin));
         const e = dragState.moved
-          ? Math.max(s + 15, Math.max(dragState.startMin, dragState.currMin))
-          : Math.min(1425, s + 60);
+          ? Math.min(1440, Math.max(s + 15, Math.max(dragState.startMin, dragState.currMin)))
+          : Math.min(1440, s + 60);
 
         const { eq, dateStr } = dragState;
         dragState = null;
@@ -1441,21 +1785,24 @@
         }
 
         const newStStr = minutesToTime(newStartMin);
-        const newEtStr = minutesToTime(newStartMin + duration);
+        const newEndMin = newStartMin + duration;
+        // 24:00 に終わる場合は「翌日 0:00」として保存する
+        const newEtStr = newEndMin >= 1440 ? "00:00" : minutesToTime(newEndMin);
+        const newEndDate = newEndMin >= 1440 ? addDaysStr(item.date, 1) : item.date;
 
-        if (targetEq === item.equipment && newStStr === item.startTime && newEtStr === item.endTime) {
+        if (targetEq === item.equipment && newStStr === item.startTime && newEtStr === item.endTime && newEndDate === resEndDate(item)) {
           renderCalendar();
           return;
         }
 
         if (targetEq !== item.equipment && !isEqAvailable(targetEq)) {
-          alert(`「${targetEq}」は現在${eqStatusLabel(targetEq)}のため予約できません。`);
+          alert(t('「{eq}」は現在{status}のため予約できません。', { eq: targetEq, status: eqStatusLabel(targetEq) }));
           renderCalendar();
           return;
         }
 
-        if (hasConflict(targetEq, item.date, newStStr, newEtStr, resId)) {
-          alert("移動先にすでに別の予約が入っているため移動できません。");
+        if (hasConflict(targetEq, item.date, newStStr, newEtStr, resId, newEndDate)) {
+          alert(t("移動先にすでに別の予約が入っているため移動できません。"));
           renderCalendar();
           return;
         }
@@ -1464,7 +1811,8 @@
           ...item,
           equipment: targetEq,
           startTime: newStStr,
-          endTime: newEtStr
+          endTime: newEtStr,
+          endDate: newEndDate
         });
       }
     }
@@ -1488,8 +1836,8 @@
       const wrapRect = document.getElementById('timelineWrapper').getBoundingClientRect();
       const trackLeftOffset = trackRect.left - wrapRect.left;
 
-      const s = Math.min(dragState.startMin, dragState.currMin);
-      const e = Math.max(s + 15, Math.max(dragState.startMin, dragState.currMin));
+      const s = Math.min(1425, Math.min(dragState.startMin, dragState.currMin));
+      const e = Math.min(1440, Math.max(s + 15, Math.max(dragState.startMin, dragState.currMin)));
       const leftPx = trackLeftOffset + (s / 1440) * trackRect.width;
       const widthPx = ((e - s) / 1440) * trackRect.width;
 
@@ -1614,11 +1962,11 @@
       pendingMoveData = afterItem;
       const noteText = beforeItem.notes ? ` (${beforeItem.notes})` : "";
       document.getElementById('confirmMoveTitle').innerText = `${beforeItem.title}${noteText}`;
-      document.getElementById('confirmMoveBefore').innerText = `${beforeItem.equipment} ｜ ${beforeItem.startTime} 〜 ${beforeItem.endTime}`;
-      document.getElementById('confirmMoveAfter').innerText = `${afterItem.equipment} ｜ ${afterItem.startTime} 〜 ${afterItem.endTime}`;
+      document.getElementById('confirmMoveBefore').innerText = `${beforeItem.equipment} ${ITEM_SEP} ${beforeItem.startTime} ${RANGE_SEP} ${endTimeLabel(beforeItem)}`;
+      document.getElementById('confirmMoveAfter').innerText = `${afterItem.equipment} ${ITEM_SEP} ${afterItem.startTime} ${RANGE_SEP} ${endTimeLabel(afterItem)}`;
       // 他人の予約を動かそうとしているときは警告を表示
       if (isOthersBooking(beforeItem)) {
-        document.getElementById('confirmMoveOthersText').innerText = `${othersWarningText(beforeItem)}本当に移動しますか？`;
+        document.getElementById('confirmMoveOthersText').innerText = othersWarningText(beforeItem) + t('本当に移動しますか？');
         showEl('confirmMoveOthersWarn');
       } else {
         hideEl('confirmMoveOthersWarn');
@@ -1639,21 +1987,30 @@
 
       const btn = document.getElementById('confirmMoveBtn');
       btn.disabled = true;
-      btn.innerText = "変更中...";
+      btn.innerText = t("変更中...");
 
       try {
+        // 先に画面へ反映し（待たずに結果が見えるように）、失敗したら元に戻す
         const idx = reservations.findIndex(r => String(r.id) === String(updatedItem.id));
+        const prevItem = idx !== -1 ? reservations[idx] : null;
         if (idx !== -1) reservations[idx] = updatedItem;
         hideEl('moveConfirmModal');
         renderCalendar();
 
         const res = await sendTransaction({ action: "update", item: updatedItem });
-        if (res && (res.status === "conflict" || res.status === "error")) {
-          alert(res.message || "変更に失敗しました。");
+        if (res.status !== "success") {
+          // サーバーが最新の一覧を返さなかった失敗（通信エラー・混雑など）は手元で元に戻す
+          if (!Array.isArray(res.reservations) && prevItem) {
+            const i2 = reservations.findIndex(r => String(r.id) === String(updatedItem.id));
+            if (i2 !== -1) reservations[i2] = prevItem;
+            renderMiniCalendar();
+            renderCalendar();
+          }
+          notifyFailure(res, t("変更に失敗しました。"));
         }
       } finally {
         btn.disabled = false;
-        btn.innerText = "この内容で変更する";
+        btn.innerText = t("この内容で変更する");
       }
     }
 
@@ -1689,15 +2046,15 @@
           <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 text-xl mb-2">
             <i class="fa-solid fa-calendar-week"></i>
           </div>
-          <h2 class="text-lg font-bold text-slate-800">週表示する実験機器を選択してください</h2>
-          <p class="text-xs text-slate-500 mt-1">選択した機器の1週間（日曜〜土曜・24時間）の予約状況が表示されます</p>
+          <h2 class="text-lg font-bold text-slate-800">${t('週表示する実験機器を選択してください')}</h2>
+          <p class="text-xs text-slate-500 mt-1">${t('選択した機器の1週間（日曜〜土曜・24時間）の予約状況が表示されます')}</p>
         </div>`;
 
         html += `<div class="max-w-md mx-auto mb-5 relative">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
           <input id="weekEqSearchInput" type="text" value="${esc(weekSearchQuery)}"
             oninput="updateWeekSearch(this.value)"
-            placeholder="機器名で絞り込み（例: HPLC, PCR, Centrifuge...）"
+            placeholder="${esc(t('機器名で絞り込み（例: HPLC, PCR, Centrifuge...）'))}"
             class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
         </div>`;
 
@@ -1723,7 +2080,7 @@
       const start = new Date(currentDate);
       start.setDate(start.getDate() - start.getDay());
       const days = [];
-      const wNames = ['日','月','火','水','木','金','土'];
+      const wNames = WEEKDAY_NAMES;
       const todayStr = formatDateStr(new Date());
       const minStr = getMinAllowedDateStr();
 
@@ -1741,35 +2098,35 @@
 
       let html = `<div class="bg-indigo-50/80 border-b border-indigo-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3 sticky left-0">`;
       html += `<div class="flex items-center gap-2.5">
-        <span class="px-2.5 py-1 rounded-md text-xs font-bold text-white ${badgeColor}">表示中</span>
+        <span class="px-2.5 py-1 rounded-md text-xs font-bold text-white ${badgeColor}">${t('表示中')}</span>
         <span class="text-base sm:text-lg font-extrabold text-indigo-950">${esc(weekSelectedEq)}</span>${eqStatusBadge(weekSelectedEq)}
         ${!weekEqAvailable && equipmentStatus[weekSelectedEq].note ? `<span class="text-xs text-slate-600">${esc(equipmentStatus[weekSelectedEq].note)}</span>` : ''}
       </div>`;
 
       html += `<div class="flex flex-wrap items-center gap-2">
         <button onclick="stepWeekEquipment(-1)" class="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50">
-          <i class="fa-solid fa-chevron-left"></i> 前の機器
+          <i class="fa-solid fa-chevron-left"></i> ${t('前の機器')}
         </button>
         <select onchange="selectWeekEquipment(this.value)" class="border border-indigo-300 bg-white rounded-lg px-3 py-1.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500">
           ${equipments.map(e => `<option value="${esc(e)}" ${e === weekSelectedEq ? 'selected' : ''}>${esc(e)}</option>`).join('')}
         </select>
         <button onclick="stepWeekEquipment(1)" class="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50">
-          次の機器 <i class="fa-solid fa-chevron-right"></i>
+          ${t('次の機器')} <i class="fa-solid fa-chevron-right"></i>
         </button>
         <button onclick="selectWeekEquipment(null)" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-xs font-bold ml-1">
-          <i class="fa-solid fa-grid-2 mr-1"></i>機器一覧に戻る
+          <i class="fa-solid fa-table-cells-large mr-1"></i>${t('機器一覧に戻る')}
         </button>
       </div></div>`;
 
       const hourHeight = 36;
       html += `<div class="min-w-[860px]">`;
       html += `<div class="week-grid bg-slate-100 border-b border-slate-300 text-xs font-bold text-center sticky top-0 z-20">`;
-      html += `<div class="p-2.5 border-r border-slate-300 text-slate-500">時間</div>`;
+      html += `<div class="p-2.5 border-r border-slate-300 text-slate-500">${t('時間')}</div>`;
       days.forEach(d => {
         const isToday = d.str === todayStr;
         const color = d.disabled ? 'text-slate-300' : d.dow === 0 ? 'text-red-600' : d.dow === 6 ? 'text-blue-600' : 'text-slate-700';
         html += `<div class="p-2.5 border-r border-slate-200 ${isToday ? 'bg-indigo-100/80 text-indigo-900' : color}">
-          ${d.label} ${isToday ? '<span class="ml-1 text-[10px] bg-indigo-600 text-white px-1.5 py-0.5 rounded">今日</span>' : ''}
+          ${d.label} ${isToday ? '<span class="ml-1 text-[10px] bg-indigo-600 text-white px-1.5 py-0.5 rounded">' + t('今日') + '</span>' : ''}
         </div>`;
       });
       html += `</div>`;
@@ -1793,7 +2150,7 @@
         html += `<div class="border-r border-slate-200 relative ${d.disabled ? 'bg-slate-100/70' : d.str === todayStr ? 'bg-indigo-50/20' : ''}" ${colStyle}>`;
         for (let h = 0; h < 24; h++) {
           const tStr = `${String(h).padStart(2,'0')}:00`;
-          const eStr = `${String(Math.min(23, h+1)).padStart(2,'0')}:00`;
+          const eStr = h === 23 ? "24:00" : `${String(h + 1).padStart(2, '0')}:00`;
           html += `<div data-eq="${esc(weekSelectedEq)}" ${clickable ? `onclick="openNewModal(this.dataset.eq, '${d.str}', '${tStr}', '${eStr}')"` : ''}
             style="height:${hourHeight}px;"
             class="border-b border-slate-100 ${clickable ? 'hover:bg-indigo-50/70 cursor-pointer' : ''}"></div>`;
@@ -1836,13 +2193,13 @@
       if (!stVal) return;
 
       // 同じ日の予約のときだけ、終了時間が開始時間以前なら開始30分後に自動調整
+      // （終了 0:00 は「24:00」の意味なので調整しない）
       const sameDay = document.getElementById('modalEndDate').value === document.getElementById('modalDate').value;
       if (!sameDay) return;
       const [h, m] = stVal.split(':').map(Number);
-      let totalMins = h * 60 + m + 30;
-      if (totalMins >= 1440) totalMins = 1439; // 24時を超える場合は上限23:59にする
-      if (!etEl.value || etEl.value <= stVal) {
-        etEl.value = minutesToTime(totalMins);
+      const totalMins = h * 60 + m + 30;
+      if (!etEl.value || (etEl.value !== "00:00" && etEl.value <= stVal)) {
+        etEl.value = totalMins >= 1440 ? "00:00" : minutesToTime(totalMins);
       }
     }
 
@@ -1873,7 +2230,7 @@
       const list = (!selectedEq || equipments.includes(selectedEq)) ? equipments : [selectedEq, ...equipments];
       return list.map(e => {
         const st = eqStatusLabel(e);
-        return `<option value="${esc(e)}" ${e === selectedEq ? 'selected' : ''}>${esc(e)}${st ? `（${esc(st)}）` : ''}</option>`;
+        return `<option value="${esc(e)}" ${e === selectedEq ? 'selected' : ''}>${esc(st ? withStatus(e, st) : e)}</option>`;
       }).join('');
     }
 
@@ -1906,7 +2263,7 @@
     function openNewModal(eq = '', date = '', startTime = '09:00', endTime = '10:00') {
       updateNameSuggestions();
       editingId = null;
-      document.getElementById('modalTitle').innerText = "新規予約";
+      document.getElementById('modalTitle').innerText = t("新規予約");
       hideEl('deleteBtn');
       showEl('repeatSection');
       hideEl('seriesScopeSection');
@@ -1921,7 +2278,9 @@
       const d = date || formatDateStr(currentDate);
       setModalDates(d, d);
       document.getElementById('modalStartTime').value = cleanTime(startTime);
-      document.getElementById('modalEndTime').value = cleanTime(endTime);
+      // "24:00" はフォーム上では「同じ日の 0:00」と表示する（保存時に翌日0:00へ変換）
+      const et = cleanTime(endTime);
+      document.getElementById('modalEndTime').value = et === "24:00" ? "00:00" : et;
 
       showEl('bookingModal');
     }
@@ -1931,7 +2290,7 @@
       if (!item) return;
       updateNameSuggestions();
       editingId = String(item.id);
-      document.getElementById('modalTitle').innerText = "予約の編集・削除";
+      document.getElementById('modalTitle').innerText = t("予約の編集・削除");
       showEl('deleteBtn');
       hideEl('repeatSection');
       if (item.seriesId) {
@@ -1942,7 +2301,8 @@
       }
 
       document.getElementById('modalEquipment').innerHTML = equipmentOptionsHtml(item.equipment);
-      setModalDates(cleanDate(item.date), resEndDate(item));
+      // 24:00終了（翌日0:00）は、フォーム上では終了日を開始日と同じにして表示
+      setModalDates(cleanDate(item.date), endsAtMidnight(item) ? cleanDate(item.date) : resEndDate(item));
       document.getElementById('modalStartTime').value = cleanTime(item.startTime);
       document.getElementById('modalEndTime').value = cleanTime(item.endTime);
       document.getElementById('modalName').value = item.title || "";
@@ -1979,48 +2339,55 @@
       const eq = document.getElementById('modalEquipment').value;
       const title = document.getElementById('modalName').value.trim();
       const date = document.getElementById('modalDate').value;
-      const endDate = document.getElementById('modalEndDate').value || date;
+      let endDate = document.getElementById('modalEndDate').value || date;
       const startTime = cleanTime(document.getElementById('modalStartTime').value);
       const endTime = cleanTime(document.getElementById('modalEndTime').value);
       const notes = document.getElementById('modalNotes').value.trim();
 
+      if (!date || !endDate) {
+        alert(t("日付を入力してください。"));
+        return;
+      }
+      // 同じ日の 0:00 終了は「その日の24:00まで」＝翌日0:00として保存
+      if (endDate === date && endTime === "00:00") endDate = addDaysStr(date, 1);
+
       if (date < getMinAllowedDateStr()) {
-        alert("保持期間（3ヶ月前）より過去の日付は指定できません。");
+        alert(t("保持期間（3ヶ月前）より過去の日付は指定できません。"));
         return;
       }
 
       const span = dayNum(endDate) - dayNum(date);
       if (span < 0) {
-        alert("終了日は開始日以降の日付にしてください。");
+        alert(t("終了日は開始日以降の日付にしてください。"));
         return;
       }
       if (span > MAX_SPAN_DAYS) {
-        alert(`1件の予約で指定できるのは最大${MAX_SPAN_DAYS}日間までです。`);
+        alert(t('1件の予約で指定できるのは最大{n}日間までです。', { n: MAX_SPAN_DAYS }));
         return;
       }
       if (span === 0 && timeToMinutes(endTime) <= timeToMinutes(startTime)) {
-        alert("終了時間は開始時間より後に設定してください。");
+        alert(t("終了時間は開始時間より後に設定してください。"));
         return;
       }
 
       const orig = editingId ? reservations.find(r => String(r.id) === String(editingId)) : null;
       if (editingId && !orig) {
-        alert("対象の予約が見つかりません。「更新」ボタンで最新の状態にしてください。");
+        alert(t("対象の予約が見つかりません。「更新」ボタンで最新の状態にしてください。"));
         return;
       }
 
       // 故障中などの機器には新規予約・機器の変更ができない
       if (!isEqAvailable(eq) && (!orig || orig.equipment !== eq)) {
-        alert(`「${eq}」は現在${eqStatusLabel(eq)}のため予約できません。`);
+        alert(t('「{eq}」は現在{status}のため予約できません。', { eq, status: eqStatusLabel(eq) }));
         return;
       }
 
       // 他人の予約を変更する場合は確認
-      if (orig && !confirmIfOthers(orig, "変更してもよろしいですか？")) return;
+      if (orig && !confirmIfOthers(orig, t("変更してもよろしいですか？"))) return;
 
       const btn = document.getElementById('saveSubmitBtn');
       btn.disabled = true;
-      btn.innerText = "確認・保存中...";
+      btn.innerText = t("確認・保存中...");
 
       try {
         if (orig) {
@@ -2029,7 +2396,7 @@
           if (scope === 'future') {
             // 繰り返し予約：この日以降のすべてをまとめて変更
             if (date !== orig.date) {
-              alert("「この日以降のすべて」を変更するときは開始日を変えられません。日付を変えるときは「この予約のみ」を選んでください。");
+              alert(t("「この日以降のすべて」を変更するときは開始日を変えられません。日付を変えるときは「この予約のみ」を選んでください。"));
               return;
             }
             const res = await sendTransaction({
@@ -2038,27 +2405,25 @@
               fromDate: orig.date,
               changes: { equipment: eq, title, notes, startTime, endTime, spanDays: span }
             });
-            if (res) {
-              if (res.status !== "success") {
-                alert(res.message || "更新に失敗しました。");
-                return;
-              }
-              closeBookingModal();
+            if (res.status !== "success") {
+              notifyFailure(res, t("更新に失敗しました。"));
+              if (res.status === "stale") closeBookingModal();
+              return;
             }
+            closeBookingModal();
           } else {
             if (hasConflict(eq, date, startTime, endTime, editingId, endDate)) {
-              alert("同じ時間帯にすでに別の予約が入っています。");
+              alert(t("同じ時間帯にすでに別の予約が入っています。"));
               return;
             }
             const updatedItem = { ...orig, id: String(editingId), equipment: eq, title, date, endDate, startTime, endTime, notes };
             const res = await sendTransaction({ action: "update", item: updatedItem });
-            if (res) {
-              if (res.status !== "success") {
-                alert(res.message || "更新に失敗しました。");
-                return;
-              }
-              closeBookingModal();
+            if (res.status !== "success") {
+              notifyFailure(res, t("更新に失敗しました。"));
+              if (res.status === "stale") closeBookingModal();
+              return;
             }
+            closeBookingModal();
           }
         } else {
           const rep = document.getElementById('modalRepeatType').value;
@@ -2067,12 +2432,19 @@
           const randSuffix = Math.random().toString(36).slice(2, 6);
           const candidateItems = [];
 
+          const base = new Date(date + "T00:00:00");
           for (let i = 0; i < count; i++) {
-            const dt = new Date(date + "T00:00:00");
+            let dt = new Date(base);
             if (rep === 'daily') dt.setDate(dt.getDate() + i);
             else if (rep === 'weekly') dt.setDate(dt.getDate() + i * 7);
             else if (rep === 'biweekly') dt.setDate(dt.getDate() + i * 14);
-            else if (rep === 'monthly') dt.setMonth(dt.getMonth() + i);
+            else if (rep === 'monthly') {
+              // 毎月：その月に同じ日がなければ月末にそろえる（1/31 → 2/28 → 3/31 …）
+              const y = base.getFullYear();
+              const m = base.getMonth() + i;
+              const lastDay = new Date(y, m + 1, 0).getDate();
+              dt = new Date(y, m, Math.min(base.getDate(), lastDay));
+            }
             const dStr = formatDateStr(dt);
 
             candidateItems.push({
@@ -2082,26 +2454,24 @@
           }
 
           const res = await sendTransaction({ action: "add", items: candidateItems });
-          if (res) {
-            if (res.status !== "success") {
-              alert(res.message || "更新に失敗しました。");
-              return;
-            }
-            if (res.added === 0) {
-              alert("指定した時間帯はすでに他の予約（または同時操作された予約）と重複しているため登録できませんでした。");
-              return;
-            }
-            setMyName(title); // 入力した名前をこのブラウザに記憶
-            renderCalendar();
-            if (res.skipped > 0) {
-              alert(`${res.added}件を登録しました（重複していた${res.skipped}件はスキップしました）。`);
-            }
-            closeBookingModal();
+          if (res.status !== "success") {
+            notifyFailure(res, t("登録に失敗しました。"));
+            return;
           }
+          if (res.added === 0) {
+            alert(t("指定した時間帯はすでに他の予約（または同時操作された予約）と重複しているため登録できませんでした。"));
+            return;
+          }
+          if (!myName) setMyName(title); // 名前が未設定のときだけ記憶（代理予約で自分の名前が変わらないように）
+          renderCalendar();
+          if (res.skipped > 0) {
+            alert(t('{added}件を登録しました（重複していた{skipped}件はスキップしました）。', { added: res.added, skipped: res.skipped }));
+          }
+          closeBookingModal();
         }
       } finally {
         btn.disabled = false;
-        btn.innerText = "保存する";
+        btn.innerText = t("保存する");
       }
     }
 
@@ -2112,17 +2482,18 @@
 
       // 繰り返し予約は削除範囲を選ぶ
       if (item.seriesId) {
-        if (!confirmIfOthers(item, "削除してもよろしいですか？")) return;
+        if (!confirmIfOthers(item, t("削除してもよろしいですか？"))) return;
         showEl('deleteScopeModal');
         return;
       }
 
       const question = isOthersBooking(item)
-        ? `${othersWarningText(item)}この予約を削除しますか？`
-        : "この予約を削除しますか？";
+        ? othersWarningText(item) + t("この予約を削除しますか？")
+        : t("この予約を削除しますか？");
       if (confirm(question)) {
         closeBookingModal();
-        await sendTransaction({ action: "delete", id: item.id });
+        const res = await sendTransaction({ action: "delete", id: item.id, updatedAt: item.updatedAt || "" });
+        notifyFailure(res, t("削除に失敗しました。"));
       }
     }
 
@@ -2132,18 +2503,14 @@
       hideEl('deleteScopeModal');
       if (!item || isSyncing) return;
       closeBookingModal();
-      if (scope === 'one') {
-        await sendTransaction({ action: "delete", id: item.id });
-        return;
-      }
-      const res = await sendTransaction({
-        action: "deleteSeries",
-        seriesId: item.seriesId,
-        fromDate: scope === 'future' ? item.date : ""
-      });
-      if (res && res.status !== "success") {
-        alert(res.message || "削除に失敗しました。");
-      }
+      const res = scope === 'one'
+        ? await sendTransaction({ action: "delete", id: item.id, updatedAt: item.updatedAt || "" })
+        : await sendTransaction({
+            action: "deleteSeries",
+            seriesId: item.seriesId,
+            fromDate: scope === 'future' ? item.date : ""
+          });
+      notifyFailure(res, t("削除に失敗しました。"));
     }
 
     // ==========================================
@@ -2170,15 +2537,17 @@
     function renderMyBookings() {
       const box = document.getElementById('myBookingsList');
       if (!myName) {
-        box.innerHTML = `<p class="text-sm text-slate-500 text-center py-8">名前を入力すると、あなたの予約が表示されます。</p>`;
+        box.innerHTML = `<p class="text-sm text-slate-500 text-center py-8">${t('名前を入力すると、あなたの予約が表示されます。')}</p>`;
         return;
       }
-      const todayStr = formatDateStr(new Date());
+      // まだ終わっていない予約（終了時刻が現在より後）
+      const now = new Date();
+      const nowAbs = dayNum(formatDateStr(now)) * 1440 + now.getHours() * 60 + now.getMinutes();
       const list = reservations
-        .filter(r => sameName(r.title, myName) && resEndDate(r) >= todayStr)
+        .filter(r => sameName(r.title, myName) && absEndMin(r) > nowAbs)
         .sort((a, b) => absStartMin(a) - absStartMin(b));
       if (list.length === 0) {
-        box.innerHTML = `<p class="text-sm text-slate-500 text-center py-8">今日以降の予約はありません。</p>`;
+        box.innerHTML = `<p class="text-sm text-slate-500 text-center py-8">${t('今後の予約はありません。')}</p>`;
         return;
       }
       box.innerHTML = list.map(r => `
@@ -2211,11 +2580,16 @@
     // ==========================================
     // 機器管理（管理者専用・スプレッドシートへ即時同期）
     // ==========================================
+    let isSavingEquipments = false; // 機器リスト保存中は操作を受け付けない
+
     function openSettingsModal() {
       if (!isAdminAuthenticated) {
         requestAdminSettings();
         return;
       }
+      const dis = isSavingEquipments ? 'disabled' : '';
+      document.getElementById('addEquipmentBtn').disabled = isSavingEquipments;
+      document.getElementById('newEquipmentName').disabled = isSavingEquipments;
       const box = document.getElementById('equipmentListContainer');
       box.innerHTML = equipments.map((eq, i) => {
         const st = eqStatusOf(eq);
@@ -2225,19 +2599,19 @@
           <div class="flex justify-between items-center gap-2">
             <span class="truncate flex-1 font-medium text-slate-800">${i + 1}. ${esc(eq)}</span>
             <div class="flex items-center gap-1 shrink-0">
-              <button onclick="moveEquipment(${i}, -1)" ${i === 0 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="上へ">▲</button>
-              <button onclick="moveEquipment(${i}, 1)" ${i === equipments.length - 1 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="下へ">▼</button>
-              <button onclick="removeEquipment(${i})" class="ml-1 px-2 py-0.5 text-red-600 hover:bg-red-50 rounded text-xs font-bold">削除</button>
+              <button onclick="moveEquipment(${i}, -1)" ${i === 0 || isSavingEquipments ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="${t('上へ')}">▲</button>
+              <button onclick="moveEquipment(${i}, 1)" ${i === equipments.length - 1 || isSavingEquipments ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="${t('下へ')}">▼</button>
+              <button onclick="removeEquipment(${i})" ${dis} class="ml-1 px-2 py-0.5 text-red-600 hover:bg-red-50 rounded text-xs font-bold disabled:opacity-30">${t('削除')}</button>
             </div>
           </div>
           <div class="flex items-center gap-1.5">
-            <select onchange="setEquipmentStatus(${i}, this.value)" class="border rounded text-xs px-1.5 py-1 bg-white ${st ? 'font-bold text-amber-800' : 'text-slate-600'}">
-              <option value="" ${!st ? 'selected' : ''}>利用可</option>
-              <option value="broken" ${st === 'broken' ? 'selected' : ''}>故障中</option>
-              <option value="maintenance" ${st === 'maintenance' ? 'selected' : ''}>メンテナンス中</option>
-              <option value="stopped" ${st === 'stopped' ? 'selected' : ''}>使用停止</option>
+            <select onchange="setEquipmentStatus(${i}, this.value)" ${dis} class="border rounded text-xs px-1.5 py-1 bg-white ${st ? 'font-bold text-amber-800' : 'text-slate-600'}">
+              <option value="" ${!st ? 'selected' : ''}>${t('利用可')}</option>
+              <option value="broken" ${st === 'broken' ? 'selected' : ''}>${EQ_STATUS_LABELS.broken}</option>
+              <option value="maintenance" ${st === 'maintenance' ? 'selected' : ''}>${EQ_STATUS_LABELS.maintenance}</option>
+              <option value="stopped" ${st === 'stopped' ? 'selected' : ''}>${EQ_STATUS_LABELS.stopped}</option>
             </select>
-            ${st ? `<input type="text" maxlength="100" value="${esc(note)}" placeholder="理由・復旧予定など（任意）" onchange="setEquipmentNote(${i}, this.value)" class="flex-1 min-w-0 border rounded text-xs px-2 py-1" />` : ''}
+            ${st ? `<input type="text" maxlength="100" value="${esc(note)}" placeholder="${esc(t('理由・復旧予定など（任意）'))}" ${dis} onchange="setEquipmentNote(${i}, this.value)" class="flex-1 min-w-0 border rounded text-xs px-2 py-1" />` : ''}
           </div>
         </div>`;
       }).join('');
@@ -2250,60 +2624,93 @@
       renderCalendar();
     }
 
-    async function syncEquipmentsToCloud() {
-      localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
-      localStorage.setItem('okamoto_eqst_v1', JSON.stringify(equipmentStatus));
+    // 変更前の状態を受け取り、保存に失敗したらその状態に戻す
+    async function syncEquipmentsToCloud(prevEquipments, prevStatus) {
+      isSavingEquipments = true;
       openSettingsModal();
-      await sendTransaction({ action: "saveEquipments", equipments: equipments, equipmentStatus: equipmentStatus });
-      if (isModalOpen('settingsModal')) openSettingsModal(); // サーバーに保存された状態で再描画
+      const res = await sendTransaction({ action: "saveEquipments", equipments: equipments, equipmentStatus: equipmentStatus });
+      isSavingEquipments = false;
+      if (res.status === "success") {
+        lsSet('okamoto_eq_v1', JSON.stringify(equipments));
+      } else if (res.status !== "unauthorized") {
+        // サーバーが一覧を返さなかった失敗は手元で元に戻す
+        if (!Array.isArray(res.equipments)) {
+          equipments = prevEquipments;
+          equipmentStatus = prevStatus;
+        }
+        renderTagButtons();
+        renderCalendar();
+        notifyFailure(res, t("機器リストの保存に失敗しました。"));
+      }
+      if (isModalOpen('settingsModal')) openSettingsModal(); // 保存結果の状態で再描画
+    }
+
+    function snapshotEquipments() {
+      return [equipments.slice(), JSON.parse(JSON.stringify(equipmentStatus))];
     }
 
     // 機器の状態（故障中・メンテナンス中・使用停止）を設定
     async function setEquipmentStatus(i, status) {
-      if (!isAdminAuthenticated) return;
+      if (!isAdminAuthenticated || isSavingEquipments) return;
+      const [prevEq, prevSt] = snapshotEquipments();
       const eq = equipments[i];
       if (status) {
         equipmentStatus[eq] = { status, note: (equipmentStatus[eq] && equipmentStatus[eq].note) || "" };
       } else {
         delete equipmentStatus[eq];
       }
-      await syncEquipmentsToCloud();
+      await syncEquipmentsToCloud(prevEq, prevSt);
     }
 
     async function setEquipmentNote(i, note) {
       const eq = equipments[i];
-      if (!isAdminAuthenticated || !equipmentStatus[eq]) return;
+      if (!isAdminAuthenticated || isSavingEquipments || !equipmentStatus[eq]) return;
+      const [prevEq, prevSt] = snapshotEquipments();
       equipmentStatus[eq].note = String(note).trim().slice(0, 100);
-      await syncEquipmentsToCloud();
+      await syncEquipmentsToCloud(prevEq, prevSt);
     }
 
     async function addEquipment() {
-      if (!isAdminAuthenticated) return;
-      const val = document.getElementById('newEquipmentName').value.trim();
-      if (val && !equipments.includes(val)) {
-        equipments.push(val);
-        document.getElementById('newEquipmentName').value = "";
-        await syncEquipmentsToCloud();
+      if (!isAdminAuthenticated || isSavingEquipments) return;
+      const input = document.getElementById('newEquipmentName');
+      const val = input.value.trim();
+      if (!val) return;
+      if (equipments.includes(val)) {
+        alert(t('「{eq}」はすでにリストにあります。', { eq: val }));
+        return;
       }
+      const [prevEq, prevSt] = snapshotEquipments();
+      equipments.push(val);
+      input.value = "";
+      await syncEquipmentsToCloud(prevEq, prevSt);
     }
 
     async function moveEquipment(index, delta) {
-      if (!isAdminAuthenticated) return;
+      if (!isAdminAuthenticated || isSavingEquipments) return;
       const targetIdx = index + delta;
       if (targetIdx < 0 || targetIdx >= equipments.length) return;
+      const [prevEq, prevSt] = snapshotEquipments();
       const temp = equipments[index];
       equipments[index] = equipments[targetIdx];
       equipments[targetIdx] = temp;
-      await syncEquipmentsToCloud();
+      await syncEquipmentsToCloud(prevEq, prevSt);
     }
 
     async function removeEquipment(i) {
-      if (!isAdminAuthenticated) return;
-      if (confirm(`「${equipments[i]}」をリストから削除しますか？`)) {
-        delete equipmentStatus[equipments[i]];
-        equipments.splice(i, 1);
-        await syncEquipmentsToCloud();
-      }
+      if (!isAdminAuthenticated || isSavingEquipments) return;
+      const eq = equipments[i];
+      // まだ終わっていない予約が残っていれば警告する（削除すると予約表に表示されなくなるため）
+      const now = new Date();
+      const nowAbs = dayNum(formatDateStr(now)) * 1440 + now.getHours() * 60 + now.getMinutes();
+      const upcoming = reservations.filter(r => r.equipment === eq && absEndMin(r) > nowAbs).length;
+      const question = t('「{eq}」をリストから削除しますか？', { eq }) + (upcoming > 0
+        ? "\n\n" + t('この機器には今後の予約が {n} 件あります。削除すると予約表に表示されなくなります（予約のデータ自体は残り、「自分の予約」からは確認できます）。', { n: upcoming })
+        : "");
+      if (!confirm(question)) return;
+      const [prevEq, prevSt] = snapshotEquipments();
+      delete equipmentStatus[eq];
+      equipments.splice(i, 1);
+      await syncEquipmentsToCloud(prevEq, prevSt);
     }
   </script>
 </body>
