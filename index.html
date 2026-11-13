@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>岡本研 実験機器予約システム</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #0f172a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    .force-hidden {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    #authModal {
+      position: fixed;
+      inset: 0;
+      background-color: #0f172a;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .auth-card {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    }
+    .auth-icon {
+      width: 56px;
+      height: 56px;
+      background-color: #e0e7ff;
+      color: #4f46e5;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px auto;
+    }
+    .auth-title {
+      margin: 0 0 4px 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .auth-desc {
+      margin: 0 0 24px 0;
+      font-size: 14px;
+      color: #64748b;
+    }
+    .auth-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 18px;
+      text-align: center;
+      color: #0f172a;
+      outline: none;
+      margin-bottom: 16px;
+      -webkit-text-security: disc;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    .auth-input:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+    .auth-error {
+      color: #ef4444;
+      font-size: 13px;
+      margin: -8px 0 12px 0;
+    }
+    .auth-btn {
+      width: 100%;
+      padding: 12px 16px;
+      background-color: #4f46e5;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .auth-btn:hover {
+      background-color: #4338ca;
+    }
+    input[type="text"], input[type="date"], input[type="time"], input[type="number"], select {
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    .timeline-grid { display: grid; grid-template-columns: 160px repeat(24, minmax(72px, 1fr)); }
+    @media (min-width: 768px) {
+      .timeline-grid { grid-template-columns: 220px repeat(24, minmax(72px, 1fr)); }
+    }
+    .week-grid { display: grid; grid-template-columns: 64px repeat(7, minmax(110px, 1fr)); }
+    .res-bar { transition: box-shadow 0.15s, background-color 0.15s, transform 0.15s; }
+    .res-bar.dragging { opacity: 0.9; z-index: 40 !important; box-shadow: 0 10px 25px rgba(79,70,229,0.35); transform: scale(1.03); cursor: grabbing !important; }
+  </style>
+</head>
+<body>
+
+  <!-- 一般入室ログインモーダル -->
+  <div id="authModal">
+    <div class="auth-card">
+      <div class="auth-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 5a3 3 0 1 1 6 0v3H9V7zm3 7a1.5 1.5 0 0 1 .75 2.8V18a.75.75 0 0 1-1.5 0v-1.2A1.5 1.5 0 0 1 12 14z"/>
+        </svg>
+      </div>
+      <h2 class="auth-title">岡本研究室 実験機器予約</h2>
+      <p class="auth-desc">利用するには研究室の合言葉を入力してください</p>
+      <form onsubmit="handleLogin(event)" autocomplete="off">
+        <input type="text" id="passwordInput" placeholder="パスワードを入力" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required autofocus class="auth-input" />
+        <p id="authError" class="auth-error force-hidden">パスワードが正しくありません</p>
+        <button type="submit" class="auth-btn">入室する</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- メイン画面 -->
+  <div id="mainApp" class="force-hidden flex-1 flex flex-col min-h-screen bg-slate-100 text-slate-800">
+    <header class="bg-indigo-950 text-white shadow">
+      <div class="max-w-[1700px] mx-auto px-4 py-2.5 flex flex-wrap justify-between items-center gap-2">
+        <div class="flex items-center gap-3">
+          <h1 class="text-base sm:text-lg font-bold tracking-wide"><i class="fa-solid fa-flask mr-2 text-indigo-300"></i>岡本研 実験機器予約</h1>
+          <span id="syncStatus" class="text-xs bg-indigo-800 px-2.5 py-1 rounded-full text-indigo-200">同期完了</span>
+          <button onclick="loadFromCloud(true)" class="text-xs bg-indigo-800 hover:bg-indigo-700 px-2.5 py-1 rounded-full transition" title="最新データを手動で再読込（10分ごとに自動更新されます）">
+            <i class="fa-solid fa-arrows-rotate mr-1"></i>更新
+          </button>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openNewModal()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-sm font-bold transition">
+            <i class="fa-solid fa-plus mr-1"></i>新規予約
+          </button>
+          <button onclick="toggleTagBar()" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition">
+            <i class="fa-solid fa-tags mr-1"></i>機器タグ
+          </button>
+          <button onclick="requestAdminSettings()" class="bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg text-sm transition flex items-center gap-1.5" title="管理者のみ機器の追加・削除が可能">
+            <i id="adminLockIcon" class="fa-solid fa-lock text-amber-300 text-xs"></i>
+            <span>機器管理</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 機器タグフィルターバー -->
+    <div id="tagBar" class="force-hidden bg-white border-b border-slate-200 px-4 py-2.5">
+      <div class="max-w-[1700px] mx-auto flex flex-wrap gap-1.5 items-center">
+        <button onclick="filterByEquipment('ALL')" id="tag-ALL" class="px-3 py-1 rounded text-xs font-bold bg-slate-800 text-white">全て表示</button>
+        <div id="tagButtonsContainer" class="flex flex-wrap gap-1.5"></div>
+      </div>
+    </div>
+
+    <!-- ナビゲーションバー -->
+    <div class="bg-white border-b border-slate-200">
+      <div class="max-w-[1700px] mx-auto px-4 py-2 flex flex-wrap justify-between items-center gap-3">
+        <div class="flex items-center gap-2">
+          <button id="navPrevBtn" onclick="changeDate(-1)" class="px-3 py-1.5 border rounded-lg hover:bg-slate-50 text-sm disabled:opacity-40 disabled:cursor-not-allowed"><i class="fa-solid fa-chevron-left"></i> 前へ</button>
+          <button onclick="goToday()" class="px-3 py-1.5 border rounded-lg text-sm font-bold hover:bg-slate-50">本日</button>
+          <button onclick="changeDate(1)" class="px-3 py-1.5 border rounded-lg hover:bg-slate-50 text-sm">次へ <i class="fa-solid fa-chevron-right"></i></button>
+          <span id="currentDateLabel" class="text-base sm:text-lg font-bold ml-1 sm:ml-2 text-slate-800"></span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="dayHintText" class="hidden lg:inline text-xs text-slate-500">
+            <i class="fa-solid fa-hand-pointer mr-1 text-indigo-500"></i>空欄を横ドラッグ（スマホは長押し後スライド）で範囲予約 ／ 予約バー移動
+          </span>
+          <div class="flex items-center bg-slate-100 p-1 rounded-lg">
+            <button onclick="setViewMode('day')" id="btn-view-day" class="px-4 py-1.5 rounded-md text-sm font-bold bg-white shadow-sm">日表示 (一覧)</button>
+            <button onclick="setViewMode('week')" id="btn-view-week" class="px-4 py-1.5 rounded-md text-sm font-medium text-slate-600">週表示</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- メインレイアウト（左：ミニカレンダー ／ 右：予約表） -->
+    <div class="flex-1 max-w-[1700px] w-full mx-auto p-3 flex flex-col md:flex-row gap-3">
+      <!-- 左サイドバー：ミニ月間カレンダー -->
+      <aside class="w-full md:w-60 shrink-0 space-y-3">
+        <div class="bg-white rounded-xl shadow border border-slate-200 p-3">
+          <div class="flex items-center justify-between mb-2">
+            <button id="miniPrevMonthBtn" onclick="changeMiniCalMonth(-1)" class="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-100 text-slate-600 font-bold disabled:opacity-30 disabled:cursor-not-allowed">&lt;</button>
+            <span id="miniCalTitle" class="text-sm font-bold text-slate-800"></span>
+            <button onclick="changeMiniCalMonth(1)" class="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-100 text-slate-600 font-bold">&gt;</button>
+          </div>
+          <div class="grid grid-cols-7 text-center text-[11px] font-bold mb-1">
+            <div class="text-red-500">日</div>
+            <div class="text-slate-600">月</div>
+            <div class="text-slate-600">火</div>
+            <div class="text-slate-600">水</div>
+            <div class="text-slate-600">木</div>
+            <div class="text-slate-600">金</div>
+            <div class="text-blue-600">土</div>
+          </div>
+          <div id="miniCalGrid" class="grid grid-cols-7 gap-0.5 text-center text-xs"></div>
+          <div class="grid grid-cols-3 gap-1 mt-3 pt-2 border-t border-slate-100">
+            <button id="sidePrevBtn" onclick="changeDate(-1)" class="py-1 bg-slate-100 hover:bg-slate-200 rounded text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed">◀ 前へ</button>
+            <button onclick="goToday()" class="py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded text-xs font-bold">本日</button>
+            <button onclick="changeDate(1)" class="py-1 bg-slate-100 hover:bg-slate-200 rounded text-xs font-medium">次へ ▶</button>
+          </div>
+          <div id="retentionNote" class="mt-2 text-[10px] text-slate-400 text-center"></div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow border border-slate-200 p-3 text-xs text-slate-600 space-y-1.5">
+          <div class="font-bold text-slate-800"><i class="fa-solid fa-circle-info text-indigo-600 mr-1"></i>操作ガイド</div>
+          <p>• <b>範囲予約</b>：空欄を横ドラッグ（スマホは<b>長押し→スライド</b>）</p>
+          <p>• <b>バー移動</b>：予約バーをドラッグ（スマホは<b>長押し→スライド</b>）</p>
+          <p>• <b>編集/削除</b>：予約バーをクリック（タップ）</p>
+          <p class="text-[11px] text-slate-400 pt-1 border-t border-slate-100">※10分おきに自動更新（操作中はスキップ）</p>
+        </div>
+      </aside>
+
+      <!-- 右メイン領域：予約表 -->
+      <main class="flex-1 min-w-0">
+        <div id="calendarContainer" class="bg-white rounded-xl shadow border border-slate-200 overflow-x-auto relative"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- 管理者パスワード認証モーダル（機器管理用） -->
+  <div id="adminAuthModal" class="force-hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center">
+      <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-3 text-xl">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h3 class="text-base font-bold text-slate-900 mb-1">管理者認証</h3>
+      <p class="text-xs text-slate-500 mb-4">実験機器リストの編集は管理者のみ許可されています。</p>
+      <form onsubmit="handleAdminLogin(event)" autocomplete="off" class="space-y-3">
+        <input type="text" id="adminPasswordInput" placeholder="管理者パスワードを入力" autocomplete="off" required
+          style="-webkit-text-security: disc;"
+          class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-center text-base focus:ring-2 focus:ring-amber-500 focus:outline-none" />
+        <p id="adminAuthError" class="force-hidden text-red-500 text-xs">管理者パスワードが正しくありません</p>
+        <div class="flex gap-2 pt-1">
+          <button type="button" onclick="hideEl('adminAuthModal')" class="flex-1 py-2 border border-slate-300 rounded-lg text-sm text-slate-600 hover:bg-slate-50">
+            キャンセル
+          </button>
+          <button type="submit" class="flex-1 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-bold">
+            認証する
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ドラッグ移動 確認ポップアップモーダル -->
+  <div id="moveConfirmModal" class="force-hidden fixed inset-0 bg-black/55 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-lg shrink-0">
+          <i class="fa-solid fa-arrows-up-down-left-right"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900">予約内容の変更確認</h3>
+          <p class="text-xs text-slate-500">以下の内容で予約を変更してよろしいですか？</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2.5 text-sm mb-5">
+        <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+          <span class="text-xs font-bold text-slate-500">予約者</span>
+          <span id="confirmMoveTitle" class="font-bold text-slate-900"></span>
+        </div>
+        <div>
+          <div class="text-[11px] font-bold text-slate-400 mb-0.5">変更前</div>
+          <div id="confirmMoveBefore" class="text-xs text-slate-600 bg-white px-2.5 py-1.5 rounded border border-slate-200"></div>
+        </div>
+        <div class="text-center text-indigo-600 text-xs">
+          <i class="fa-solid fa-arrow-down"></i>
+        </div>
+        <div>
+          <div class="text-[11px] font-bold text-indigo-600 mb-0.5">変更後</div>
+          <div id="confirmMoveAfter" class="text-xs font-bold text-indigo-950 bg-indigo-50 px-2.5 py-1.5 rounded border border-indigo-300"></div>
+        </div>
+      </div>
+
+      <div class="flex gap-2 justify-end">
+        <button type="button" onclick="cancelPendingMove()" class="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">
+          キャンセル
+        </button>
+        <button type="button" id="confirmMoveBtn" onclick="executePendingMove()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold shadow-sm">
+          この内容で変更する
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 予約作成・編集モーダル -->
+  <div id="bookingModal" class="force-hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 max-h-[92vh] overflow-y-auto">
+      <h3 id="modalTitle" class="text-lg font-bold mb-4 text-indigo-950">新規予約</h3>
+      <form onsubmit="saveBooking(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">実験機器</label>
+          <select id="modalEquipment" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm"></select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">予約者名</label>
+            <input type="text" id="modalName" required placeholder="例: Oiwa" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">日付</label>
+            <input type="date" id="modalDate" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">開始時間 (分単位)</label>
+            <input type="time" id="modalStartTime" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">終了時間 (分単位)</label>
+            <input type="time" id="modalEndTime" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">備考テキスト</label>
+          <input type="text" id="modalNotes" placeholder="例: RNA合成 / サンプル名など" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+        </div>
+
+        <!-- 繰り返し設定 -->
+        <div id="repeatSection" class="border-t pt-3">
+          <label class="block text-xs font-bold text-indigo-900 mb-1"><i class="fa-solid fa-rotate mr-1"></i>繰り返し予約</label>
+          <div class="flex gap-2">
+            <select id="modalRepeatType" onchange="toggleRepeatOptions()" class="flex-1 border border-slate-300 rounded-lg p-2 text-sm">
+              <option value="none">繰り返さない</option>
+              <option value="daily">毎日</option>
+              <option value="weekly">毎週</option>
+              <option value="biweekly">隔週 (2週間ごと)</option>
+              <option value="monthly">毎月</option>
+            </select>
+            <div id="repeatCountBox" class="force-hidden flex items-center gap-1">
+              <input type="number" id="modalRepeatCount" min="2" max="30" value="4" class="w-16 border border-slate-300 rounded-lg p-2 text-sm text-center" />
+              <span class="text-xs text-slate-600">回分</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-3 border-t">
+          <button type="button" id="deleteBtn" onclick="deleteCurrentBooking()" class="force-hidden text-red-600 hover:text-red-800 text-sm font-bold">
+            <i class="fa-solid fa-trash mr-1"></i>削除
+          </button>
+          <div class="flex gap-2 ml-auto">
+            <button type="button" onclick="closeBookingModal()" class="px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-50">キャンセル</button>
+            <button type="submit" id="saveSubmitBtn" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold">保存する</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 機器管理モーダル（管理者専用・クラウド保存対応） -->
+  <div id="settingsModal" class="force-hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-lg font-bold text-indigo-950"><i class="fa-solid fa-shield-halved text-amber-500 mr-1.5"></i>実験機器リスト管理</h3>
+        <span class="text-[11px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">管理者モード</span>
+      </div>
+      <p class="text-xs text-slate-500 mb-3">追加・削除・並び替えを行うとスプレッドシートへ自動保存され、全員の画面に反映されます。</p>
+      <div id="equipmentListContainer" class="flex-1 overflow-y-auto space-y-1.5 mb-3 pr-1"></div>
+      <div class="flex gap-2 pt-2 border-t">
+        <input type="text" id="newEquipmentName" placeholder="追加する機器名" class="flex-1 border rounded-lg p-2 text-sm" />
+        <button type="button" onclick="addEquipment()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold">追加</button>
+      </div>
+      <button onclick="closeSettingsModal()" class="mt-3 w-full py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-bold">閉じる</button>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // ★管理者設定エリア（パスワードやURLはここで変更可能）
+    // ==========================================
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPipEUBQ1MJ-UTiPeqIriwgUc-jw1b4b8Z8CdPBQgLFxlx_GhmoHZ8c2pkrxg2kZ4W/exec";
+    const MEMBER_PASSWORD = "OkamotoLab";   // 一般メンバー用の入室パスワード
+    const ADMIN_PASSWORD  = "OkamotoAdmin"; // 管理者専用（機器リスト編集用）パスワード
+    const AUTO_REFRESH_INTERVAL_MS = 10 * 60 * 1000; // 10分おきに自動同期
+    // ==========================================
+
+    let currentDate = new Date();
+    let miniCalDate = new Date();
+    let viewMode = 'day';
+    let currentFilter = 'ALL';
+    let weekSelectedEq = null;
+    let weekSearchQuery = "";
+    let reservations = [];
+    let editingId = null;
+    let isSyncing = false;
+    let pendingMoveData = null;
+    let isAdminAuthenticated = false;
+    let isUnlocked = false;
+    let prefetchPromise = null;
+    let autoRefreshTimer = null;
+
+    // ドラッグ＆タッチ長押し管理
+    let dragState = null;
+    let touchHoldState = null;
+
+    let equipments = [
+      "Peptide synthesizer", "Glovebox", "DNA RNA synthesizer1", "DNA RNA synthesizer2",
+      "DNA synthesizer (left)", "HPLC(JASCO PDA for peptide)", "HPLC inert (JASCO PDA for pepti",
+      "HPLC(JASCO PDA for DNA 713)-1", "HPLC(JASCO PDA for DNA 713)-2", "BioSeperator @725",
+      "Clean bench", "Safe cabinet", "FACS", "plate reader", "photoirradiater",
+      "721Centrifuge", "725Centrifuge", "RT-PCR", "Photospectrometer(UV-2550)",
+      "Thermal cycler up", "Thermal cycler down", "Zetasizer", "vacuum dryer",
+      "Freeze Dryer(for DNA)", "iMac", "iBind1 (WB)", "iBind2 (WB)",
+      "Incubator1(721 E.coli.)", "Incubator2(721 E.coli.)", "BLI", "ESI-MS"
+    ];
+
+    const tagColors = ["bg-blue-600","bg-red-600","bg-emerald-600","bg-amber-600","bg-indigo-600","bg-purple-600","bg-pink-600","bg-cyan-600","bg-teal-600"];
+
+    function getMinAllowedDate() {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth() - 3, 1);
+    }
+
+    function getMinAllowedDateStr() {
+      return formatDateStr(getMinAllowedDate());
+    }
+
+    function clampToAllowedDate(d) {
+      const minD = getMinAllowedDate();
+      const target = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      return target < minD ? minD : target;
+    }
+
+    function showEl(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('force-hidden');
+    }
+
+    function hideEl(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('force-hidden');
+    }
+
+    function isModalOpen(id) {
+      const el = document.getElementById(id);
+      return el && !el.classList.contains('force-hidden');
+    }
+
+    function isUserOperating() {
+      if (isSyncing) return true;
+      if (dragState !== null) return true;
+      if (touchHoldState !== null) return true;
+      if (pendingMoveData !== null) return true;
+      if (isModalOpen('bookingModal')) return true;
+      if (isModalOpen('moveConfirmModal')) return true;
+      if (isModalOpen('settingsModal')) return true;
+      if (isModalOpen('adminAuthModal')) return true;
+      return false;
+    }
+
+    function formatDateStr(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function minutesToTime(mins) {
+      const clamped = Math.max(0, Math.min(1439, Math.round(mins)));
+      const h = Math.floor(clamped / 60);
+      const m = clamped % 60;
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    }
+
+    function cleanTime(t) {
+      if (!t) return "09:00";
+      const s = String(t).trim();
+      if (s.includes('T')) {
+        const dt = new Date(s);
+        if (!isNaN(dt.getTime())) {
+          return `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`;
+        }
+      }
+      const parts = s.split(':');
+      if (parts.length >= 2) {
+        const hh = String(parseInt(parts[0], 10) || 0).padStart(2, '0');
+        const mm = String(parseInt(parts[1], 10) || 0).padStart(2, '0');
+        return `${hh}:${mm}`;
+      }
+      return "09:00";
+    }
+
+    function timeToMinutes(t) {
+      const normalized = cleanTime(t);
+      const [h, m] = normalized.split(':').map(Number);
+      return (h || 0) * 60 + (m || 0);
+    }
+
+    function cleanDate(d) {
+      if (!d) return "";
+      const s = String(d).trim();
+      if (s.includes('T')) {
+        const dt = new Date(s);
+        if (!isNaN(dt.getTime())) return formatDateStr(dt);
+      }
+      return s.slice(0, 10);
+    }
+
+    function normalizeList(list) {
+      const minStr = getMinAllowedDateStr();
+      return (list || [])
+        .map(r => ({
+          ...r,
+          id: String(r.id).trim(),
+          date: cleanDate(r.date),
+          startTime: cleanTime(r.startTime),
+          endTime: cleanTime(r.endTime)
+        }))
+        .filter(r => r.date >= minStr);
+    }
+
+    function startPrefetch(isBackgroundAuto = false) {
+      if (prefetchPromise) return prefetchPromise;
+      prefetchPromise = fetch(GAS_WEB_APP_URL)
+        .then(res => res.json())
+        .then(json => {
+          if (isBackgroundAuto && isUserOperating()) {
+            return false;
+          }
+
+          const rawList = Array.isArray(json) ? json : (json.reservations || []);
+          reservations = normalizeList(rawList);
+          localStorage.setItem('okamoto_res_v1', JSON.stringify(reservations));
+
+          if (json && Array.isArray(json.equipments) && json.equipments.length > 0) {
+            equipments = json.equipments;
+            localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
+          }
+
+          if (isUnlocked) {
+            const st = document.getElementById('syncStatus');
+            if (st) {
+              const now = new Date();
+              const hh = String(now.getHours()).padStart(2, '0');
+              const mm = String(now.getMinutes()).padStart(2, '0');
+              st.innerText = isBackgroundAuto ? `自動更新済 (${hh}:${mm})` : "同期完了";
+            }
+            renderTagButtons();
+            renderMiniCalendar();
+            renderCalendar();
+          }
+          return true;
+        })
+        .catch(err => {
+          console.error(err);
+          if (isUnlocked && !isBackgroundAuto) {
+            const st = document.getElementById('syncStatus');
+            if (st) st.innerText = "読込エラー";
+          }
+          return false;
+        })
+        .finally(() => {
+          prefetchPromise = null;
+        });
+      return prefetchPromise;
+    }
+
+    function startAutoRefreshTimer() {
+      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+      autoRefreshTimer = setInterval(() => {
+        if (!isUnlocked) return;
+        if (isUserOperating()) return;
+        startPrefetch(true);
+      }, AUTO_REFRESH_INTERVAL_MS);
+    }
+
+    // 一般ログイン処理
+    function handleLogin(e) {
+      e.preventDefault();
+      const inputVal = document.getElementById('passwordInput').value;
+      if (inputVal === MEMBER_PASSWORD || inputVal === ADMIN_PASSWORD) {
+        sessionStorage.setItem('okamoto_auth', '1');
+        if (inputVal === ADMIN_PASSWORD) {
+          isAdminAuthenticated = true;
+          sessionStorage.setItem('okamoto_admin_auth', '1');
+        }
+        unlockApp();
+      } else {
+        showEl('authError');
+      }
+    }
+
+    function unlockApp() {
+      isUnlocked = true;
+      hideEl('authModal');
+      showEl('mainApp');
+      document.body.style.backgroundColor = '#f1f5f9';
+      updateAdminIconState();
+
+      const minD = getMinAllowedDate();
+      document.getElementById('retentionNote').innerText = `※履歴保持: ${minD.getFullYear()}年${minD.getMonth()+1}月1日〜`;
+
+      renderTagButtons();
+      renderMiniCalendar();
+      renderCalendar();
+      startAutoRefreshTimer();
+
+      const st = document.getElementById('syncStatus');
+      if (prefetchPromise) {
+        if (st) st.innerText = "最新確認中...";
+      } else {
+        if (st) st.innerText = "同期完了";
+      }
+    }
+
+    function updateAdminIconState() {
+      const icon = document.getElementById('adminLockIcon');
+      if (!icon) return;
+      if (isAdminAuthenticated) {
+        icon.className = "fa-solid fa-lock-open text-emerald-400 text-xs";
+      } else {
+        icon.className = "fa-solid fa-lock text-amber-300 text-xs";
+      }
+    }
+
+    function requestAdminSettings() {
+      if (isAdminAuthenticated) {
+        openSettingsModal();
+      } else {
+        document.getElementById('adminPasswordInput').value = "";
+        hideEl('adminAuthError');
+        showEl('adminAuthModal');
+        setTimeout(() => document.getElementById('adminPasswordInput').focus(), 50);
+      }
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const val = document.getElementById('adminPasswordInput').value;
+      if (val === ADMIN_PASSWORD) {
+        isAdminAuthenticated = true;
+        sessionStorage.setItem('okamoto_admin_auth', '1');
+        updateAdminIconState();
+        hideEl('adminAuthModal');
+        openSettingsModal();
+      } else {
+        showEl('adminAuthError');
+      }
+    }
+
+    (function initImmediate() {
+      const savedEq = localStorage.getItem('okamoto_eq_v1');
+      if (savedEq) equipments = JSON.parse(savedEq);
+      const savedRes = localStorage.getItem('okamoto_res_v1');
+      if (savedRes) reservations = normalizeList(JSON.parse(savedRes));
+
+      startPrefetch(false);
+
+      if (sessionStorage.getItem('okamoto_admin_auth') === '1') {
+        isAdminAuthenticated = true;
+      }
+      if (sessionStorage.getItem('okamoto_auth') === '1') {
+        unlockApp();
+      }
+    })();
+
+    window.addEventListener('resize', () => {
+      if (viewMode === 'day') fitReservationBarFonts();
+    });
+
+    async function loadFromCloud(force = false) {
+      const status = document.getElementById('syncStatus');
+      if (status) status.innerText = "同期中...";
+      await startPrefetch(false);
+    }
+
+    async function sendTransaction(payload) {
+      const status = document.getElementById('syncStatus');
+      if (isSyncing) return null;
+      isSyncing = true;
+      status.innerText = "サーバー同期中...";
+
+      try {
+        const res = await fetch(GAS_WEB_APP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.reservations) {
+          reservations = normalizeList(result.reservations);
+          localStorage.setItem('okamoto_res_v1', JSON.stringify(reservations));
+        }
+        if (Array.isArray(result.equipments) && result.equipments.length > 0) {
+          equipments = result.equipments;
+          localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
+          renderTagButtons();
+        }
+        status.innerText = "同期完了";
+        renderMiniCalendar();
+        renderCalendar();
+        return result;
+      } catch (err) {
+        console.error(err);
+        status.innerText = "通信エラー";
+        alert("サーバーとの通信に失敗しました。GASが「新バージョン」でデプロイされているか確認してください。");
+        return null;
+      } finally {
+        isSyncing = false;
+      }
+    }
+
+    // ミニ月間カレンダー描画
+    function changeMiniCalMonth(diff) {
+      const minD = getMinAllowedDate();
+      const target = new Date(miniCalDate.getFullYear(), miniCalDate.getMonth() + diff, 1);
+      if (target < new Date(minD.getFullYear(), minD.getMonth(), 1)) return;
+      miniCalDate = target;
+      renderMiniCalendar();
+    }
+
+    function selectDateFromMiniCal(dateStr) {
+      if (dateStr < getMinAllowedDateStr()) return;
+      currentDate = new Date(dateStr + "T00:00:00");
+      miniCalDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      renderMiniCalendar();
+      renderCalendar();
+    }
+
+    function renderMiniCalendar() {
+      const y = miniCalDate.getFullYear();
+      const m = miniCalDate.getMonth();
+      document.getElementById('miniCalTitle').innerText = `${y}年${m + 1}月`;
+
+      const minD = getMinAllowedDate();
+      const minMonthFirst = new Date(minD.getFullYear(), minD.getMonth(), 1);
+      const currMonthFirst = new Date(y, m, 1);
+      const miniPrevBtn = document.getElementById('miniPrevMonthBtn');
+      if (miniPrevBtn) {
+        miniPrevBtn.disabled = currMonthFirst <= minMonthFirst;
+      }
+
+      const firstDay = new Date(y, m, 1).getDay();
+      const lastDate = new Date(y, m + 1, 0).getDate();
+      const selectedStr = formatDateStr(currentDate);
+      const todayStr = formatDateStr(new Date());
+      const minStr = getMinAllowedDateStr();
+
+      let html = '';
+      for (let i = 0; i < firstDay; i++) html += `<div class="py-1.5"></div>`;
+      for (let day = 1; day <= lastDate; day++) {
+        const dStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const isDisabled = dStr < minStr;
+        const isSelected = dStr === selectedStr;
+        const isToday = dStr === todayStr;
+        const hasRes = !isDisabled && reservations.some(r => r.date === dStr);
+        const dow = (firstDay + day - 1) % 7;
+
+        let cls = "py-1.5 rounded-md relative font-medium transition ";
+        if (isDisabled) cls += "text-slate-300 cursor-not-allowed ";
+        else if (isSelected) cls += "bg-indigo-600 text-white font-bold shadow-sm cursor-pointer ";
+        else if (isToday) cls += "bg-indigo-100 text-indigo-800 font-bold cursor-pointer ";
+        else if (dow === 0) cls += "text-red-500 hover:bg-slate-100 cursor-pointer ";
+        else if (dow === 6) cls += "text-blue-600 hover:bg-slate-100 cursor-pointer ";
+        else cls += "text-slate-700 hover:bg-slate-100 cursor-pointer ";
+
+        html += `<div ${isDisabled ? '' : `onclick="selectDateFromMiniCal('${dStr}')"`} class="${cls}">
+          ${day}
+          ${hasRes && !isSelected ? '<span class="block w-1 h-1 bg-indigo-500 rounded-full mx-auto mt-0.5"></span>' : ''}
+        </div>`;
+      }
+      document.getElementById('miniCalGrid').innerHTML = html;
+    }
+
+    // 表示モード・日付移動
+    function setViewMode(mode) {
+      viewMode = mode;
+      ['day', 'week'].forEach(m => {
+        const btn = document.getElementById(`btn-view-${m}`);
+        btn.className = m === mode
+          ? "px-4 py-1.5 rounded-md text-sm font-bold bg-white shadow-sm"
+          : "px-4 py-1.5 rounded-md text-sm font-medium text-slate-600";
+      });
+      document.getElementById('dayHintText').style.display = mode === 'day' ? '' : 'none';
+      if (mode === 'week' && currentFilter !== 'ALL') {
+        weekSelectedEq = currentFilter;
+      }
+      renderCalendar();
+    }
+
+    function changeDate(diff) {
+      const next = new Date(currentDate);
+      if (viewMode === 'day') next.setDate(next.getDate() + diff);
+      else next.setDate(next.getDate() + diff * 7);
+
+      currentDate = clampToAllowedDate(next);
+      miniCalDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      renderMiniCalendar();
+      renderCalendar();
+    }
+
+    function goToday() {
+      currentDate = new Date();
+      miniCalDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      renderMiniCalendar();
+      renderCalendar();
+    }
+
+    function updatePrevButtonsState() {
+      const minStr = getMinAllowedDateStr();
+      let isAtMin = false;
+      if (viewMode === 'day') {
+        isAtMin = formatDateStr(currentDate) <= minStr;
+      } else {
+        const weekStart = new Date(currentDate);
+        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+        isAtMin = formatDateStr(weekStart) <= minStr;
+      }
+      const navBtn = document.getElementById('navPrevBtn');
+      const sideBtn = document.getElementById('sidePrevBtn');
+      if (navBtn) navBtn.disabled = isAtMin;
+      if (sideBtn) sideBtn.disabled = isAtMin;
+    }
+
+    function toggleTagBar() {
+      document.getElementById('tagBar').classList.toggle('force-hidden');
+    }
+
+    function renderTagButtons() {
+      const box = document.getElementById('tagButtonsContainer');
+      box.innerHTML = '';
+      equipments.forEach((eq, i) => {
+        const b = document.createElement('button');
+        b.className = `px-2.5 py-1 rounded text-xs font-medium text-white ${tagColors[i % tagColors.length]} hover:opacity-90`;
+        b.innerText = eq;
+        b.onclick = () => filterByEquipment(eq);
+        box.appendChild(b);
+      });
+    }
+
+    function filterByEquipment(eq) {
+      currentFilter = eq;
+      if (viewMode === 'week') weekSelectedEq = eq === 'ALL' ? null : eq;
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      updatePrevButtonsState();
+      const y = currentDate.getFullYear();
+      const m = currentDate.getMonth() + 1;
+      const d = currentDate.getDate();
+      const label = document.getElementById('currentDateLabel');
+      const container = document.getElementById('calendarContainer');
+      const eqs = currentFilter === 'ALL' ? equipments : [currentFilter];
+
+      if (viewMode === 'day') {
+        const weekdays = ['日','月','火','水','木','金','土'];
+        label.innerText = `${y}年${m}月${d}日 (${weekdays[currentDate.getDay()]})`;
+        renderDayTimeline(container, eqs, formatDateStr(currentDate));
+      } else {
+        const start = new Date(currentDate);
+        start.setDate(start.getDate() - start.getDay());
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        label.innerText = `${start.getFullYear()}年${start.getMonth()+1}月${start.getDate()}日 〜 ${end.getMonth()+1}月${end.getDate()}日`;
+        renderWeekView(container);
+      }
+    }
+
+    function fitReservationBarFonts() {
+      document.querySelectorAll('.res-bar').forEach(bar => {
+        const labelEl = bar.querySelector('.res-label');
+        if (!labelEl) return;
+
+        bar.style.paddingLeft = '5px';
+        bar.style.paddingRight = '5px';
+        labelEl.style.fontSize = '12px';
+
+        const barWidth = bar.clientWidth;
+        if (barWidth <= 0) return;
+
+        if (barWidth < 54) {
+          bar.style.paddingLeft = '2px';
+          bar.style.paddingRight = '2px';
+        }
+
+        const availableWidth = bar.clientWidth - (barWidth < 54 ? 4 : 10);
+        const textWidth = labelEl.scrollWidth;
+
+        if (textWidth > availableWidth && availableWidth > 0) {
+          const ratio = availableWidth / textWidth;
+          const fittedSize = Math.max(8, Math.min(11.5, Math.floor(12 * ratio * 10) / 10));
+          labelEl.style.fontSize = `${fittedSize}px`;
+        }
+      });
+    }
+
+    // ========================================================
+    // 日表示タイムライン（PCマウス操作 ＋ スマホ長押しスライド操作対応）
+    // ========================================================
+    function renderDayTimeline(container, eqs, dateStr) {
+      let html = `<div id="timelineWrapper" class="min-w-[1888px] md:min-w-[1948px] relative">`;
+      html += `<div class="timeline-grid bg-slate-100 border-b border-slate-300 text-xs font-bold text-slate-600 sticky top-0 z-30">`;
+      html += `<div class="p-2.5 border-r border-slate-300 sticky left-0 bg-slate-100 z-40 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.12)]">実験機器名</div>`;
+      for (let h = 0; h < 24; h++) {
+        html += `<div class="p-2 border-r border-slate-200 text-center">${h}</div>`;
+      }
+      html += `</div>`;
+
+      eqs.forEach((eq, rowIdx) => {
+        const dayItems = reservations.filter(r => r.equipment === eq && r.date === dateStr);
+        const safeEqAttr = eq.replace(/"/g, '&quot;');
+        const safeEqJs = eq.replace(/'/g, "\\'");
+        html += `<div data-eq-row="${rowIdx}" data-eq-name="${safeEqAttr}" class="eq-timeline-row timeline-grid border-b border-slate-200 hover:bg-slate-50/70 relative h-11">`;
+        html += `<div class="px-2.5 py-2 border-r border-slate-300 text-xs font-semibold truncate sticky left-0 bg-white z-20 flex items-center shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)]" title="${safeEqAttr}">${eq}</div>`;
+
+        for (let h = 0; h < 24; h++) {
+          html += `<div class="border-r border-slate-100 h-full pointer-events-none"></div>`;
+        }
+
+        html += `<div class="timeline-track absolute top-0 bottom-0 left-[160px] md:left-[220px] right-0 cursor-crosshair z-10 overflow-hidden"
+          onmousedown="startCreateDrag(event, '${safeEqJs}', '${dateStr}')"
+          ontouchstart="handleTrackTouchStart(event, '${safeEqJs}', '${dateStr}')">`;
+
+        dayItems.forEach(item => {
+          const startMin = timeToMinutes(item.startTime);
+          const endMin = Math.max(startMin + 15, timeToMinutes(item.endTime));
+          const leftPct = (startMin / 1440) * 100;
+          const widthPct = ((endMin - startMin) / 1440) * 100;
+          const text = item.notes ? `${item.title} | ${item.notes}` : item.title;
+
+          html += `<div data-res-id="${item.id}"
+            onmousedown="startMoveDrag(event, '${item.id}')"
+            ontouchstart="handleBarTouchStart(event, '${item.id}')"
+            title="${item.startTime}-${item.endTime} ${text}（クリックで編集 / ドラッグで移動）"
+            style="left:${leftPct}%; width:${widthPct}%;"
+            class="res-bar absolute top-1.5 bottom-1.5 bg-white border-2 border-indigo-600 text-slate-900 rounded px-1.5 text-xs font-bold flex items-center overflow-hidden shadow-sm cursor-pointer hover:bg-indigo-50 z-10">
+            ${item.seriesId ? '<i class="fa-solid fa-rotate text-[9px] text-indigo-600 mr-0.5 shrink-0"></i>' : ''}<span class="res-label whitespace-nowrap overflow-hidden leading-none">${text}</span>
+          </div>`;
+        });
+
+        html += `</div></div>`;
+      });
+
+      html += `<div id="createGhostBar" class="force-hidden pointer-events-none absolute bg-indigo-500/35 border-2 border-dashed border-indigo-700 rounded z-25 flex items-center justify-center text-[11px] font-bold text-indigo-950 shadow-md"></div>`;
+      html += `</div>`;
+      container.innerHTML = html;
+
+      requestAnimationFrame(fitReservationBarFonts);
+    }
+
+    function clientXToMinutes(trackEl, clientX) {
+      const rect = trackEl.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const rawMins = ratio * 1440;
+      return Math.round(rawMins / 15) * 15;
+    }
+
+    // 共通：新規範囲ドラッグの初期化
+    function initCreateDragState(trackEl, eq, dateStr, clientX, isTouch = false) {
+      const startMin = clientXToMinutes(trackEl, clientX);
+      const rowEl = trackEl.closest('.eq-timeline-row');
+      const wrapperEl = document.getElementById('timelineWrapper');
+      const rowRect = rowEl.getBoundingClientRect();
+      const wrapRect = wrapperEl.getBoundingClientRect();
+
+      dragState = {
+        mode: 'create',
+        isTouch,
+        eq,
+        dateStr,
+        trackEl,
+        startX: clientX,
+        startMin,
+        currMin: startMin,
+        moved: false,
+        topPx: rowRect.top - wrapRect.top + 3,
+        heightPx: rowRect.height - 6
+      };
+
+      const ghost = document.getElementById('createGhostBar');
+      ghost.style.top = `${dragState.topPx}px`;
+      ghost.style.height = `${dragState.heightPx}px`;
+      updateCreateGhost();
+      showEl('createGhostBar');
+    }
+
+    // 共通：既存予約バー移動の初期化
+    function initMoveDragState(barEl, resId, clientX, clientY, isTouch = false) {
+      const item = reservations.find(r => String(r.id) === String(resId));
+      if (!item) return false;
+
+      const trackEl = barEl.closest('.timeline-track');
+      const startMin = timeToMinutes(item.startTime);
+      const endMin = timeToMinutes(item.endTime);
+      const duration = Math.max(15, endMin - startMin);
+      const pointerOffsetMin = clientXToMinutes(trackEl, clientX) - startMin;
+
+      dragState = {
+        mode: 'move',
+        isTouch,
+        resId: String(resId),
+        item,
+        barEl,
+        trackEl,
+        startX: clientX,
+        startY: clientY,
+        duration,
+        pointerOffsetMin,
+        newStartMin: startMin,
+        targetEq: item.equipment,
+        moved: isTouch // タッチ長押し発動時はその時点で移動モード開始とみなす
+      };
+
+      if (isTouch) {
+        barEl.classList.add('dragging');
+      }
+      return true;
+    }
+
+    // 共通：ドラッグ中の座標更新
+    function handleDragMove(clientX, clientY) {
+      if (!dragState) return;
+
+      if (dragState.mode === 'create') {
+        if (Math.abs(clientX - dragState.startX) >= 8) dragState.moved = true;
+        dragState.currMin = clientXToMinutes(dragState.trackEl, clientX);
+        updateCreateGhost();
+      } else if (dragState.mode === 'move') {
+        const dx = Math.abs(clientX - dragState.startX);
+        const dy = Math.abs(clientY - dragState.startY);
+        if (!dragState.moved && dx < 10 && dy < 10) return;
+
+        dragState.moved = true;
+        dragState.barEl.classList.add('dragging');
+
+        const pointerMin = clientXToMinutes(dragState.trackEl, clientX);
+        let newStart = Math.round((pointerMin - dragState.pointerOffsetMin) / 15) * 15;
+        newStart = Math.max(0, Math.min(1440 - dragState.duration, newStart));
+        dragState.newStartMin = newStart;
+
+        const leftPct = (newStart / 1440) * 100;
+        dragState.barEl.style.left = `${leftPct}%`;
+
+        const rows = document.querySelectorAll('.eq-timeline-row');
+        rows.forEach(row => {
+          const rect = row.getBoundingClientRect();
+          if (clientY >= rect.top && clientY <= rect.bottom) {
+            dragState.targetEq = row.getAttribute('data-eq-name');
+            row.classList.add('bg-indigo-100/70');
+            const targetTrack = row.querySelector('.timeline-track');
+            if (targetTrack && dragState.barEl.parentElement !== targetTrack) {
+              targetTrack.appendChild(dragState.barEl);
+            }
+          } else {
+            row.classList.remove('bg-indigo-100/70');
+          }
+        });
+      }
+    }
+
+    // 共通：ドラッグ終了処理
+    function finishDragOperation() {
+      if (!dragState) return;
+
+      if (dragState.mode === 'create') {
+        hideEl('createGhostBar');
+
+        const s = Math.min(dragState.startMin, dragState.currMin);
+        const e = dragState.moved
+          ? Math.max(s + 15, Math.max(dragState.startMin, dragState.currMin))
+          : Math.min(1425, s + 60);
+
+        const { eq, dateStr } = dragState;
+        dragState = null;
+        openNewModal(eq, dateStr, minutesToTime(s), minutesToTime(e));
+      } else if (dragState.mode === 'move') {
+        const { resId, item, barEl, moved, newStartMin, duration, targetEq } = dragState;
+        barEl.classList.remove('dragging');
+        document.querySelectorAll('.eq-timeline-row').forEach(r => r.classList.remove('bg-indigo-100/70'));
+        dragState = null;
+
+        if (!moved) {
+          openEditModal(resId);
+          return;
+        }
+
+        const newStStr = minutesToTime(newStartMin);
+        const newEtStr = minutesToTime(newStartMin + duration);
+
+        if (targetEq === item.equipment && newStStr === item.startTime && newEtStr === item.endTime) {
+          renderCalendar();
+          return;
+        }
+
+        if (hasConflict(targetEq, item.date, newStStr, newEtStr, resId)) {
+          alert("移動先にすでに別の予約が入っているため移動できません。");
+          renderCalendar();
+          return;
+        }
+
+        openMoveConfirmModal(item, {
+          ...item,
+          equipment: targetEq,
+          startTime: newStStr,
+          endTime: newEtStr
+        });
+      }
+    }
+
+    // --- PCマウス用イベント ---
+    function startCreateDrag(e, eq, dateStr) {
+      if (e.button !== 0 || isSyncing) return;
+      initCreateDragState(e.currentTarget, eq, dateStr, e.clientX, false);
+    }
+
+    function startMoveDrag(e, resId) {
+      e.stopPropagation();
+      if (e.button !== 0 || isSyncing) return;
+      initMoveDragState(e.currentTarget, resId, e.clientX, e.clientY, false);
+    }
+
+    function updateCreateGhost() {
+      if (!dragState || dragState.mode !== 'create') return;
+      const ghost = document.getElementById('createGhostBar');
+      const trackRect = dragState.trackEl.getBoundingClientRect();
+      const wrapRect = document.getElementById('timelineWrapper').getBoundingClientRect();
+      const trackLeftOffset = trackRect.left - wrapRect.left;
+
+      const s = Math.min(dragState.startMin, dragState.currMin);
+      const e = Math.max(s + 15, Math.max(dragState.startMin, dragState.currMin));
+      const leftPx = trackLeftOffset + (s / 1440) * trackRect.width;
+      const widthPx = ((e - s) / 1440) * trackRect.width;
+
+      ghost.style.left = `${leftPx}px`;
+      ghost.style.width = `${Math.max(20, widthPx)}px`;
+      ghost.innerText = `${minutesToTime(s)} - ${minutesToTime(e)}`;
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      if (!dragState || dragState.isTouch) return;
+      handleDragMove(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!dragState || dragState.isTouch) return;
+      finishDragOperation();
+    });
+
+    // --- スマホ・タブレット タッチ長押し＆スライド用イベント ---
+    function cancelTouchHoldTimer() {
+      if (touchHoldState && touchHoldState.timer) {
+        clearTimeout(touchHoldState.timer);
+      }
+      touchHoldState = null;
+    }
+
+    function handleTrackTouchStart(e, eq, dateStr) {
+      if (isSyncing || e.touches.length !== 1) return;
+      cancelTouchHoldTimer();
+      const touch = e.touches[0];
+      const trackEl = e.currentTarget;
+      const startX = touch.clientX;
+      const startY = touch.clientY;
+
+      const timer = setTimeout(() => {
+        // 350ms長押し成功 → 横スクロールを止め、範囲選択モードを起動
+        if (navigator.vibrate) navigator.vibrate(25);
+        initCreateDragState(trackEl, eq, dateStr, startX, true);
+        touchHoldState = null;
+      }, 350);
+
+      touchHoldState = {
+        type: 'create',
+        timer,
+        startX,
+        startY
+      };
+    }
+
+    function handleBarTouchStart(e, resId) {
+      e.stopPropagation();
+      if (isSyncing || e.touches.length !== 1) return;
+      cancelTouchHoldTimer();
+      const touch = e.touches[0];
+      const barEl = e.currentTarget;
+      const startX = touch.clientX;
+      const startY = touch.clientY;
+
+      const timer = setTimeout(() => {
+        // 350ms長押し成功 → 予約バー移動モードを起動
+        if (navigator.vibrate) navigator.vibrate(25);
+        initMoveDragState(barEl, resId, startX, startY, true);
+        touchHoldState = null;
+      }, 350);
+
+      touchHoldState = {
+        type: 'move',
+        resId,
+        timer,
+        startX,
+        startY
+      };
+    }
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length !== 1) return;
+      const touch = e.touches[0];
+
+      // 長押し判定前に指が大きく動いた場合は「画面スクロール」とみなして長押しタイマーを解除
+      if (touchHoldState) {
+        const dx = Math.abs(touch.clientX - touchHoldState.startX);
+        const dy = Math.abs(touch.clientY - touchHoldState.startY);
+        if (dx > 10 || dy > 10) {
+          cancelTouchHoldTimer();
+        }
+        return;
+      }
+
+      // 長押し成立後（dragStateアクティブ中）はページスクロールを止めて範囲選択・バー移動を実行
+      if (dragState && dragState.isTouch) {
+        if (e.cancelable) e.preventDefault();
+        handleDragMove(touch.clientX, touch.clientY);
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', (e) => {
+      // 長押し成立前に指を離した場合
+      if (touchHoldState) {
+        const prevHold = touchHoldState;
+        cancelTouchHoldTimer();
+        // 予約バーの短いタップだった場合は編集モーダルを開く
+        if (prevHold.type === 'move' && prevHold.resId) {
+          if (e.cancelable) e.preventDefault();
+          openEditModal(prevHold.resId);
+        }
+        return;
+      }
+
+      // 長押し成立後のスライド完了時
+      if (dragState && dragState.isTouch) {
+        if (e.cancelable) e.preventDefault();
+        finishDragOperation();
+      }
+    });
+
+    window.addEventListener('touchcancel', () => {
+      cancelTouchHoldTimer();
+      if (dragState && dragState.isTouch) {
+        hideEl('createGhostBar');
+        if (dragState.barEl) dragState.barEl.classList.remove('dragging');
+        document.querySelectorAll('.eq-timeline-row').forEach(r => r.classList.remove('bg-indigo-100/70'));
+        dragState = null;
+        renderCalendar();
+      }
+    });
+
+    // ドラッグ移動の確認モーダル制御
+    function openMoveConfirmModal(beforeItem, afterItem) {
+      pendingMoveData = afterItem;
+      const noteText = beforeItem.notes ? ` (${beforeItem.notes})` : "";
+      document.getElementById('confirmMoveTitle').innerText = `${beforeItem.title}${noteText}`;
+      document.getElementById('confirmMoveBefore').innerText = `${beforeItem.equipment} ｜ ${beforeItem.startTime} 〜 ${beforeItem.endTime}`;
+      document.getElementById('confirmMoveAfter').innerText = `${afterItem.equipment} ｜ ${afterItem.startTime} 〜 ${afterItem.endTime}`;
+      showEl('moveConfirmModal');
+    }
+
+    function cancelPendingMove() {
+      pendingMoveData = null;
+      hideEl('moveConfirmModal');
+      renderCalendar();
+    }
+
+    async function executePendingMove() {
+      if (!pendingMoveData || isSyncing) return;
+      const updatedItem = pendingMoveData;
+      pendingMoveData = null;
+
+      const btn = document.getElementById('confirmMoveBtn');
+      btn.disabled = true;
+      btn.innerText = "変更中...";
+
+      try {
+        const idx = reservations.findIndex(r => String(r.id) === String(updatedItem.id));
+        if (idx !== -1) reservations[idx] = updatedItem;
+        hideEl('moveConfirmModal');
+        renderCalendar();
+
+        const res = await sendTransaction({ action: "update", item: updatedItem });
+        if (res && (res.status === "conflict" || res.status === "error")) {
+          alert(res.message || "変更に失敗しました。");
+        }
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "この内容で変更する";
+      }
+    }
+
+    // 週表示
+    function selectWeekEquipment(eq) {
+      weekSelectedEq = eq || null;
+      renderCalendar();
+    }
+
+    function stepWeekEquipment(delta) {
+      if (!weekSelectedEq || equipments.length === 0) return;
+      const idx = equipments.indexOf(weekSelectedEq);
+      const nextIdx = (idx + delta + equipments.length) % equipments.length;
+      weekSelectedEq = equipments[nextIdx];
+      renderCalendar();
+    }
+
+    function updateWeekSearch(val) {
+      weekSearchQuery = val;
+      renderCalendar();
+      const inp = document.getElementById('weekEqSearchInput');
+      if (inp) {
+        inp.focus();
+        inp.setSelectionRange(val.length, val.length);
+      }
+    }
+
+    function renderWeekView(container) {
+      if (!weekSelectedEq || !equipments.includes(weekSelectedEq)) {
+        const filtered = equipments.filter(eq => eq.toLowerCase().includes(weekSearchQuery.toLowerCase()));
+        let html = `<div class="p-6 max-w-5xl mx-auto">`;
+        html += `<div class="text-center mb-6">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 text-xl mb-2">
+            <i class="fa-solid fa-calendar-week"></i>
+          </div>
+          <h2 class="text-lg font-bold text-slate-800">週表示する実験機器を選択してください</h2>
+          <p class="text-xs text-slate-500 mt-1">選択した機器の1週間（日曜〜土曜・24時間）の予約状況が表示されます</p>
+        </div>`;
+
+        html += `<div class="max-w-md mx-auto mb-5 relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+          <input id="weekEqSearchInput" type="text" value="${weekSearchQuery.replace(/"/g, '&quot;')}"
+            oninput="updateWeekSearch(this.value)"
+            placeholder="機器名で絞り込み（例: HPLC, PCR, Centrifuge...）"
+            class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+        </div>`;
+
+        html += `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">`;
+        filtered.forEach((eq) => {
+          const origIdx = equipments.indexOf(eq);
+          const colorCls = tagColors[origIdx % tagColors.length];
+          html += `<button onclick="selectWeekEquipment('${eq.replace(/'/g, "\\'")}')"
+            class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/50 text-left transition shadow-sm group">
+            <span class="w-3 h-8 rounded-full ${colorCls} shrink-0"></span>
+            <span class="text-sm font-bold text-slate-800 group-hover:text-indigo-700 truncate">${eq}</span>
+          </button>`;
+        });
+        html += `</div></div>`;
+        container.innerHTML = html;
+        return;
+      }
+
+      const eqIdx = equipments.indexOf(weekSelectedEq);
+      const badgeColor = tagColors[eqIdx % tagColors.length];
+
+      const start = new Date(currentDate);
+      start.setDate(start.getDate() - start.getDay());
+      const days = [];
+      const wNames = ['日','月','火','水','木','金','土'];
+      const todayStr = formatDateStr(new Date());
+      const minStr = getMinAllowedDateStr();
+
+      for (let i = 0; i < 7; i++) {
+        const dt = new Date(start);
+        dt.setDate(start.getDate() + i);
+        const s = formatDateStr(dt);
+        days.push({
+          str: s,
+          label: `${dt.getMonth()+1}/${dt.getDate()} (${wNames[i]})`,
+          dow: i,
+          disabled: s < minStr
+        });
+      }
+
+      let html = `<div class="bg-indigo-50/80 border-b border-indigo-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3 sticky left-0">`;
+      html += `<div class="flex items-center gap-2.5">
+        <span class="px-2.5 py-1 rounded-md text-xs font-bold text-white ${badgeColor}">表示中</span>
+        <span class="text-base sm:text-lg font-extrabold text-indigo-950">${weekSelectedEq}</span>
+      </div>`;
+
+      html += `<div class="flex flex-wrap items-center gap-2">
+        <button onclick="stepWeekEquipment(-1)" class="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50">
+          <i class="fa-solid fa-chevron-left"></i> 前の機器
+        </button>
+        <select onchange="selectWeekEquipment(this.value)" class="border border-indigo-300 bg-white rounded-lg px-3 py-1.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500">
+          ${equipments.map(e => `<option value="${e.replace(/"/g, '&quot;')}" ${e === weekSelectedEq ? 'selected' : ''}>${e}</option>`).join('')}
+        </select>
+        <button onclick="stepWeekEquipment(1)" class="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50">
+          次の機器 <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button onclick="selectWeekEquipment(null)" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-xs font-bold ml-1">
+          <i class="fa-solid fa-grid-2 mr-1"></i>機器一覧に戻る
+        </button>
+      </div></div>`;
+
+      const hourHeight = 36;
+      html += `<div class="min-w-[860px]">`;
+      html += `<div class="week-grid bg-slate-100 border-b border-slate-300 text-xs font-bold text-center sticky top-0 z-20">`;
+      html += `<div class="p-2.5 border-r border-slate-300 text-slate-500">時間</div>`;
+      days.forEach(d => {
+        const isToday = d.str === todayStr;
+        const color = d.disabled ? 'text-slate-300' : d.dow === 0 ? 'text-red-600' : d.dow === 6 ? 'text-blue-600' : 'text-slate-700';
+        html += `<div class="p-2.5 border-r border-slate-200 ${isToday ? 'bg-indigo-100/80 text-indigo-900' : color}">
+          ${d.label} ${isToday ? '<span class="ml-1 text-[10px] bg-indigo-600 text-white px-1.5 py-0.5 rounded">今日</span>' : ''}
+        </div>`;
+      });
+      html += `</div>`;
+
+      html += `<div class="week-grid relative">`;
+      html += `<div class="border-r border-slate-300 bg-slate-50">`;
+      for (let h = 0; h < 24; h++) {
+        html += `<div style="height:${hourHeight}px;" class="border-b border-slate-200 text-[11px] text-slate-500 font-medium pr-2 flex items-start justify-end pt-0.5">${h}:00</div>`;
+      }
+      html += `</div>`;
+
+      days.forEach(d => {
+        const dayItems = d.disabled ? [] : reservations.filter(r => r.equipment === weekSelectedEq && r.date === d.str);
+        html += `<div class="border-r border-slate-200 relative ${d.disabled ? 'bg-slate-100/70' : d.str === todayStr ? 'bg-indigo-50/20' : ''}">`;
+        for (let h = 0; h < 24; h++) {
+          const tStr = `${String(h).padStart(2,'0')}:00`;
+          const eStr = `${String(Math.min(23, h+1)).padStart(2,'0')}:00`;
+          html += `<div ${d.disabled ? '' : `onclick="openNewModal('${weekSelectedEq.replace(/'/g, "\\'")}', '${d.str}', '${tStr}', '${eStr}')"`}
+            style="height:${hourHeight}px;"
+            class="border-b border-slate-100 ${d.disabled ? '' : 'hover:bg-indigo-50/70 cursor-pointer'}"></div>`;
+        }
+
+        dayItems.forEach(item => {
+          const startMin = timeToMinutes(item.startTime);
+          const endMin = Math.max(startMin + 15, timeToMinutes(item.endTime));
+          const durationMin = endMin - startMin;
+          const topPx = (startMin / 60) * hourHeight;
+          const heightPx = Math.max(16, (durationMin / 60) * hourHeight);
+          const text = item.notes ? `${item.title} | ${item.notes}` : item.title;
+          const fontSizeClass = durationMin <= 30 ? 'text-[9px]' : durationMin <= 45 ? 'text-[10px]' : 'text-[11px]';
+
+          html += `<div onclick="event.stopPropagation(); openEditModal('${item.id}')"
+            style="top:${topPx}px; height:${heightPx}px;"
+            title="${item.startTime}-${item.endTime} ${text}"
+            class="absolute left-1 right-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md px-1.5 py-0.5 ${fontSizeClass} shadow-sm cursor-pointer overflow-hidden flex flex-col justify-center border border-indigo-800 z-10">
+            <div class="font-bold leading-tight whitespace-nowrap overflow-hidden">${item.startTime}-${item.endTime} ${item.title}</div>
+            ${item.notes && heightPx >= 32 ? `<div class="text-[9.5px] text-indigo-100 whitespace-nowrap overflow-hidden">${item.notes}</div>` : ''}
+          </div>`;
+        });
+
+        html += `</div>`;
+      });
+
+      html += `</div></div>`;
+      container.innerHTML = html;
+    }
+
+    // モーダル操作
+    function openNewModal(eq = '', date = '', startTime = '09:00', endTime = '10:00') {
+      editingId = null;
+      document.getElementById('modalTitle').innerText = "新規予約";
+      hideEl('deleteBtn');
+      showEl('repeatSection');
+      document.getElementById('modalName').value = "";
+      document.getElementById('modalNotes').value = "";
+      document.getElementById('modalRepeatType').value = "none";
+      hideEl('repeatCountBox');
+
+      const defaultEq = eq || (viewMode === 'week' && weekSelectedEq ? weekSelectedEq : '');
+      const sel = document.getElementById('modalEquipment');
+      sel.innerHTML = equipments.map(e => `<option value="${e}" ${e === defaultEq ? 'selected' : ''}>${e}</option>`).join('');
+
+      const dateInput = document.getElementById('modalDate');
+      dateInput.min = getMinAllowedDateStr();
+      dateInput.value = date || formatDateStr(currentDate);
+
+      document.getElementById('modalStartTime').value = cleanTime(startTime);
+      document.getElementById('modalEndTime').value = cleanTime(endTime);
+      showEl('bookingModal');
+    }
+
+    function openEditModal(id) {
+      const item = reservations.find(r => String(r.id) === String(id));
+      if (!item) return;
+      editingId = String(item.id);
+      document.getElementById('modalTitle').innerText = "予約の編集・削除";
+      showEl('deleteBtn');
+      hideEl('repeatSection');
+
+      const sel = document.getElementById('modalEquipment');
+      sel.innerHTML = equipments.map(e => `<option value="${e}" ${e === item.equipment ? 'selected' : ''}>${e}</option>`).join('');
+
+      const dateInput = document.getElementById('modalDate');
+      dateInput.min = getMinAllowedDateStr();
+      dateInput.value = cleanDate(item.date);
+
+      document.getElementById('modalName').value = item.title || "";
+      document.getElementById('modalStartTime').value = cleanTime(item.startTime);
+      document.getElementById('modalEndTime').value = cleanTime(item.endTime);
+      document.getElementById('modalNotes').value = item.notes || "";
+      showEl('bookingModal');
+    }
+
+    function closeBookingModal() {
+      hideEl('bookingModal');
+    }
+
+    function toggleRepeatOptions() {
+      const val = document.getElementById('modalRepeatType').value;
+      if (val === 'none') hideEl('repeatCountBox');
+      else showEl('repeatCountBox');
+    }
+
+    function hasConflict(eq, date, st, et, ignoreId = null) {
+      const s1 = timeToMinutes(st);
+      const e1 = timeToMinutes(et);
+      return reservations.some(r => {
+        if (ignoreId && String(r.id) === String(ignoreId)) return false;
+        if (r.equipment !== eq || r.date !== date) return false;
+        const s2 = timeToMinutes(r.startTime);
+        const e2 = timeToMinutes(r.endTime);
+        return s1 < e2 && e1 > s2;
+      });
+    }
+
+    async function saveBooking(e) {
+      e.preventDefault();
+      if (isSyncing) return;
+
+      const eq = document.getElementById('modalEquipment').value;
+      const title = document.getElementById('modalName').value.trim();
+      const date = document.getElementById('modalDate').value;
+      const startTime = cleanTime(document.getElementById('modalStartTime').value);
+      const endTime = cleanTime(document.getElementById('modalEndTime').value);
+      const notes = document.getElementById('modalNotes').value.trim();
+
+      if (date < getMinAllowedDateStr()) {
+        alert("保持期間（3ヶ月前）より過去の日付は指定できません。");
+        return;
+      }
+
+      if (timeToMinutes(endTime) <= timeToMinutes(startTime)) {
+        alert("終了時間は開始時間より後に設定してください。");
+        return;
+      }
+
+      const btn = document.getElementById('saveSubmitBtn');
+      btn.disabled = true;
+      btn.innerText = "確認・保存中...";
+
+      try {
+        if (editingId) {
+          if (hasConflict(eq, date, startTime, endTime, editingId)) {
+            alert("同じ時間帯にすでに別の予約が入っています。");
+            return;
+          }
+          const orig = reservations.find(r => String(r.id) === String(editingId)) || {};
+          const updatedItem = { ...orig, id: String(editingId), equipment: eq, title, date, startTime, endTime, notes };
+          const res = await sendTransaction({ action: "update", item: updatedItem });
+          if (res) {
+            if (res.status === "conflict" || res.status === "error") {
+              alert(res.message || "更新に失敗しました。");
+              return;
+            }
+            closeBookingModal();
+          }
+        } else {
+          const rep = document.getElementById('modalRepeatType').value;
+          const count = rep === 'none' ? 1 : Math.max(2, parseInt(document.getElementById('modalRepeatCount').value) || 4);
+          const seriesId = rep === 'none' ? "" : "ser_" + Date.now();
+          const randSuffix = Math.random().toString(36).slice(2, 6);
+          const candidateItems = [];
+
+          for (let i = 0; i < count; i++) {
+            const dt = new Date(date + "T00:00:00");
+            if (rep === 'daily') dt.setDate(dt.getDate() + i);
+            else if (rep === 'weekly') dt.setDate(dt.getDate() + i * 7);
+            else if (rep === 'biweekly') dt.setDate(dt.getDate() + i * 14);
+            else if (rep === 'monthly') dt.setMonth(dt.getMonth() + i);
+            const dStr = formatDateStr(dt);
+
+            candidateItems.push({
+              id: `res_${Date.now()}_${randSuffix}_${i}`,
+              equipment: eq, title, date: dStr, startTime, endTime, notes, seriesId
+            });
+          }
+
+          const res = await sendTransaction({ action: "add", items: candidateItems });
+          if (res) {
+            if (res.added === 0) {
+              alert("指定した時間帯はすでに他の予約（または同時操作された予約）と重複しているため登録できませんでした。");
+              return;
+            }
+            if (res.skipped > 0) {
+              alert(`${res.added}件を登録しました（重複していた${res.skipped}件はスキップしました）。`);
+            }
+            closeBookingModal();
+          }
+        }
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "保存する";
+      }
+    }
+
+    async function deleteCurrentBooking() {
+      if (!editingId || isSyncing) return;
+      if (confirm("この予約を削除しますか？")) {
+        const targetId = editingId;
+        closeBookingModal();
+        await sendTransaction({ action: "delete", id: targetId });
+      }
+    }
+
+    // 機器管理（管理者専用・スプレッドシートへ即時同期）
+    function openSettingsModal() {
+      if (!isAdminAuthenticated) {
+        requestAdminSettings();
+        return;
+      }
+      const box = document.getElementById('equipmentListContainer');
+      box.innerHTML = equipments.map((eq, i) => `
+        <div class="flex justify-between items-center bg-slate-50 px-3 py-2 rounded border text-sm gap-2">
+          <span class="truncate flex-1 font-medium text-slate-800">${i + 1}. ${eq}</span>
+          <div class="flex items-center gap-1 shrink-0">
+            <button onclick="moveEquipment(${i}, -1)" ${i === 0 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="上へ">▲</button>
+            <button onclick="moveEquipment(${i}, 1)" ${i === equipments.length - 1 ? 'disabled' : ''} class="px-1.5 py-0.5 border rounded text-xs bg-white hover:bg-slate-100 disabled:opacity-30" title="下へ">▼</button>
+            <button onclick="removeEquipment(${i})" class="ml-1 px-2 py-0.5 text-red-600 hover:bg-red-50 rounded text-xs font-bold">削除</button>
+          </div>
+        </div>
+      `).join('');
+      showEl('settingsModal');
+    }
+
+    function closeSettingsModal() {
+      hideEl('settingsModal');
+      renderTagButtons();
+      renderCalendar();
+    }
+
+    async function syncEquipmentsToCloud() {
+      localStorage.setItem('okamoto_eq_v1', JSON.stringify(equipments));
+      openSettingsModal();
+      await sendTransaction({ action: "saveEquipments", equipments: equipments });
+    }
+
+    async function addEquipment() {
+      if (!isAdminAuthenticated) return;
+      const val = document.getElementById('newEquipmentName').value.trim();
+      if (val && !equipments.includes(val)) {
+        equipments.push(val);
+        document.getElementById('newEquipmentName').value = "";
+        await syncEquipmentsToCloud();
+      }
+    }
+
+    async function moveEquipment(index, delta) {
+      if (!isAdminAuthenticated) return;
+      const targetIdx = index + delta;
+      if (targetIdx < 0 || targetIdx >= equipments.length) return;
+      const temp = equipments[index];
+      equipments[index] = equipments[targetIdx];
+      equipments[targetIdx] = temp;
+      await syncEquipmentsToCloud();
+    }
+
+    async function removeEquipment(i) {
+      if (!isAdminAuthenticated) return;
+      if (confirm(`「${equipments[i]}」をリストから削除しますか？`)) {
+        equipments.splice(i, 1);
+        await syncEquipmentsToCloud();
+      }
+    }
+  </script>
+</body>
+</html>
