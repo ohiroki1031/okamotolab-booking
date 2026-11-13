@@ -174,7 +174,7 @@
         <div class="flex items-center gap-2">
           <button id="navPrevBtn" onclick="changeDate(-1)" class="px-3 py-1.5 border rounded-lg hover:bg-slate-50 text-sm disabled:opacity-40 disabled:cursor-not-allowed"><i class="fa-solid fa-chevron-left"></i> 前へ</button>
           <button onclick="goToday()" class="px-3 py-1.5 border rounded-lg text-sm font-bold hover:bg-slate-50">本日</button>
-          <button onclick="changeDate(1)" class="px-3 py-1.5 border rounded-lg hover:bg-slate-50 text-sm">次へ <i class="fa-solid fa-chevron-right"></i></button>
+          <button onclick="changeDate(1)" class="px-3 py-1.5 border rounded-lg text-sm">次へ <i class="fa-solid fa-chevron-right"></i></button>
           <span id="currentDateLabel" class="text-base sm:text-lg font-bold ml-1 sm:ml-2 text-slate-800"></span>
         </div>
         <div class="flex items-center gap-3">
@@ -322,7 +322,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">開始時間 (分単位)</label>
-            <input type="time" id="modalStartTime" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
+            <input type="time" id="modalStartTime" onchange="handleStartTimeChange()" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" />
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">終了時間 (分単位)</label>
@@ -406,7 +406,7 @@
     let isUnlocked = false;
     let prefetchPromise = null;
     let autoRefreshTimer = null;
-    let hasScrolledInitialToday = false; // 初回ログイン時のスクロール判定用
+    let hasScrolledInitialToday = false;
 
     let dragState = null;
     let touchHoldState = null;
@@ -731,7 +731,7 @@
       if (dateStr < getMinAllowedDateStr()) return;
       currentDate = new Date(dateStr + "T00:00:00");
       miniCalDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      hasScrolledInitialToday = true; // 日付を手動選択した場合は午前10時基準へ
+      hasScrolledInitialToday = true;
       renderMiniCalendar();
       renderCalendar();
     }
@@ -804,7 +804,7 @@
 
       currentDate = clampToAllowedDate(next);
       miniCalDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      hasScrolledInitialToday = true; // 別日に移動した場合は午前10時基準へ
+      hasScrolledInitialToday = true;
       renderMiniCalendar();
       renderCalendar();
     }
@@ -812,7 +812,7 @@
     function goToday() {
       currentDate = new Date();
       miniCalDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      hasScrolledInitialToday = false; // 「本日」に戻ったときは現在時刻基準へ
+      hasScrolledInitialToday = false;
       renderMiniCalendar();
       renderCalendar();
     }
@@ -960,10 +960,8 @@
       requestAnimationFrame(() => {
         fitReservationBarFonts();
         
-        // スクロール位置の自動調整
-        // デフォルト日（本日かつ初回）は現在時刻、別日や手動切替時は午前10時(10:00 = 600分)を左端にする
         const isToday = formatDateStr(currentDate) === formatDateStr(new Date());
-        let targetMinutes = 600; // デフォルトは午前10時 (10 * 60)
+        let targetMinutes = 600; // デフォルトは午前10時 (600分)
         
         if (isToday && !hasScrolledInitialToday) {
           const now = new Date();
@@ -973,10 +971,8 @@
         const wrapper = document.getElementById('calendarContainer');
         if (wrapper) {
           const totalTimelineWidth = wrapper.scrollWidth;
-          // 左側の固定機器名列の幅（スマホ: 160px, PC: 220px）
           const leftColWidth = window.innerWidth >= 768 ? 220 : 160;
           const scrollableWidth = totalTimelineWidth - leftColWidth;
-          // 該当時間のX座標位置を計算（1日は1440分）
           const targetX = (targetMinutes / 1440) * scrollableWidth;
           wrapper.scrollLeft = Math.max(0, targetX);
         }
@@ -1475,6 +1471,32 @@
       container.innerHTML = html;
     }
 
+    // 新規予約・編集時の開始・終了時間バリデーション連動
+    function handleStartTimeChange() {
+      const stEl = document.getElementById('modalStartTime');
+      const etEl = document.getElementById('modalEndTime');
+      if (!stEl || !etEl) return;
+
+      const stVal = stEl.value;
+      if (!stVal) return;
+
+      // 終了時間の最小値（min属性）を開始時間に設定
+      etEl.min = stVal;
+
+      // 開始時間から30分後の時刻を自動計算してセットする
+      const [h, m] = stVal.split(':').map(Number);
+      let totalMins = h * 60 + m + 30;
+      if (totalMins >= 1440) totalMins = 1439; // 24時を超える場合は上限23:59にする
+      const newEh = Math.floor(totalMins / 60);
+      const newEm = totalMins % 60;
+      const newEtStr = `${String(newEh).padStart(2, '0')}:${String(newEm).padStart(2, '0')}`;
+
+      // 現在の終了時間が新しい開始時間より前、あるいは未設定の場合は自動更新
+      if (!etEl.value || etEl.value <= stVal) {
+        etEl.value = newEtStr;
+      }
+    }
+
     // モーダル操作
     function openNewModal(eq = '', date = '', startTime = '09:00', endTime = '10:00') {
       editingId = null;
@@ -1494,8 +1516,12 @@
       dateInput.min = getMinAllowedDateStr();
       dateInput.value = date || formatDateStr(currentDate);
 
-      document.getElementById('modalStartTime').value = cleanTime(startTime);
-      document.getElementById('modalEndTime').value = cleanTime(endTime);
+      const stEl = document.getElementById('modalStartTime');
+      const etEl = document.getElementById('modalEndTime');
+      stEl.value = cleanTime(startTime);
+      etEl.min = stEl.value;
+      etEl.value = cleanTime(endTime);
+
       showEl('bookingModal');
     }
 
@@ -1514,9 +1540,13 @@
       dateInput.min = getMinAllowedDateStr();
       dateInput.value = cleanDate(item.date);
 
+      const stEl = document.getElementById('modalStartTime');
+      const etEl = document.getElementById('modalEndTime');
+      stEl.value = cleanTime(item.startTime);
+      etEl.min = stEl.value;
+      etEl.value = cleanTime(item.endTime);
+
       document.getElementById('modalName').value = item.title || "";
-      document.getElementById('modalStartTime').value = cleanTime(item.startTime);
-      document.getElementById('modalEndTime').value = cleanTime(item.endTime);
       document.getElementById('modalNotes').value = item.notes || "";
       showEl('bookingModal');
     }
